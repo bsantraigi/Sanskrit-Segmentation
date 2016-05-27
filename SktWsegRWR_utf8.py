@@ -14,32 +14,39 @@ np.set_printoptions(precision=2, suppress= True)
 def sigmoid(x):
   return 1 / (1 + math.exp(-x))
 
-def Floyd_Warshall(nodes, transMat):
-    # D = np.copy(1/(transMat + 0.00001))
-    D = np.copy(transMat)
-    D[D > 0] = 1
-    D[D == 0] = np.Inf
-    for i in nodes:
-        D[i, i] = 0    
-    for k in nodes:
-        D_new = np.zeros(D.shape)
-        for i in nodes:
-            for j in nodes:
-                D_new[i, j] = np.min([D[i,j], D[i, k] + D[k, j]])
-        D = D_new
-
-    return(D)
-
-
 def GetDiaFromTransmat(nodes, transMat):
-    sp = Floyd_Warshall(nodes, transMat)
-    # sp[sp == np.Inf] = 0
-    # print(nodes)
-    sp = sp[nodes, :]
-    sp = sp[:, nodes]
+    """
+    Transmat is probability matrix
+    Convert it to a edge weight adjacency matrix
+    before calling Floyd_Warshall
+    """
+#     print('Transition Prob. Matrix: ')
+#     print(transMat)
+    adjMat = np.copy(transMat[nodes, :])
+    adjMat = adjMat[:, nodes]
+    with np.errstate(divide='ignore'):
+        adjMat = 1/adjMat
+#     print('Graph Adj. Matrix: ')
+#     print(adjMat)
+    sp = Floyd_Warshall(adjMat)
     dia = np.max(sp)
     # print(sp)
     return dia
+
+def Floyd_Warshall(adjMat):
+    l = adjMat.shape[0]
+    D = np.copy(adjMat)
+    for i in range(l):
+        D[i, i] = 0
+    for k in range(l):
+        D_new = np.zeros(D.shape)
+        for i in range(l):
+            for j in range(l):
+                D_new[i, j] = np.min([D[i,j], D[i, k] + D[k, j]])
+        D = D_new
+#     print("Shortest Path Matrix: ")
+#     print(D)
+    return(D)
 
 def getTransMat(wordList, model_cbow):
     nodeCount = len(wordList)
@@ -142,15 +149,17 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated):
             nodes.append(i)
 
     dia = GetDiaFromTransmat(nodes, transMat)
-    print( "Dia: ", dia)
+    rp_new = 1 - math.pow(.045, 1/dia)
+    # print( "Dia: ", dia, " RP: ", rp_new)
 
     for i in range(maxIteration):        
 #        print('shapes',papMat.shape,va.shape,prevMat.shape)
+        # newMat = (1 - rp_new) * np.dot(papMat, transMat) + rp_new * np.mat(rVec)
         newMat = (1 - restartP) * np.dot(papMat, transMat) + restartP * np.mat(rVec)
         diff = np.absolute(papMat - newMat)
         diffMax = np.argmax(diff)
         papMat = newMat
-        if  abs(diffMax) < eps and maxIteration/10 > 10:
+        if  abs(diffMax) < eps and maxIteration/100.0 > 1:
             break
                   
     return(papMat)
@@ -210,11 +219,14 @@ class AlgoTestFactory(object):
 
     def test(self):
         accuracies = []
-        for f in self.commonFiles[1:10]:
+        for f in self.commonFiles[0:100]:
         # f = self.commonFiles[33]
             sentenceObj, dcsObj = self.loadSentence(f)
             if(sentenceObj != None):
-                result = self.algo.predict(sentenceObj, dcsObj)
+                try:
+                    result = self.algo.predict(sentenceObj, dcsObj)
+                except ZeroDivisionError:
+                    pass
                 solution = [rom_slp(c) for c in dcsObj.dcs_chunks]
                 if result != None:
                     ac = 100*sum(list(map(lambda x: x in solution, result)))/len(solution)
@@ -222,10 +234,10 @@ class AlgoTestFactory(object):
                     print(ac)
                     # print("Solution: ", solution)
                     # print("Prediction: ", result)
-        # print("Results: ")
-        # accuracies = np.array(accuracies)
-        # print("Mean: ", accuracies.mean())
-        # print("Percentiles: ", np.percentile(accuracies, [0, 25, 50, 75, 100]))
+        print("Results: ")
+        accuracies = np.array(accuracies)
+        print("Mean: ", accuracies.mean())
+        print("Percentiles: ", np.percentile(accuracies, [0, 25, 50, 75, 100]))
 
 
 """
@@ -238,7 +250,7 @@ class SktWsegRWR(object):
         """
         Load the CBOW pickle
         """
-        # print()
+        # modelFilePath = 'extras/model_100_10.p'
         self.model_cbow = pickleFixLoad(modelFilePath)
         print("Loaded: ", self.model_cbow)
 
@@ -319,7 +331,10 @@ class SktWsegRWR(object):
                     prioriVec = (prioriVec != 0) * uniform_prob
 
                     restartP = 0.045 # This is to be set based on graph diameter
-                    weights = RWR(prioriVec, TransitionMat, restartP, 1000, qu, deactivated)
+                    weights = RWR(
+                        prioriVec = prioriVec, transMat = TransitionMat, 
+                        restartP = 0.4, maxIteration = 500, queryList = qu, 
+                        deactivated = deactivated)
                     ranking = np.asarray(weights.argsort()).reshape(-1)            
                     cid = -1
                     pos = -1

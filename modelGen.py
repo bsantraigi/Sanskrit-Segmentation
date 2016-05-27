@@ -59,7 +59,7 @@ class SKTSentences(object):
 
 
 sentences = SKTSentences(picklePath, pickleFiles)
-model = Word2Vec(sentences, size=100, window=10, workers=20)
+model = Word2Vec(sentences, size=100, window=10, min_count=1, workers=20)
 model.save('model_100_10.p')
 print(model)
 
