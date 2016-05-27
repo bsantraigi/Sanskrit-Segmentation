@@ -7,6 +7,7 @@ import re
 import numpy as np
 import math
 import pickle
+from romtoslp import rom_slp
 
 np.set_printoptions(precision=2, suppress= True)
 
@@ -58,9 +59,24 @@ def getTransMat(wordList, model_cbow):
                 except KeyError:
                     TransitionMat[row][col] = 0 #WHAT TO DO HERE??
             else:
-                TransitionMat[row][col] = 0 #WHAT TO DO HERE??            
+                TransitionMat[row][col] = 0
         
-    MakeRowStochastic(TransitionMat)
+        row_sum = np.sum(TransitionMat[row, :])
+        if(row_sum > 0):
+            delta = 0.1
+            NZ = np.sum(TransitionMat[row, :] != 0)
+            Z = nodeCount - 1 - NZ
+            TransitionMat[row, :] -= delta
+            TransitionMat[row, :] = TransitionMat[row, :].clip(min = 0)
+            TransitionMat[row, :] /= row_sum
+            filler = delta*NZ/(row_sum*Z)
+            TransitionMat[row, :] += filler * (TransitionMat[row, :] == 0)            
+        else:
+            TransitionMat[row, :] = 1/(nodeCount - 1)
+        
+        TransitionMat[row, row] = 0
+        # print((TransitionMat[row, :]))
+    # MakeRowStochastic(TransitionMat)
     return TransitionMat
 
 
@@ -118,7 +134,7 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated):
 
 
     """
-    Find Dia of graph using BFS
+    Find Dia of graph using Floyd Warshall
     """
     nodes = []
     for i in range(prioriVec.shape[1]):
@@ -126,7 +142,7 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated):
             nodes.append(i)
 
     dia = GetDiaFromTransmat(nodes, transMat)
-    # print( "Dia: ", dia)
+    print( "Dia: ", dia)
 
     for i in range(maxIteration):        
 #        print('shapes',papMat.shape,va.shape,prevMat.shape)
@@ -199,7 +215,7 @@ class AlgoTestFactory(object):
             sentenceObj, dcsObj = self.loadSentence(f)
             if(sentenceObj != None):
                 result = self.algo.predict(sentenceObj, dcsObj)
-                solution = dcsObj.dcs_chunks
+                solution = [rom_slp(c) for c in dcsObj.dcs_chunks]
                 if result != None:
                     ac = 100*sum(list(map(lambda x: x in solution, result)))/len(solution)
                     accuracies.append(ac)
@@ -218,7 +234,7 @@ Keeps a full list of train files and target sentences
 Test on a single sentence of a set of sentences
 """
 class SktWsegRWR(object):
-    def __init__(self, modelFilePath = 'extras/NewModel_utf8.p'):
+    def __init__(self, modelFilePath = 'extras/modelpickle10.p'):
         """
         Load the CBOW pickle
         """
@@ -263,7 +279,7 @@ class SktWsegRWR(object):
                     canBeQuery = 2
                 for word_sense in chunk.chunk_words[pos]:
                     if(len(word_sense.lemmas) > 0):
-                        wordList.append(word_sense.lemmas[0])
+                        wordList.append(rom_slp(word_sense.lemmas[0]))
                         k = len(wordList) - 1
                         chunkDict[cid][pos].append(k)
                         revMap2Chunk.append((cid, pos))
