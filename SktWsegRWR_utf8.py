@@ -8,6 +8,7 @@ import numpy as np
 import math
 import pickle
 from romtoslp import rom_slp
+import threading
 
 np.set_printoptions(precision=2, suppress= True)
 
@@ -72,12 +73,15 @@ def getTransMat(wordList, model_cbow):
         if(row_sum > 0):
             delta = 0.1
             NZ = np.sum(TransitionMat[row, :] != 0)
-            Z = nodeCount - 1 - NZ
-            TransitionMat[row, :] -= delta
-            TransitionMat[row, :] = TransitionMat[row, :].clip(min = 0)
-            TransitionMat[row, :] /= row_sum
-            filler = delta*NZ/(row_sum*Z)
-            TransitionMat[row, :] += filler * (TransitionMat[row, :] == 0)            
+            if(NZ < nodeCount - 1):
+                Z = nodeCount - 1 - NZ
+                TransitionMat[row, :] -= delta
+                TransitionMat[row, :] = TransitionMat[row, :].clip(min = 0)
+                TransitionMat[row, :] /= row_sum
+                filler = delta*NZ/(row_sum*Z)
+                TransitionMat[row, :] += filler * (TransitionMat[row, :] == 0)
+            else:
+                TransitionMat[row, :] /= row_sum
         else:
             TransitionMat[row, :] = 1/(nodeCount - 1)
         
@@ -165,8 +169,9 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated):
     return(papMat)
 
 
-class AlgoTestFactory(object):
-    def __init__(self, sentencesPath = '../TextSegmentation/Pickles/', dcsPath = '../Text Segmentation/DCS_pick/'):
+class AlgoTestFactory(threading.Thread):
+    def __init__(self, testRange, sentencesPath = '../TextSegmentation/Pickles/', dcsPath = '../Text Segmentation/DCS_pick/'):        
+        threading.Thread.__init__(self)
         if(sys.version_info < (3, 0)):
             warnings.warn("\nPython version 3 or greater is required. Python 2.x is not tested.\n")
 
@@ -177,6 +182,7 @@ class AlgoTestFactory(object):
         """
         self.sentencesPath = sentencesPath
         self.dcsPath = dcsPath
+        self.testRange = testRange
 
 
         """
@@ -203,9 +209,9 @@ class AlgoTestFactory(object):
         """
         Load file list from pickle
         """
-        self.commonFiles = pickle.load(open("commonFiles.p", 'rb'))
+        # self.commonFiles = pickle.load(open("commonFiles.p", 'rb'))
 
-        print("Current folder contains: ",len(self.commonFiles), " Files")
+        # print("Current folder contains: ",len(self.commonFiles), " Files")
 
         self.algo = SktWsegRWR()
 
@@ -217,9 +223,12 @@ class AlgoTestFactory(object):
             return None, None
         return(sentenceObj, dcsObj)
 
-    def test(self):
+    def run(self):
         accuracies = []
-        for f in self.commonFiles[0:100]:
+        # print(self.testRange[0])
+        # print(AlgoTestFactory.commonFiles[self.testRange[0]])
+        # return
+        for f in AlgoTestFactory.commonFiles[self.testRange[0]:self.testRange[1]]:
         # f = self.commonFiles[33]
             sentenceObj, dcsObj = self.loadSentence(f)
             if(sentenceObj != None):
@@ -231,14 +240,17 @@ class AlgoTestFactory(object):
                 if result != None:
                     ac = 100*sum(list(map(lambda x: x in solution, result)))/len(solution)
                     accuracies.append(ac)
-                    print(ac)
+                    # print(ac)
                     # print("Solution: ", solution)
                     # print("Prediction: ", result)
-        print("Results: ")
-        accuracies = np.array(accuracies)
-        print("Mean: ", accuracies.mean())
-        print("Percentiles: ", np.percentile(accuracies, [0, 25, 50, 75, 100]))
+        
+        AlgoTestFactory.allAccuracies.append(accuracies)
+        print('Thread Finished')
 
+
+AlgoTestFactory.commonFiles = pickle.load(open("commonFiles.p", 'rb'))
+print("Current folder contains: ",len(AlgoTestFactory.commonFiles), " Files")
+AlgoTestFactory.allAccuracies = []
 
 """
 Loads the Model_CBOW from file
@@ -246,13 +258,16 @@ Keeps a full list of train files and target sentences
 Test on a single sentence of a set of sentences
 """
 class SktWsegRWR(object):
+    modelFilePath = 'extras/modelpickle10.p'
+    model_cbow = pickleFixLoad(modelFilePath)
+    print("Loaded: ", model_cbow)
     def __init__(self, modelFilePath = 'extras/modelpickle10.p'):
         """
         Load the CBOW pickle
         """
         # modelFilePath = 'extras/model_100_10.p'
-        self.model_cbow = pickleFixLoad(modelFilePath)
-        print("Loaded: ", self.model_cbow)
+        self.model_cbow = SktWsegRWR.model_cbow
+        # print("Loaded: ", self.model_cbow)
 
 
     def predict(self, sentenceObj, dcsObj):
@@ -382,8 +397,30 @@ class SktWsegRWR(object):
             # ac = 100*sum(list(map(lambda x: wordList[x] in solution, qu)))/len(solution)                
 
 if __name__ == "__main__":
-    tester = AlgoTestFactory()
-    tester.test()
+    if(len(sys.argv) > 1):
+        thCount = int(sys.argv[1])
+    else:
+        thCount = 10
+    print("Using", thCount, "threads")
+    upto = 500
+    filePerThread = upto/thCount
+    testerThreads = [None]*thCount
+    for thId in range(0,thCount):
+        testerThreads[thId] = AlgoTestFactory([int(thId*filePerThread), int((thId + 1)*filePerThread)])
+        testerThreads[thId].start()
     
+    for t in testerThreads:
+        t.join()
+
+    print("Results: ")
+    # print(AlgoTestFactory.allAccuracies)
+    accuracies = [ac for acList in AlgoTestFactory.allAccuracies for ac in acList]
+    # print(accuracies)
+
+    accuracies = np.array(accuracies)
+    print("Mean: ", accuracies.mean())
+    print("Percentiles: ", np.percentile(accuracies, [0, 25, 50, 75, 100]))
+    
+
 
             
