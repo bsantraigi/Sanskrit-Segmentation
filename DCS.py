@@ -7,3 +7,8 @@ class DCS:
         self.dcs_chunks=[]
         self.lemmas=[]
         self.cng=[]
+
+def SeeDCS(dcsObj):
+    print(dcsObj.sentence)
+    print(dcsObj.lemmas)
+    print(dcsObj.cng)

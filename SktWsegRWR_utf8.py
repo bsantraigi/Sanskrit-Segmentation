@@ -1,14 +1,20 @@
 import os, sys
 import pickle
-from DCS import DCS
-from sentences import word_new, chunks, sentences
+from DCS import *
+from sentences import *
 from utilities import printProgress, validatePickleName, pickleFixLoad
 import re
 import numpy as np
 import math
 import pickle
 from romtoslp import rom_slp
-import threading
+import multiprocessing
+
+class Method():
+    word2vec = 0
+    word2word = 1
+    type2type = 2
+    verb2type = 3
 
 np.set_printoptions(precision=2, suppress= True)
 
@@ -48,6 +54,45 @@ def Floyd_Warshall(adjMat):
 #     print("Shortest Path Matrix: ")
 #     print(D)
     return(D)
+
+def getCo_occurMat(wordList, fullCo_ocMat, word2IndexDict):    
+    nodeCount = len(wordList)
+    wordIndexList = [-1]*nodeCount
+    i = -1
+    for w in wordList:
+        i += 1
+        try:
+            wordIndexList[i] = word2IndexDict[w]
+        except KeyError:
+            continue
+    TransitionMat = np.zeros((nodeCount, nodeCount))
+    
+    """
+    FIXME:
+    1. HOW TO DO SMOOTHING?
+    2. HOW TO CONVERT WORD2VEC SIM. TO PROB.
+    """
+    
+    for row in range(nodeCount):
+        for col in range(nodeCount):
+            if row != col:
+                try:
+                    TransitionMat[row][col] = fullCo_ocMat[wordIndexList[row]][wordIndexList[col]]
+                except KeyError:
+                    TransitionMat[row][col] = 0 #WHAT TO DO HERE??
+            else:
+                TransitionMat[row][col] = 0
+        
+        row_sum = np.sum(TransitionMat[row, :])
+        if(row_sum > 0):
+            TransitionMat[row, :] /= row_sum
+        else:
+            TransitionMat[row, :] = 1/(nodeCount - 1)
+        
+        TransitionMat[row, row] = 0
+        # print((TransitionMat[row, :]))
+    # MakeRowStochastic(TransitionMat)
+    return TransitionMat
 
 def getTransMat(wordList, model_cbow):
     nodeCount = len(wordList)
@@ -91,6 +136,8 @@ def getTransMat(wordList, model_cbow):
     return TransitionMat
 
 
+
+
 def MakeRowStochastic(matrix):
     rowCount = matrix.shape[0]
     for row in range(rowCount):
@@ -98,13 +145,13 @@ def MakeRowStochastic(matrix):
         if(s!=0):
             matrix[row, :] = matrix[row, :]/s
 
-def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated):
+def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, allowRPModify = True):
     """
     Run Random walk with restart
     until 
     we reach steady state or max iteration steps
     """
-    # print(transMat)
+    # print(prioriVec)
     
 #     MERGE THE NEW QUERY NODE(IF ANY), CHANGES IN TRANSMAT AND PRIORI-VEC
     doMax = True
@@ -134,44 +181,45 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated):
     eps = 0.0000000000001    # the error difference, which should ideally be zero but can never be attained.
     
     n = prioriVec.shape[1]
-    papMat = np.array(prioriVec)
+    papMat = np.copy(prioriVec)
     
     rVec = np.zeros((1, n))    
 #     print(n)
     for i in queryList:
 #         print(i)
         rVec[0, i] = 1/len(queryList)
-    
 
-
-    """
-    Find Dia of graph using Floyd Warshall
-    """
     nodes = []
     for i in range(prioriVec.shape[1]):
         if(prioriVec[0,i] > 0):
             nodes.append(i)
 
-    dia = GetDiaFromTransmat(nodes, transMat)
-    rp_new = 1 - math.pow(.045, 1/dia)
+    if(allowRPModify):
+        """
+        Find Dia of graph using Floyd Warshall
+        Dynamically decide restart probability
+        """
+        dia = GetDiaFromTransmat(nodes, transMat)
+        rp_new = 1 - math.pow(.045, 1/dia)
+    else:
+        rp_new = restartP
     # print( "Dia: ", dia, " RP: ", rp_new)
 
     for i in range(maxIteration):        
-#        print('shapes',papMat.shape,va.shape,prevMat.shape)
-        # newMat = (1 - rp_new) * np.dot(papMat, transMat) + rp_new * np.mat(rVec)
-        newMat = (1 - restartP) * np.dot(papMat, transMat) + restartP * np.mat(rVec)
+        newMat = (1 - rp_new) * np.dot(papMat, transMat) + rp_new * np.mat(rVec)        
         diff = np.absolute(papMat - newMat)
         diffMax = np.argmax(diff)
         papMat = newMat
+        # print(papMat)
         if  abs(diffMax) < eps and maxIteration/100.0 > 1:
             break
                   
     return(papMat)
 
 
-class AlgoTestFactory(threading.Thread):
-    def __init__(self, testRange, sentencesPath = '../TextSegmentation/Pickles/', dcsPath = '../Text Segmentation/DCS_pick/'):        
-        threading.Thread.__init__(self)
+class AlgoTestFactory(multiprocessing.Process):
+    def __init__(self, testRange, processID, method = Method.word2vec, sentencesPath = '../TextSegmentation/Pickles/', dcsPath = '../Text Segmentation/DCS_pick/', storeAccuracies = False):
+        multiprocessing.Process.__init__(self)
         if(sys.version_info < (3, 0)):
             warnings.warn("\nPython version 3 or greater is required. Python 2.x is not tested.\n")
 
@@ -183,15 +231,14 @@ class AlgoTestFactory(threading.Thread):
         self.sentencesPath = sentencesPath
         self.dcsPath = dcsPath
         self.testRange = testRange
+        self.processID = processID
+        self.method = method
+        self.storeAccuracies = storeAccuracies
 
 
         """
-        Get common dcs and sentences files
-        """
-        # print()        
-
-        """
-        Uncommet to refresh fileLists
+        Get common dcs and sentences files        
+        Uncomment to refresh fileLists
         """
         # self.sentenceFiles=set(sorted(os.listdir(sentencesPath)))
         # self.dcsFiles=set(sorted(os.listdir(dcsPath)))
@@ -213,7 +260,7 @@ class AlgoTestFactory(threading.Thread):
 
         # print("Current folder contains: ",len(self.commonFiles), " Files")
 
-        self.algo = SktWsegRWR()
+        self.algo = SktWsegRWR(method=self.method)
 
     def loadSentence(self, fName):
         try:
@@ -235,17 +282,23 @@ class AlgoTestFactory(threading.Thread):
                 try:
                     result = self.algo.predict(sentenceObj, dcsObj)
                 except ZeroDivisionError:
+                    result = None
                     pass
                 solution = [rom_slp(c) for c in dcsObj.dcs_chunks]
                 if result != None:
                     ac = 100*sum(list(map(lambda x: x in solution, result)))/len(solution)
                     accuracies.append(ac)
-                    # print(ac)
+                    if not self.storeAccuracies:
+                        print(ac)
                     # print("Solution: ", solution)
                     # print("Prediction: ", result)
         
-        AlgoTestFactory.allAccuracies.append(accuracies)
-        print('Thread Finished')
+        # AlgoTestFactory.allAccuracies.append(accuracies)
+        if(self.storeAccuracies):
+            pickle.dump(accuracies, open('.temp/' + str(self.processID) + '_out.p', 'wb'))
+            print('Process Finished (accuracies saved to disk)')
+        else:
+            print('Process Finished (accuracies not saved to disk)')
 
 
 AlgoTestFactory.commonFiles = pickle.load(open("commonFiles.p", 'rb'))
@@ -253,20 +306,79 @@ print("Current folder contains: ",len(AlgoTestFactory.commonFiles), " Files")
 AlgoTestFactory.allAccuracies = []
 
 """
+SentencePreprocess:
+-------------------
+    Read a sentence obj and create + return the following objects 
+
+    -> chunkDict: chunk_id -> position -> index in wordlist (nested dictionary)
+    -> wordList: list of possible words as a result of word segmentation
+    -> revMap2Chunk: Map word in wordlist to (cid, position) in chunkDict
+    -> qu: Possible query nodes
+"""
+def SentencePreprocess(sentenceObj):
+    """
+    Considering word names only
+    ***{Word forms or cngs can also be used}
+    """
+    chunkDict = {}
+    wordList = []
+    revMap2Chunk = []
+    qu = []
+
+    cid = -1
+    for chunk in sentenceObj.chunk:
+        # print()
+        cid = cid + 1
+        chunkDict[cid] = {}
+        canBeQuery = 0
+        if len(chunk.chunk_words.keys()) == 1:
+            canBeQuery = 1 # Unsegmentable Chunk
+        for pos in chunk.chunk_words.keys():
+            chunkDict[cid][pos] = []
+            if(canBeQuery == 1) and (len(chunk.chunk_words[pos]) == 1):
+                canBeQuery = 2 # No cng alternative for the word
+            for word_sense in chunk.chunk_words[pos]:
+                if(len(word_sense.lemmas) > 0):
+                    wordList.append(rom_slp(word_sense.lemmas[0]))
+                    k = len(wordList) - 1
+                    chunkDict[cid][pos].append(k)
+                    revMap2Chunk.append((cid, pos))
+                    if canBeQuery == 2:
+                        # The word has a lemma available - in some pickle file it's not
+                        # Make this word query
+                        qu.append(k)
+    return (chunkDict, wordList, revMap2Chunk, qu)
+
+"""
 Loads the Model_CBOW from file
 Keeps a full list of train files and target sentences
 Test on a single sentence of a set of sentences
 """
 class SktWsegRWR(object):
+    print("Loading Prob. Models")
     modelFilePath = 'extras/modelpickle10.p'
     model_cbow = pickleFixLoad(modelFilePath)
-    print("Loaded: ", model_cbow)
-    def __init__(self, modelFilePath = 'extras/modelpickle10.p'):
+    fullCo_ocMat = pickle.load(open('extras/all_dcs_lemmas_matrix.p', 'rb'))
+    word2IndexDict = pickle.load(open('dcsLemma2index.p', 'rb'))
+    print("Prob. Models loaded")
+    # print("Loaded: ", model_cbow)
+    def __init__(self, method = Method.word2vec, modelFilePath = 'extras/modelpickle10.p'):
         """
         Load the CBOW pickle
         """
         # modelFilePath = 'extras/model_100_10.p'
         self.model_cbow = SktWsegRWR.model_cbow
+        self.fullCo_ocMat = SktWsegRWR.fullCo_ocMat
+        self.word2IndexDict = SktWsegRWR.word2IndexDict
+        self.method = method
+
+        if(self.method == Method.word2word):
+            print("Using word2word")
+        if(self.method == Method.word2vec):
+            print("Using word2vec")
+
+            
+
         # print("Loaded: ", self.model_cbow)
 
 
@@ -284,40 +396,17 @@ class SktWsegRWR(object):
         
         """
         Considering word names only
-        ***{Word forms can also be used}
+        ***{Word forms or cngs can also be used}
         """
-        chunkDict = {}
-        wordList = []
-        revMap2Chunk = []
-        qu = []
-        
-        cid = -1
-        for chunk in sentenceObj.chunk:
-            # print()
-            cid = cid+1
-            chunkDict[cid] = {}
-            canBeQuery = 0
-            if len(chunk.chunk_words.keys()) == 1:
-                canBeQuery = 1
-            # print("Analyzing ", chunk.chunk_name)
-            for pos in chunk.chunk_words.keys():
-                chunkDict[cid][pos] = []
-                if(canBeQuery == 1) and (len(chunk.chunk_words[pos]) == 1):
-                    canBeQuery = 2
-                for word_sense in chunk.chunk_words[pos]:
-                    if(len(word_sense.lemmas) > 0):
-                        wordList.append(rom_slp(word_sense.lemmas[0]))
-                        k = len(wordList) - 1
-                        chunkDict[cid][pos].append(k)
-                        revMap2Chunk.append((cid, pos))
-                        # print(pos, ": ", rom_slp(word_sense.names), word_sense.lemmas, word_sense.forms)
-                        if canBeQuery == 2:
-                            qu.append(k)
+        (chunkDict, wordList, revMap2Chunk, qu) = SentencePreprocess(sentenceObj)
         
         if(len(wordList) == 0):
             return
 
-        TransitionMat = getTransMat(wordList, self.model_cbow)
+        if(self.method == Method.word2vec):
+            TransitionMat = getTransMat(wordList, self.model_cbow)
+        elif(self.method == Method.word2word):
+            TransitionMat = getCo_occurMat(wordList, self.fullCo_ocMat, self.word2IndexDict)
         if(len(qu) > 0):
             # for q in qu:
             #     print(q,wordList[q], end=" ")
@@ -345,11 +434,12 @@ class SktWsegRWR(object):
                     uniform_prob = 1/(nodeCount - len(qu) + 1 - len(deactivated))
                     prioriVec = (prioriVec != 0) * uniform_prob
 
-                    restartP = 0.045 # This is to be set based on graph diameter
+                    restartP = 0.4 # This is to be set based on graph diameter
+                    # print(deactivated)
                     weights = RWR(
                         prioriVec = prioriVec, transMat = TransitionMat, 
-                        restartP = 0.4, maxIteration = 500, queryList = qu, 
-                        deactivated = deactivated)
+                        restartP = restartP, maxIteration = 500, queryList = qu, 
+                        deactivated = deactivated, allowRPModify = False)
                     ranking = np.asarray(weights.argsort()).reshape(-1)            
                     cid = -1
                     pos = -1
@@ -393,34 +483,30 @@ class SktWsegRWR(object):
 
             # print()
             result = list(map(lambda x: wordList[x], qu))
-            return(result)
             # ac = 100*sum(list(map(lambda x: wordList[x] in solution, qu)))/len(solution)                
+            return(result)
 
 if __name__ == "__main__":
     if(len(sys.argv) > 1):
-        thCount = int(sys.argv[1])
+        prCount = int(sys.argv[1])
     else:
-        thCount = 10
-    print("Using", thCount, "threads")
-    upto = 500
-    filePerThread = upto/thCount
-    testerThreads = [None]*thCount
-    for thId in range(0,thCount):
-        testerThreads[thId] = AlgoTestFactory([int(thId*filePerThread), int((thId + 1)*filePerThread)])
-        testerThreads[thId].start()
+        prCount = 1
+    print("Using", prCount, "Processes")
+    upto = 10
+    filePerProcess = upto/prCount
+    testerProcesses = [None]*prCount
+    for thId in range(0,prCount):
+        testerProcesses[thId] = AlgoTestFactory([int(thId*filePerProcess), int((thId + 1)*filePerProcess)], processID = thId, method=Method.word2vec)
+        testerProcesses[thId].start()
     
-    for t in testerThreads:
-        t.join()
+    for p in testerProcesses:
+        p.join()
 
-    print("Results: ")
-    # print(AlgoTestFactory.allAccuracies)
-    accuracies = [ac for acList in AlgoTestFactory.allAccuracies for ac in acList]
-    # print(accuracies)
+    # print("Results: ")
+    # # print(AlgoTestFactory.allAccuracies)
+    # accuracies = [ac for acList in AlgoTestFactory.allAccuracies for ac in acList]
+    # # print(accuracies)
 
-    accuracies = np.array(accuracies)
-    print("Mean: ", accuracies.mean())
-    print("Percentiles: ", np.percentile(accuracies, [0, 25, 50, 75, 100]))
-    
-
-
-            
+    # accuracies = np.array(accuracies)
+    # print("Mean: ", accuracies.mean())
+    # print("Percentiles: ", np.percentile(accuracies, [0, 25, 50, 75, 100]))
