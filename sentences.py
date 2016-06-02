@@ -25,3 +25,66 @@ def SeeSentence(sentenceObj):
         for pos in chunk.chunk_words.keys():
             for word_sense in chunk.chunk_words[pos]:
                 print(pos, ": ", rom_slp(word_sense.names), list(map(rom_slp, word_sense.lemmas)), word_sense.forms)
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+from wordTypeCheckFunction import *
+
+"""
+SentencePreprocess:
+-------------------
+    Read a sentence obj and create + return the following objects 
+
+    -> chunkDict: chunk_id -> position -> index in wordlist (nested dictionary)
+    -> wordList: list of possible words as a result of word segmentation
+    -> revMap2Chunk: Map word in wordlist to (cid, position) in chunkDict
+    -> qu: Possible query nodes
+"""
+def SentencePreprocess(sentenceObj):
+    """
+    Considering word names only
+    ***{Word forms or cngs can also be used}
+    """
+    chunkDict = {}
+    wordList = []
+    cngList = []
+    revMap2Chunk = []
+    qu = []
+
+    cid = -1
+    for chunk in sentenceObj.chunk:        
+        cid = cid+1
+        chunkDict[cid] = {}
+        canBeQuery = 0
+        if len(chunk.chunk_words.keys()) == 1:
+            canBeQuery = 1 # Unsegmentable Chunk
+        for pos in chunk.chunk_words.keys():
+            chunkDict[cid][pos] = []
+            if(canBeQuery == 1) and (len(chunk.chunk_words[pos]) == 1):
+                canBeQuery = 2 # No cng alternative for the word
+            for word_sense in chunk.chunk_words[pos]:
+                if(len(word_sense.lemmas) > 0):
+                    wordList.append(rom_slp(word_sense.lemmas[0]))
+                    print(word_sense.forms)
+                    for form, config in word_sense.forms[0].items():
+                        if(type(config[0]) == list):
+                            cng = wordTypeCheck(form, config[0][0])
+                        else:
+                            cng = wordTypeCheck(form, config[0])
+                        if(cng != None):
+                            cngList.append(cng)
+                            break
+                    
+                    k = len(wordList) - 1
+                    chunkDict[cid][pos].append(k)
+                    revMap2Chunk.append((cid, pos))
+                    if canBeQuery == 2:
+                        # The word has a lemma available - in some pickle file it's not
+                        # Make this word query
+                        qu.append(k)
+    # print(cngList)
+    # print(wordList)
+    return (chunkDict, wordList, revMap2Chunk, qu, cngList)
