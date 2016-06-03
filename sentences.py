@@ -68,7 +68,7 @@ def SentencePreprocess(sentenceObj):
             for word_sense in chunk.chunk_words[pos]:
                 if(len(word_sense.lemmas) > 0):
                     wordList.append(rom_slp(word_sense.lemmas[0]))
-                    print(word_sense.forms)
+                    # print(word_sense.forms)
                     for form, config in word_sense.forms[0].items():
                         if(type(config[0]) == list):
                             cng = wordTypeCheck(form, config[0][0])
