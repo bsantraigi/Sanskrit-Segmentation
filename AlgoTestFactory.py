@@ -22,54 +22,30 @@ class AlgoTestFactory(multiprocessing.Process):
         self.storeAccuracies = storeAccuracies
         self.savePath = savePath
 
-
-        """
-        Get common dcs and sentences files        
-        Uncomment to refresh fileLists
-        """
-        # self.sentenceFiles=set(sorted(os.listdir(sentencesPath)))
-        # self.dcsFiles=set(sorted(os.listdir(dcsPath)))
-        # self.commonFiles = []
         
-        # for sPickle in self.sentenceFiles:
-        #     if sPickle in self.dcsFiles:
-        #         sPickle = validatePickleName(sPickle)
-        #         if sPickle != "":                
-        #             self.commonFiles.append(sPickle)
-
-        # self.commonFiles = list(set(self.commonFiles))
-        # pickle.dump(self.commonFiles, open('commonFiles.p', 'wb'))
-
-        """
-        Load file list from pickle
-        """
-        # self.commonFiles = pickle.load(open("commonFiles.p", 'rb'))
-
-        # print("Current folder contains: ",len(self.commonFiles), " Files")
 
         self.algo = SktWsegRWR(method=self.method)
 
-    def loadSentence(self, fName):
+    def loadSentence(self, fName, folderTag):
         # print('File: ', fName)
         try:
-            sentenceObj = pickleFixLoad(self.sentencesPath + fName)
-            dcsObj = pickleFixLoad(self.dcsPath + fName)            
+            dcsObj = pickleFixLoad(self.dcsPath + fName)           
+            if folderTag == "C1020" :
+                sentenceObj = pickleFixLoad('../TextSegmentation/corrected_10to20/' + fName)
+            else 
+                sentenceObj = pickleFixLoad('../TextSegmentation/Pickle_Files/' + fName)
+
         except (KeyError, EOFError) as e:
             return None, None
         return(sentenceObj, dcsObj)
 
     def run(self):
+
         accuracies = []
-        # print(self.testRange[0])
-        # print(AlgoTestFactory.commonFiles[self.testRange[0]])
-        # return
         newBad = False
-        for f in AlgoTestFactory.commonFiles[self.testRange[0]:self.testRange[1]]:
-        # f = self.commonFiles[33]
-            # if(f in badFiles):
-            #     # print(f, 'is a badfile')
-            #     continue
-            sentenceObj, dcsObj = self.loadSentence(f)
+
+        for f in list(AlgoTestFactory.goodDict.keys())[self.testRange[0]:self.testRange[1]]:
+            sentenceObj, dcsObj = self.loadSentence(f, goodDict[f])
             if(sentenceObj != None):
                 try:
                     result = self.algo.predict(sentenceObj, dcsObj)
@@ -107,6 +83,5 @@ class AlgoTestFactory(multiprocessing.Process):
             print('Process Finished (accuracies not saved to disk)')
 
 
-AlgoTestFactory.commonFiles = pickle.load(open("commonFiles.p", 'rb'))
-print("Current folder contains: ",len(AlgoTestFactory.commonFiles), " Files")
+AlgoTestFactory.goodFileDict = pickle.load(open('mergedGood.p', 'rb'))
 AlgoTestFactory.allAccuracies = []

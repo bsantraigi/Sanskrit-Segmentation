@@ -62,11 +62,33 @@ class ProbModels():
 
 
         """VERB2TYPE DATA"""
+        self.v2t_fullMat = kwargs['v2t_fullMat']
+
 
         """W2W_SAME_CNG DATA"""
+        w2w_samecng_fullmat = kwargs['w2w_samecng_fullmat']
+        samecng_unigram_counts = kwargs['samecng_unigram_counts']
+
+        samecng_context_count = defaultdict(int)
+        for word in w2w_samecng_fullmat.keys():
+            samecng_context_count[word] = len(w2w_samecng_fullmat[word])
+
+        # Each bigram is repeated; a-b is same as b-a
+        samecng_total_context = int(sum(samecng_context_count.values())/2)
+
+        total_sentences = 441735
+        samecng_total_co_oc = sum(
+            [sum(w2w_samecng_fullmat[word].values()) for word in w2w_samecng_fullmat.keys()])
+        
+        self.w2w_samecng_fullmat = w2w_samecng_fullmat
+        self.samecng_unigram_counts = samecng_unigram_counts
+        self.samecng_context_count = samecng_context_count
+        self.samecng_total_context = samecng_total_context
+        self.samecng_total_co_oc = samecng_total_co_oc
 
         
         return
+
 
     def get_cng2cng_no_KN(self, cngList):
         cng2cngFullMat = self.cng2cngFullMat
@@ -120,47 +142,84 @@ class ProbModels():
 
     
 
-    def get_w2w_mat(self, wordList):    
+    def get_w2w_mat(self, wordList, kn_smooth = True):    
         nodeCount = len(wordList)
         TransitionMat = np.zeros((nodeCount, nodeCount))
         
-        for row in range(nodeCount):
-            for col in range(nodeCount):
-                if row != col:
-                    TransitionMat[row][col] = self.kn_word2word(wordList[row], wordList[col])
+        if kn_smooth:
+            for row in range(nodeCount):
+                for col in range(nodeCount):
+                    if row != col:
+                        TransitionMat[row][col] = self.kn_word2word(wordList[row], wordList[col])
+                    else:
+                        TransitionMat[row][col] = 0
+                
+                row_sum = np.sum(TransitionMat[row, :])
+                if(row_sum > 0):
+                    TransitionMat[row, :] /= row_sum
                 else:
-                    TransitionMat[row][col] = 0
-            
-            row_sum = np.sum(TransitionMat[row, :])
-            if(row_sum > 0):
-                TransitionMat[row, :] /= row_sum
-            else:
-                TransitionMat[row, :] = 1/(nodeCount - 1)
-            
-            TransitionMat[row, row] = 0
+                    TransitionMat[row, :] = 1/(nodeCount - 1)
+                
+                TransitionMat[row, row] = 0
+        else:
+            for row in range(nodeCount):
+                for col in range(nodeCount):
+                    if row != col:
+                        try:
+                            TransitionMat[row][col] = self.fullCo_oc_mat[wordList[row]][wordList[col]]
+                        except KeyError:
+                            TransitionMat[row][col] = 0
+                    else:
+                        TransitionMat[row][col] = 0
+                
+
+                row_sum = np.sum(TransitionMat[row, :])
+                if row_sum > 0:
+                    TransitionMat[row, :] /= row_sum
+                else:
+                    TransitionMat[row, :] = 1/(nodeCount - 1)
+                TransitionMat[row, row] = 0
             # print((TransitionMat[row, :]))
         # MakeRowStochastic(TransitionMat)
         return TransitionMat
 
-    def get_w2w_no_KN(self, wordList):    
+    def get_w2w_samecng_mat(self, wordList, kn_smooth = True):
         nodeCount = len(wordList)
         TransitionMat = np.zeros((nodeCount, nodeCount))
         
-        for row in range(nodeCount):
-            for col in range(nodeCount):
-                if row != col:
-                    try:
-                        TransitionMat[row][col] = self.fullCo_oc_mat[wordList[row]][wordList[col]]
-                    except KeyError:
+        if kn_smooth:
+            for row in range(nodeCount):
+                for col in range(nodeCount):
+                    if row != col:
+                        TransitionMat[row][col] = self.kn_word2word_samecng(wordList[row], wordList[col])
+                    else:
                         TransitionMat[row][col] = 0
+                
+                row_sum = np.sum(TransitionMat[row, :])
+                if(row_sum > 0):
+                    TransitionMat[row, :] /= row_sum
                 else:
-                    TransitionMat[row][col] = 0
+                    TransitionMat[row, :] = 1/(nodeCount - 1)
+                
+                TransitionMat[row, row] = 0
+        else:
+            for row in range(nodeCount):
+                for col in range(nodeCount):
+                    if row != col:
+                        try:
+                            TransitionMat[row][col] = self.w2w_samecng_fullmat[wordList[row]][wordList[col]]
+                        except KeyError:
+                            TransitionMat[row][col] = 0
+                    else:
+                        TransitionMat[row][col] = 0
+                
+                row_sum = np.sum(TransitionMat[row, :])
+                if row_sum != 0:
+                    TransitionMat[row, :] /= row_sum
+                else:
+                    TransitionMat[row, :] /= 1/(nodeCount - 1)
+                TransitionMat[row, row] = 0
             
-            row_sum = np.sum(TransitionMat[row, :])
-            TransitionMat[row, :] /= row_sum
-            TransitionMat[row, row] = 0
-            # print((TransitionMat[row, :]))
-        # MakeRowStochastic(TransitionMat)
         return TransitionMat
 
     def kn_word2word(self, word_a, word_b):
@@ -181,6 +240,7 @@ class ProbModels():
             p_a = context_count[word_a]/total_context
             p_b = context_count[word_b]/total_context
             return normalization*p_a*p_b
+
 
     def kn_cng2cng(self, cng_a, cng_b):
         # print(cng_a, cng_b)
@@ -206,4 +266,23 @@ class ProbModels():
             p_a = t2t_context_count[index_a]/t2t_total_contexts
             p_b = t2t_context_count[index_b]/t2t_total_contexts
             # print(p_a, p_b)
+            return normalization*p_a*p_b
+
+    def kn_word2word_samecng(self, word_a, word_b):
+        w2w_samecng_fullmat = self.w2w_samecng_fullmat
+        samecng_total_co_oc = self.samecng_total_co_oc
+        samecng_total_context = self.samecng_total_context
+        samecng_context_count = self.samecng_context_count
+        
+        delta = 0.5
+        normalization = delta*samecng_total_context/samecng_total_co_oc
+
+        if word_a in w2w_samecng_fullmat[word_b]:
+            c_ab = max((w2w_samecng_fullmat[word_a][word_b] - delta), 0)/samecng_total_co_oc
+            p_a = samecng_context_count[word_a]/samecng_total_context
+            p_b = samecng_context_count[word_b]/samecng_total_context
+            return c_ab + normalization*p_a*p_b
+        else:
+            p_a = samecng_context_count[word_a]/samecng_total_context
+            p_b = samecng_context_count[word_b]/samecng_total_context
             return normalization*p_a*p_b

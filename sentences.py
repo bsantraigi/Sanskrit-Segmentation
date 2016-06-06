@@ -32,6 +32,7 @@ def SeeSentence(sentenceObj):
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
 from wordTypeCheckFunction import *
+import pickle
 
 """
 SentencePreprocess:
@@ -66,14 +67,17 @@ def SentencePreprocess(sentenceObj):
             if(canBeQuery == 1) and (len(chunk.chunk_words[pos]) == 1):
                 canBeQuery = 2 # No cng alternative for the word
             for word_sense in chunk.chunk_words[pos]:
-                if(len(word_sense.lemmas) > 0):
-                    wordList.append(rom_slp(word_sense.lemmas[0]))
+                if(len(word_sense.lemmas) > 0 and len(word_sense.forms) > 0):
+                    wordList.append(rom_slp(word_sense.lemmas[0].split('_')[0]))
                     # print(word_sense.forms)
-                    for form, config in word_sense.forms[0].items():
-                        if(type(config[0]) == list):
-                            cng = wordTypeCheck(form, config[0][0])
-                        else:
-                            cng = wordTypeCheck(form, config[0])
+                    for thing in word_sense.forms:
+                        cng = None
+                        for form, config in thing.items():
+                            if(form != 'verbform'):
+                                if(type(config[0]) == list):
+                                    cng = wordTypeCheck(form, config[0][0])
+                                else:
+                                    cng = wordTypeCheck(form, config[0])
                         if(cng != None):
                             cngList.append(cng)
                             break
@@ -85,6 +89,14 @@ def SentencePreprocess(sentenceObj):
                         # The word has a lemma available - in some pickle file it's not
                         # Make this word query
                         qu.append(k)
-    # print(cngList)
-    # print(wordList)
-    return (chunkDict, wordList, revMap2Chunk, qu, cngList)
+    # print(len(cngList))
+    # print(len(wordList))
+    verbs = []
+    v2t = pickle.load(open('extras/verbs_vs_cngs_matrix_countonly.p', 'rb'), encoding=u'utf8')
+    i = -1
+    for w in wordList:
+        i += 1
+        if w in v2t:
+            verbs.append(i)
+    
+    return (chunkDict, wordList, revMap2Chunk, qu, cngList, verbs)
