@@ -44,6 +44,7 @@ SentencePreprocess:
     -> revMap2Chunk: Map word in wordlist to (cid, position) in chunkDict
     -> qu: Possible query nodes
 """
+v2t = pickle.load(open('extras/verbs_vs_cngs_matrix_countonly.p', 'rb'), encoding=u'utf8')
 def SentencePreprocess(sentenceObj):
     """
     Considering word names only
@@ -92,11 +93,10 @@ def SentencePreprocess(sentenceObj):
     # print(len(cngList))
     # print(len(wordList))
     verbs = []
-    v2t = pickle.load(open('extras/verbs_vs_cngs_matrix_countonly.p', 'rb'), encoding=u'utf8')
     i = -1
     for w in wordList:
         i += 1
-        if w in v2t:
+        if w in list(v2t.keys()):
             verbs.append(i)
     
     return (chunkDict, wordList, revMap2Chunk, qu, cngList, verbs)

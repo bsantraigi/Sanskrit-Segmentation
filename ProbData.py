@@ -12,4 +12,6 @@ cng2index_dict = pickleFixLoad('cng2index_dict.p')
 w2w_samecng_fullmat = pickle.load(open('extras/lemmas_with_same_cngs_matrix_countonly.p', 'rb'), encoding=u'utf8')
 samecng_unigram_counts = pickle.load(open('extras/dictionary_for_lemmas_with_same_cng.p', 'rb'), encoding=u'utf8')
 
+v2c_fullMat = pickle.load(open('extras/verbs_vs_cngs_matrix_countonly.p', 'rb'), encoding=u'utf8')
+
 print("Dataloader Finished[Prob]...")

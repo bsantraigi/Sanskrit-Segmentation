@@ -34,7 +34,6 @@ class ProbModels():
         # Each bigram is repeated; a-b is same as b-a
         total_context = int(sum(context_count.values())/2)
 
-        total_sentences = 441735
         total_co_oc = sum(
             [sum(fullCo_oc_mat[word].values()) for word in fullCo_oc_mat.keys()])
         
@@ -62,7 +61,7 @@ class ProbModels():
 
 
         """VERB2TYPE DATA"""
-        self.v2t_fullMat = kwargs['v2t_fullMat']
+        self.v2c_fullMat = kwargs['v2c_fullMat']
 
 
         """W2W_SAME_CNG DATA"""
@@ -75,8 +74,7 @@ class ProbModels():
 
         # Each bigram is repeated; a-b is same as b-a
         samecng_total_context = int(sum(samecng_context_count.values())/2)
-
-        total_sentences = 441735
+        
         samecng_total_co_oc = sum(
             [sum(w2w_samecng_fullmat[word].values()) for word in w2w_samecng_fullmat.keys()])
         
@@ -85,57 +83,49 @@ class ProbModels():
         self.samecng_context_count = samecng_context_count
         self.samecng_total_context = samecng_total_context
         self.samecng_total_co_oc = samecng_total_co_oc
-
-        
         return
 
 
-    def get_cng2cng_no_KN(self, cngList):
+    def get_cng2cng_mat(self, cngList, kn_smooth = True):
         cng2cngFullMat = self.cng2cngFullMat
         cng2index_dict = self.cng2index_dict
         nodeCount = len(cngList)
         # print(cngList)
         cngIndexList = list(map(lambda x:cng2index_dict[str(x)], cngList))
-        # print(cngIndexList)
-        TransitionMat = np.zeros((nodeCount, nodeCount))
-        
-        for row in range(nodeCount):
-            for col in range(nodeCount):
-                if row != col:
-                    try:
-                        # print(cngIndexList[row])
-                        TransitionMat[row][col] = cng2cngFullMat[cngIndexList[row],cngIndexList[col]]
-                    except KeyError:
-                        TransitionMat[row][col] = 0 #WHAT TO DO HERE??
-                else:
-                    TransitionMat[row][col] = 0
-            
-            row_sum = np.sum(TransitionMat[row, :])
-            if(row_sum > 0):
-                TransitionMat[row, :] /= row_sum
-            else:
-                TransitionMat[row, :] = 1/(nodeCount - 1)
-                pass
-            
-            TransitionMat[row, row] = 0
-            # print((TransitionMat[row, :]))
-        # MakeRowStochastic(TransitionMat)
-        return TransitionMat
-
-    def get_cng2cng_mat(self, cngList):
         nodeCount = len(cngList)
         TransitionMat = np.zeros((nodeCount, nodeCount))
-        
-        for row in range(nodeCount):
-            for col in range(nodeCount):
-                if row != col:
-                    TransitionMat[row][col] = self.kn_cng2cng(cngList[row], cngList[col])
+        if kn_smooth:
+            for row in range(nodeCount):
+                for col in range(nodeCount):
+                    if row != col:
+                        TransitionMat[row][col] = self.kn_cng2cng(cngList[row], cngList[col])
+                    else:
+                        TransitionMat[row][col] = 0
+                
+                row_sum = np.sum(TransitionMat[row, :])
+                TransitionMat[row, :] /= row_sum
+                TransitionMat[row, row] = 0
+        else:
+            for row in range(nodeCount):
+                for col in range(nodeCount):
+                    if row != col:
+                        try:
+                            # print(cngIndexList[row])
+                            TransitionMat[row][col] = cng2cngFullMat[cngIndexList[row],cngIndexList[col]]
+                        except KeyError:
+                            TransitionMat[row][col] = 0 #WHAT TO DO HERE??
+                    else:
+                        TransitionMat[row][col] = 0
+                
+                row_sum = np.sum(TransitionMat[row, :])
+                if(row_sum > 0):
+                    TransitionMat[row, :] /= row_sum
                 else:
-                    TransitionMat[row][col] = 0
+                    TransitionMat[row, :] = 1/(nodeCount - 1)
+                    pass
+                
+                TransitionMat[row, row] = 0
             
-            row_sum = np.sum(TransitionMat[row, :])
-            TransitionMat[row, :] /= row_sum
-            TransitionMat[row, row] = 0
             # print((TransitionMat[row, :]))
         # MakeRowStochastic(TransitionMat)
         return TransitionMat
@@ -221,6 +211,29 @@ class ProbModels():
                 TransitionMat[row, row] = 0
             
         return TransitionMat
+
+    def get_v2c_ranking(self, wordList, cngList, verbs):
+        v2c_fullMat = self.v2c_fullMat
+        ranks = np.zeros(len(cngList))
+        for vi in verbs:
+            tempRank = np.zeros(len(cngList))
+            v = wordList[vi]
+            # print(v)
+            for i in range(len(cngList)):
+                if i not in verbs:
+                    c = str(cngList[i])
+                    if c in v2c_fullMat[v]:
+                        tempRank[i] = v2c_fullMat[v][c]
+                    else:
+                        tempRank[i] = 0
+            ranks = np.max((tempRank, ranks), axis = 0)
+            # print(ranks)
+            
+        s = np.sum(ranks)
+        if(s > 0):
+            ranks /= s
+        
+        return ranks
 
     def kn_word2word(self, word_a, word_b):
         fullCo_oc_mat = self.fullCo_oc_mat
