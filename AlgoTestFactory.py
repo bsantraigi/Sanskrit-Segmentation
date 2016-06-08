@@ -1,11 +1,15 @@
 from SktWsegRWR_utf8 import *
 import pickle
+import ProbData
+from ProbModels import *
+import multiprocessing
+import math
 # badFiles = pickle.load(open('extras/badFiles.p', 'rb'))
 # badFiles = []
 # print(badFiles)
-class AlgoTestFactory(multiprocessing.Process):
-    def __init__(self, testRange, processID, method = Method.word2vec, sentencesPath = '../TextSegmentation/Pickles/', dcsPath = '../Text Segmentation/DCS_pick/', storeAccuracies = False, savePath = None):
-        multiprocessing.Process.__init__(self)
+class AlgoTestFactory():
+    def __init__(self, testRange, processCount, sentencesPath = '../TextSegmentation/Pickles/', dcsPath = '../Text Segmentation/DCS_pick/', storeAccuracies = False, savePath = None):
+        
         if(sys.version_info < (3, 0)):
             warnings.warn("\nPython version 3 or greater is required. Python 2.x is not tested.\n")
 
@@ -17,14 +21,18 @@ class AlgoTestFactory(multiprocessing.Process):
         self.sentencesPath = sentencesPath
         self.dcsPath = dcsPath
         self.testRange = testRange
-        self.processID = processID
-        self.method = method
+        self.processCount = processCount
         self.storeAccuracies = storeAccuracies
         self.savePath = savePath
 
         
-
-        self.algo = SktWsegRWR(method=self.method)
+        self.algo = SktWsegRWR(
+            w2w_modelFunc = AlgoTestFactory.pb.get_w2w_mat, 
+            t2t_modelFunc = AlgoTestFactory.pb.get_cng2cng_mat,
+            v2c_modelFunc = AlgoTestFactory.pb.get_v2c_ranking,
+            sameCng_modelFunc = AlgoTestFactory.pb.get_w2w_samecng_mat,
+            partition=[0.2, 0.5, 0.2, 0.1]
+        )
 
     def loadSentence(self, fName, folderTag):
         # print('File: ', fName)
@@ -32,56 +40,85 @@ class AlgoTestFactory(multiprocessing.Process):
             dcsObj = pickleFixLoad(self.dcsPath + fName)           
             if folderTag == "C1020" :
                 sentenceObj = pickleFixLoad('../TextSegmentation/corrected_10to20/' + fName)
-            else 
+            else:
                 sentenceObj = pickleFixLoad('../TextSegmentation/Pickle_Files/' + fName)
 
-        except (KeyError, EOFError) as e:
+        except (KeyError, EOFError, pickle.UnpicklingError) as e:
             return None, None
         return(sentenceObj, dcsObj)
 
-    def run(self):
-
+    def processTarget(self, processID, start, finish):
         accuracies = []
-        newBad = False
-
-        for f in list(AlgoTestFactory.goodDict.keys())[self.testRange[0]:self.testRange[1]]:
-            sentenceObj, dcsObj = self.loadSentence(f, goodDict[f])
+        for f in list(AlgoTestFactory.goodFileDict.keys())[start:finish]:
+            sentenceObj, dcsObj = self.loadSentence(f, AlgoTestFactory.goodFileDict[f])
             if(sentenceObj != None):
-                try:
-                    result = self.algo.predict(sentenceObj, dcsObj)
-                except (ZeroDivisionError, IndexError) as e:
-                    # SeeSentence(sentenceObj)
-                    # print(f)
-                    # newBad = True
-                    result = None
-                    pass
-                solution = [rom_slp(c) for c in dcsObj.dcs_chunks]
+                result = self.algo.predict(sentenceObj, dcsObj)
+                # try:
+                    # if result == None:
+                    #     print(f)
+                # except (ZeroDivisionError, IndexError) as e:
+                #     print("FROM HERE")
+                #     result = None
+                #     pass
+                # except KeyError as e:
+                #     print("KeyError:", e)
+                #     print(f)
+                
 
                 if result != None:
-                    ac = 100*sum(list(map(lambda x: x in solution, result)))/len(solution)
+                    ac = Accuracy(result, dcsObj)
                     accuracies.append(ac)
-                    if not self.storeAccuracies:
+                    if not self.storeAccuracies and not self.processCount > 1:
                         print(ac)
-                    # print("Solution: ", solution)
-                    # print("Prediction: ", result)
-        # if(newBad):
-        #     # print('BAD BAD')
-        #     pickle.dump(badFiles, open('extras/badFiles.p', 'wb'))
-        #     # badFiles = pickle.load(open('extras/badFiles.p', 'rb'))
-        # AlgoTestFactory.allAccuracies.append(accuracies)
+                # else:
+                    # print(f)
+                    # print("BAD HIT")
         savePath = self.savePath
         if(self.storeAccuracies):
             if(savePath == None):
-                savePath = '.temp/' + str(self.processID) + '_out.p'
+                savePath = '.temp/' + str(processID) + '_out.p'
             else:
-                savePath = '.temp/' + savePath + '/' + str(self.processID) + '_out.p'
+                directory = '.temp/' + savePath + '/'
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                savePath = directory + str(processID) + '_out.p'
 
             pickle.dump(accuracies, open(savePath, 'wb'))
-            print('Process Finished (accuracies saved to disk){0}'.format(
-                savePath))
+            print('Process Finished ({1} accuracies and saved to disk){0}'.format(savePath, len(accuracies)))
         else:
-            print('Process Finished (accuracies not saved to disk)')
+            accuracies = np.array(accuracies)
+            print("Results: ")
+            print("Mean: ", accuracies.mean())
+            print("Percentiles: ", np.percentile(accuracies, [0, 25, 50, 75, 100]))
+            print('Process Finished ({0} accuracies and not saved to disk)'.format(len(accuracies)))
+
+    def run(self):
+        processCount = self.processCount
+        start = self.testRange[0] 
+        finish = self.testRange[1]
+        if processCount == 1:
+            self.processTarget(0, start, finish)
+        else:
+            step = math.ceil((finish - start)/processCount)
+            processes = []
+            for processID in range(0, processCount):
+                processes.append(multiprocessing.Process(target = self.processTarget, args = (processID, start + step*processID, min(step*(processID + 1), finish))))
+            for p in processes:
+                p.start()
+            for p in processes:
+                p.join()
+                
 
 
-AlgoTestFactory.goodFileDict = pickle.load(open('mergedGood.p', 'rb'))
+
+def Accuracy(prediction, dcsObj):
+    solution = [rom_slp(c) for c in dcsObj.dcs_chunks]
+    ac = 100*sum(list(map(lambda x: x in solution, prediction)))/len(prediction)
+    return ac
+
+AlgoTestFactory.goodFileDict = pickle.load(open('mergedGood_v2.p', 'rb'))
 AlgoTestFactory.allAccuracies = []
+AlgoTestFactory.pb = ProbModels(fullCo_oc_mat = ProbData.fullCo_oc_mat, unigram_counts = ProbData.unigram_counts,
+               cng2cngFullMat = ProbData.cng2cngFullMat, cng2index_dict = ProbData.cng2index_dict,
+               w2w_samecng_fullmat=ProbData.w2w_samecng_fullmat, samecng_unigram_counts=ProbData.samecng_unigram_counts,
+               v2c_fullMat = ProbData.v2c_fullMat)

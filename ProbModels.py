@@ -91,7 +91,14 @@ class ProbModels():
         cng2index_dict = self.cng2index_dict
         nodeCount = len(cngList)
         # print(cngList)
-        cngIndexList = list(map(lambda x:cng2index_dict[str(x)], cngList))
+        cngIndexList = []
+        for cng in cngList:
+            try:
+                ci = cng2index_dict[str(cng)]
+                cngIndexList.append(ci)
+            except:
+                cngIndexList.append(None)
+
         nodeCount = len(cngList)
         TransitionMat = np.zeros((nodeCount, nodeCount))
         if kn_smooth:
@@ -213,6 +220,7 @@ class ProbModels():
         return TransitionMat
 
     def get_v2c_ranking(self, wordList, cngList, verbs):
+        # Higher is better
         v2c_fullMat = self.v2c_fullMat
         ranks = np.zeros(len(cngList))
         for vi in verbs:
@@ -266,8 +274,11 @@ class ProbModels():
         delta = 0.5
         normalization = delta*t2t_total_contexts/t2t_total_co_oc
 
-        index_a = cng2index_dict[str(cng_a)]
-        index_b = cng2index_dict[str(cng_b)]        
+        try:
+            index_a = cng2index_dict[str(cng_a)]
+            index_b = cng2index_dict[str(cng_b)]
+        except KeyError:
+            return 1/440000
 
         if cng2cngFullMat[index_a, index_b] > 0:
             c_ab = max((cng2cngFullMat[index_a, index_b] - delta), 0)/t2t_total_co_oc

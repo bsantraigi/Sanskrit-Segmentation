@@ -1,29 +1,21 @@
-from SktWsegRWR_utf8 import *
 from AlgoTestFactory import *
+import os
 
+def printAccuracies(path):    
+    fNames = [validatePickleName(f) for f in os.listdir(path)]
+    fNames = list(filter(len, fNames))
+    accuracies = []
+    for fName in fNames:
+        accuracies.append(pickle.load(open(path + fName, 'rb')))
+    print(len(accuracies))
+    accuracies = [ac for acList in accuracies for ac in acList]
+    print(len(accuracies))
+    accuracies = np.array(accuracies)
+    print("Results: ")
+    print("Mean: ", accuracies.mean())
+    print("Percentiles: ", np.percentile(accuracies, [0, 25, 50, 75, 100]))
 
 if __name__ == "__main__":
-    if(len(sys.argv) > 1):
-        prCount = int(sys.argv[1])
-    else:
-        prCount = 1
-    print("Using", prCount, "Processes")
-    upto = 1
-    filePerProcess = upto/prCount
-    testerProcesses = [None]*prCount
-
-    for thId in range(0,prCount):
-        testerProcesses[thId] = AlgoTestFactory([int(thId*filePerProcess), int((thId + 1)*filePerProcess)], processID = thId, method = Method.word2vec)
-        testerProcesses[thId].start()
-    
-    for p in testerProcesses:
-        p.join()    
-
-    # print("Results: ")
-    # # print(AlgoTestFactory.allAccuracies)
-    # accuracies = [ac for acList in AlgoTestFactory.allAccuracies for ac in acList]
-    # # print(accuracies)
-
-    # accuracies = np.array(accuracies)
-    # print("Mean: ", accuracies.mean())
-    # print("Percentiles: ", np.percentile(accuracies, [0, 25, 50, 75, 100]))
+    altf1 = AlgoTestFactory([0, 100], 4, savePath="Combined_longrun_10K", storeAccuracies=True)
+    altf1.run()
+    printAccuracies('.temp/Combined_longrun_10K/')
