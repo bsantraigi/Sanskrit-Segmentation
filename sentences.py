@@ -1,6 +1,7 @@
 #Loading of SKT Pickles
 from romtoslp import rom_slp
-class word_new:
+from json import *
+class word_new():
     def __init__(self,names):
         self.lemmas=[]
         self.names=names
@@ -25,6 +26,11 @@ def SeeSentence(sentenceObj):
         for pos in chunk.chunk_words.keys():
             for word_sense in chunk.chunk_words[pos]:
                 print(pos, ": ", rom_slp(word_sense.names), list(map(rom_slp, word_sense.lemmas)), word_sense.forms)
+
+def getWord(sentenceObj, cid, pos,kii):
+    ch = sentenceObj.chunk[cid]
+    word = ch.chunk_words[pos][kii]
+    return {'lemmas': word.lemmas, 'forms':word.forms, 'names':word.names}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
