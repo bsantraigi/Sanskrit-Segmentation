@@ -25,7 +25,7 @@ def SeeSentence(sentenceObj):
         print("Analyzing ", rom_slp(chunk.chunk_name))
         for pos in chunk.chunk_words.keys():
             for word_sense in chunk.chunk_words[pos]:
-                print(pos, ": ", rom_slp(word_sense.names), list(map(rom_slp, word_sense.lemmas)), word_sense.forms)
+                print(pos, ": ", rom_slp(word_sense.names), list(map(rom_slp,word_sense.lemmas)), word_sense.forms)
 
 def getWord(sentenceObj, cid, pos,kii):
     ch = sentenceObj.chunk[cid]
@@ -45,24 +45,44 @@ SentencePreprocess:
 -------------------
     Read a sentence obj and create + return the following objects 
 
-    -> chunkDict: chunk_id -> position -> index in wordlist (nested dictionary)
-    -> wordList: list of possible words as a result of word segmentation
+    -> chunkDict: chunk_id -> position -> index in lemmaList (nested dictionary)
+    -> lemmaList: list of possible words as a result of word segmentation
     -> revMap2Chunk: Map word in wordlist to (cid, position) in chunkDict
     -> qu: Possible query nodes
 """
 v2t = pickle.load(open('extras/verbs_vs_cngs_matrix_countonly.p', 'rb'), encoding=u'utf8')
+def wtc_recursive(form, c):
+    if type(c) ==list:
+        for cc in c:
+            return wtc_recursive(form, cc)
+    else:
+        return wordTypeCheck(form, c)
+
 def SentencePreprocess(sentenceObj):
     """
     Considering word names only
     ***{Word forms or cngs can also be used}
     """
+    def getCNGs(formsDict):
+        l = []
+        for form, configs in formsDict.items():
+            for c in configs:
+                if(form == 'verbform'):                
+                    continue
+                else:
+                    l.append(wtc_recursive(form, configs))
+        return list(set(l))
+
     chunkDict = {}
+    lemmaList = []
     wordList = []
     cngList = []
     revMap2Chunk = []
     qu = []
+    tuplesMain = []
 
     cid = -1
+    tidExclusive = 0
     for chunk in sentenceObj.chunk:        
         cid = cid+1
         chunkDict[cid] = {}
@@ -74,35 +94,39 @@ def SentencePreprocess(sentenceObj):
             if(canBeQuery == 1) and (len(chunk.chunk_words[pos]) == 1):
                 canBeQuery = 2 # No cng alternative for the word
             for word_sense in chunk.chunk_words[pos]:
+                nama = rom_slp(word_sense.names)
                 if(len(word_sense.lemmas) > 0 and len(word_sense.forms) > 0):
-                    wordList.append(rom_slp(word_sense.lemmas[0].split('_')[0]))
-                    # print(word_sense.forms)
-                    for thing in word_sense.forms:
-                        cng = None
-                        for form, config in thing.items():
-                            if(form != 'verbform'):
-                                if(type(config[0]) == list):
-                                    cng = wordTypeCheck(form, config[0][0])
-                                else:
-                                    cng = wordTypeCheck(form, config[0])
-                        if(cng != None):
+                    tuples = []
+                    for lemmaI in range(len(word_sense.lemmas)):
+                        lemma = rom_slp(word_sense.lemmas[lemmaI].split('_')[0])
+                        tempCNGs = getCNGs(word_sense.forms[lemmaI])
+                        for cng in tempCNGs:
+                            # UPDATE LISTS
+                            tuples.append((tidExclusive, nama, lemma, cng)) # Remember the order
+                            lemmaList.append(lemma)
+                            wordList.append(nama)
                             cngList.append(cng)
-                            break
+
+                            revMap2Chunk.append((cid, pos, len(tuplesMain)))
+                            tidExclusive += 1
                     
-                    k = len(wordList) - 1
+                    k = len(tuplesMain)
                     chunkDict[cid][pos].append(k)
-                    revMap2Chunk.append((cid, pos))
+                    tuplesMain.append(tuples)
                     if canBeQuery == 2:
                         # The word has a lemma available - in some pickle file it's not
                         # Make this word query
-                        qu.append(k)
-    # print(len(cngList))
-    # print(len(wordList))
+                        # print("Query: ", len(tuples))
+                        qu.append(tuples[0][0])
+
     verbs = []
     i = -1
-    for w in wordList:
+    for w in lemmaList:
         i += 1
         if w in list(v2t.keys()):
             verbs.append(i)
+
+
+    # print(tuplesMain)
     
-    return (chunkDict, wordList, revMap2Chunk, qu, cngList, verbs)
+    return (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain)

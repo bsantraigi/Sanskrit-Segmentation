@@ -127,23 +127,25 @@ class SktWsegRWR(object):
 
     def predict(self, sentenceObj, dcsObj):
         partition = self.partition
-        (chunkDict, wordList, revMap2Chunk, qu, cngList, verbs) = SentencePreprocess(sentenceObj)
+        (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
 
-        if(len(wordList) <= 1):
+        if(len(lemmaList) <= 1):
             # print("ERROR: Zero or one word in sentence...")
             return None
 
         # ALL FUNC USES KN SMOOTHING
         # USE THE SECOND ARGUMENT TO TURN IN OFF BY PASSING FALSE
-        TransitionMat_t2t = self.t2t_modelFunc(cngList)
-        TransitionMat_w2w = self.w2w_modelFunc(wordList)
-        TransitionMat_w2w_samecng = self.sameCng_modelFunc(wordList)
+        TransitionMat_t2t = self.t2t_modelFunc(tuplesMain)
+        TransitionMat_w2w = self.w2w_modelFunc(tuplesMain)
+        TransitionMat_w2w_samecng = self.sameCng_modelFunc(tuplesMain)
 
         if(len(qu) > 0):
             solution = [w for w in dcsObj.dcs_chunks]
 
             # INITIALIZATION OF RWR VECTORS/MATRICES
-            nodeCount = len(wordList)
+            lastTuple = tuplesMain[len(tuplesMain) - 1]
+            nodeCount = lastTuple[len(lastTuple) - 1][0] + 1
+            # print(nodeCount)
             deactivated = []
             prioriVec = np.ones((1, nodeCount))
             for q in qu:
@@ -151,6 +153,7 @@ class SktWsegRWR(object):
             prioriVec[0, qu[0]] = 1
 
             def deactivate(index):    
+                # print("Remove:", wordList[index])
                 deactivated.append(index)
                 prioriVec[0,index] = 0
 
@@ -191,19 +194,20 @@ class SktWsegRWR(object):
                     ranking_w2w_samecng = np.asarray(weights_w2w_samecng.argsort())
                     # print(ranking_w2w_samecng)
 
-                    v2c_scores = self.v2c_modelFunc(wordList, cngList, verbs)
-                    # print(v2c_scores)
-                    v2c_scores = 1/(1+v2c_scores)
-                    ranking_v2cng = np.asarray(v2c_scores.argsort())
+                    # v2c_scores = self.v2c_modelFunc(lemmaList, cngList, verbs)
+                    # # print(v2c_scores)
+                    # v2c_scores = 1/(1+v2c_scores)
+                    # ranking_v2cng = np.asarray(v2c_scores.argsort())
                     # print(ranking_v2cng)
 
                     # NORMALIZE THE WEIGHT VECTORS
                     weights_w2w /= np.sum(weights_w2w)
                     weights_t2t /= np.sum(weights_t2t)
                     weights_w2w_samecng /= np.sum(weights_w2w_samecng)
-                    v2c_scores /= np.sum(v2c_scores)
+                    # v2c_scores /= np.sum(v2c_scores)
 
-                    weights_combined = partition[0]*weights_w2w + partition[1]*weights_t2t + partition[2]*weights_w2w_samecng + partition[3]*v2c_scores
+                    # FIXME:
+                    weights_combined = partition[0]*weights_w2w + partition[1]*weights_t2t + partition[2]*weights_w2w_samecng # + partition[3]*v2c_scores
                     ranking_combined = np.asarray(weights_combined.argsort()).reshape(-1)
 
                     # print("W2W: ", ranking_w2w)
@@ -225,43 +229,60 @@ class SktWsegRWR(object):
                         qu.append(r)
                         prioriVec[0,r] = 0
                         # Remove overlapping competitors
-                        cid, pos = revMap2Chunk[r]
+                        cid, pos, tid = revMap2Chunk[r]
+                        # print("Result", r)
+                        # print("Winner:", lemmaList[r])
+                        # print(cid, pos, chunkDict[cid][pos])
                         break
+
+                    for tup in tuplesMain[tid]:
+                        if tup[0] not in qu:
+                            deactivate(tup[0])
 
                     # Remove overlapping words
                     activeChunk = chunkDict[cid]
                     r = qu[len(qu) - 1]
                     for _pos in activeChunk:
                         if(_pos < pos):
-                            for index in activeChunk[_pos]:
-                                if index not in deactivated and index not in qu:
-                                    w = wordList[index]
-                                    if(_pos+len(w)-1 > pos):
-                                        deactivate(index)                    
+                            for indexDummy in activeChunk[_pos]:
+                                tupSet = tuplesMain[indexDummy]
+                                for tup in tupSet:
+                                    index = tup[0]
+                                    if index not in deactivated and index not in qu:
+                                        w = wordList[index]
+                                        if(_pos+len(w)-1 > pos):
+                                            deactivate(index)
                         elif(_pos > pos):
                             winwin = wordList[r]
-                            for index in activeChunk[_pos]:
-                                if index not in deactivated and index not in qu:
-                                    if(_pos < pos + len(winwin) - 1):
-                                        deactivate(index)                    
+                            for indexDummy in activeChunk[_pos]:
+                                tupSet = tuplesMain[indexDummy]
+                                for tup in tupSet:
+                                    index = tup[0]
+                                    if index not in deactivated and index not in qu:
+                                        if(_pos < pos + len(winwin) - 1):
+                                            deactivate(index)                    
                         else:
-                            for index in activeChunk[_pos]:
-                                if(index != r):
-                                    if index not in deactivated:
-                                        deactivate(index)                    
+                            for indexDummy in activeChunk[_pos]:
+                                tupSet = tuplesMain[indexDummy]
+                                for tup in tupSet:
+                                    index = tup[0]
+                                    if(index != r):
+                                        if index not in deactivated:
+                                            deactivate(index)                    
 
                 except KeyError:
                     break
 
-                # print([wordList[i] for i in qu])
+                # print([lemmaList[i] for i in qu])
                 # print(solution)
 
-            result = list(map(lambda x: wordList[x], qu))
+            result = list(map(lambda x: lemmaList[x], qu))
+            # print(result)
             # if(result == None):
             #     print("NONE")
 
             # print(result)
-            # ac = 100*sum(list(map(lambda x: wordList[x] in solution, qu)))/len(solution)
+            # ac = 100*sum(list(map(lambda x: lemmaList[x] in solution, qu)))/len(solution)
             return(result)
         else:
             # print("No unsegmentable chunks")

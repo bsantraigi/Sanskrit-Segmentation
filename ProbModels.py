@@ -86,33 +86,46 @@ class ProbModels():
         return
 
 
-    def get_cng2cng_mat(self, cngList, kn_smooth = True):
-        cng2cngFullMat = self.cng2cngFullMat
-        cng2index_dict = self.cng2index_dict
-        nodeCount = len(cngList)
-        # print(cngList)
-        cngIndexList = []
-        for cng in cngList:
-            try:
-                ci = cng2index_dict[str(cng)]
-                cngIndexList.append(ci)
-            except:
-                cngIndexList.append(None)
+    def get_cng2cng_mat(self, tuplesMain, kn_smooth = True):
+        
+        lastTuple = tuplesMain[len(tuplesMain) - 1]
+        nodeCount = lastTuple[len(lastTuple) - 1][0] + 1
 
-        nodeCount = len(cngList)
         TransitionMat = np.zeros((nodeCount, nodeCount))
         if kn_smooth:
+            for i in range(0, len(tuplesMain) - 1):
+                for j in range(i + 1, len(tuplesMain)):
+                    tSet1 = tuplesMain[i]
+                    tSet2 = tuplesMain[j]
+                    for tup1 in tSet1:
+                        for tup2 in tSet2:
+                            row = tup1[0]
+                            col = tup2[0]
+                            # row != col, always
+                            TransitionMat[row][col] = self.kn_cng2cng(tup1[3], tup2[3])
+                            TransitionMat[col][row] = self.kn_cng2cng(tup2[3], tup1[3])
+
             for row in range(nodeCount):
-                for col in range(nodeCount):
-                    if row != col:
-                        TransitionMat[row][col] = self.kn_cng2cng(cngList[row], cngList[col])
-                    else:
-                        TransitionMat[row][col] = 0
-                
                 row_sum = np.sum(TransitionMat[row, :])
+                if(row_sum == 0):
+                    print("Report ROW SUM ZERO CNG2CNG")
                 TransitionMat[row, :] /= row_sum
                 TransitionMat[row, row] = 0
         else:
+            # FIXME: DOESN'T SUPPORT TUPLESMAIN
+            cng2cngFullMat = self.cng2cngFullMat
+            cng2index_dict = self.cng2index_dict
+            cngList = []
+            for tupleSet in tuplesMain:
+                for tup in tupleSet:
+                    cngList.append(tup[3])
+            cngIndexList = []
+            for cng in cngList:
+                try:
+                    ci = cng2index_dict[str(cng)]
+                    cngIndexList.append(ci)
+                except:
+                    cngIndexList.append(None)
             for row in range(nodeCount):
                 for col in range(nodeCount):
                     if row != col:
@@ -139,26 +152,36 @@ class ProbModels():
 
     
 
-    def get_w2w_mat(self, wordList, kn_smooth = True):    
-        nodeCount = len(wordList)
-        TransitionMat = np.zeros((nodeCount, nodeCount))
+    def get_w2w_mat(self, tuplesMain, kn_smooth = True):
+        lastTuple = tuplesMain[len(tuplesMain) - 1]
+        nodeCount = lastTuple[len(lastTuple) - 1][0] + 1
         
+        TransitionMat = np.zeros((nodeCount, nodeCount))
         if kn_smooth:
+            for i in range(0, len(tuplesMain) - 1):
+                for j in range(i + 1, len(tuplesMain)):
+                    tSet1 = tuplesMain[i]
+                    tSet2 = tuplesMain[j]
+                    for tup1 in tSet1:
+                        for tup2 in tSet2:
+                            row = tup1[0]
+                            col = tup2[0]
+                            # row != col, always
+                            TransitionMat[row][col] = self.kn_word2word(tup1[2], tup2[2])
+                            TransitionMat[col][row] = self.kn_word2word(tup2[2], tup1[2])
+                            
             for row in range(nodeCount):
-                for col in range(nodeCount):
-                    if row != col:
-                        TransitionMat[row][col] = self.kn_word2word(wordList[row], wordList[col])
-                    else:
-                        TransitionMat[row][col] = 0
-                
                 row_sum = np.sum(TransitionMat[row, :])
-                if(row_sum > 0):
-                    TransitionMat[row, :] /= row_sum
-                else:
-                    TransitionMat[row, :] = 1/(nodeCount - 1)
-                
+                if(row_sum == 0):
+                    print("Report ROW SUM ZERO W2W")
+                TransitionMat[row, :] /= row_sum
                 TransitionMat[row, row] = 0
         else:
+            # FIXME:
+            wordList = []
+            for tupleSet in tuplesMain:
+                for tup in tupleSet:
+                    wordList.append(tup[2])
             for row in range(nodeCount):
                 for col in range(nodeCount):
                     if row != col:
@@ -180,26 +203,35 @@ class ProbModels():
         # MakeRowStochastic(TransitionMat)
         return TransitionMat
 
-    def get_w2w_samecng_mat(self, wordList, kn_smooth = True):
-        nodeCount = len(wordList)
-        TransitionMat = np.zeros((nodeCount, nodeCount))
+    def get_w2w_samecng_mat(self, tuplesMain, kn_smooth = True):
+        lastTuple = tuplesMain[len(tuplesMain) - 1]
+        nodeCount = lastTuple[len(lastTuple) - 1][0] + 1
         
+        TransitionMat = np.zeros((nodeCount, nodeCount))
         if kn_smooth:
+            for i in range(0, len(tuplesMain) - 1):
+                for j in range(i + 1, len(tuplesMain)):
+                    tSet1 = tuplesMain[i]
+                    tSet2 = tuplesMain[j]
+                    for tup1 in tSet1:
+                        for tup2 in tSet2:
+                            row = tup1[0]
+                            col = tup2[0]
+                            # row != col, always
+                            TransitionMat[row][col] = self.kn_word2word_samecng(tup1[2], tup2[2])
+                            TransitionMat[col][row] = self.kn_word2word_samecng(tup2[2], tup1[2])
+                            
             for row in range(nodeCount):
-                for col in range(nodeCount):
-                    if row != col:
-                        TransitionMat[row][col] = self.kn_word2word_samecng(wordList[row], wordList[col])
-                    else:
-                        TransitionMat[row][col] = 0
-                
                 row_sum = np.sum(TransitionMat[row, :])
-                if(row_sum > 0):
-                    TransitionMat[row, :] /= row_sum
-                else:
-                    TransitionMat[row, :] = 1/(nodeCount - 1)
-                
+                if(row_sum == 0):
+                    print("Report ROW SUM ZERO W2W")
+                TransitionMat[row, :] /= row_sum
                 TransitionMat[row, row] = 0
         else:
+            wordList = []
+            for tupleSet in tuplesMain:
+                for tup in tupleSet:
+                    wordList.append(tup[2])
             for row in range(nodeCount):
                 for col in range(nodeCount):
                     if row != col:
@@ -258,9 +290,11 @@ class ProbModels():
             p_b = context_count[word_b]/total_context
             return c_ab + normalization*p_a*p_b
         else:
-            p_a = context_count[word_a]/total_context
-            p_b = context_count[word_b]/total_context
+            p_a = max(context_count[word_a], 1)/total_context
+            p_b = max(context_count[word_b], 1)/total_context
+
             return normalization*p_a*p_b
+
 
 
     def kn_cng2cng(self, cng_a, cng_b):
@@ -287,8 +321,8 @@ class ProbModels():
             p_b = t2t_context_count[index_b]/t2t_total_contexts
             return c_ab + normalization*p_a*p_b
         else:
-            p_a = t2t_context_count[index_a]/t2t_total_contexts
-            p_b = t2t_context_count[index_b]/t2t_total_contexts
+            p_a = max(t2t_context_count[index_a], 1)/t2t_total_contexts
+            p_b = max(t2t_context_count[index_b], 1)/t2t_total_contexts
             # print(p_a, p_b)
             return normalization*p_a*p_b
 
@@ -307,6 +341,6 @@ class ProbModels():
             p_b = samecng_context_count[word_b]/samecng_total_context
             return c_ab + normalization*p_a*p_b
         else:
-            p_a = samecng_context_count[word_a]/samecng_total_context
-            p_b = samecng_context_count[word_b]/samecng_total_context
+            p_a = max(samecng_context_count[word_a], 1)/samecng_total_context
+            p_b = max(samecng_context_count[word_b], 1)/samecng_total_context
             return normalization*p_a*p_b

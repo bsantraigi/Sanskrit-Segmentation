@@ -31,7 +31,7 @@ class AlgoTestFactory():
             t2t_modelFunc = AlgoTestFactory.pb.get_cng2cng_mat,
             v2c_modelFunc = AlgoTestFactory.pb.get_v2c_ranking,
             sameCng_modelFunc = AlgoTestFactory.pb.get_w2w_samecng_mat,
-            partition=[0.2, 0.5, 0.2, 0.1]
+            partition=[0.25, 0.25, 0.25, 0.1]
         )
 
     def loadSentence(self, fName, folderTag):

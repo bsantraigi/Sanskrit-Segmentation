@@ -1,5 +1,6 @@
 import sys
 import warnings
+from romtoslp import *
 class DCS:
     def __init__(self,sent_id,sentence):
         self.sent_id=sent_id
@@ -11,4 +12,5 @@ class DCS:
 def SeeDCS(dcsObj):
     print(dcsObj.sentence)
     print(dcsObj.lemmas)
+    print("Lemmas:", [rom_slp(c) for arr in dcsObj.lemmas for c in arr])
     print(dcsObj.cng)
