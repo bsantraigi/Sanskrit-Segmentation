@@ -16,6 +16,6 @@ def printAccuracies(path):
     print("Percentiles: ", np.percentile(accuracies, [0, 25, 50, 75, 100]))
 
 if __name__ == "__main__":
-    altf1 = AlgoTestFactory([0, 5000], 16, savePath="lemmaFix", storeAccuracies=True)
+    altf1 = AlgoTestFactory([0, 11000], 16, savePath="lemmaFix", storeAccuracies=True)
     altf1.run()
     printAccuracies('.temp/lemmaFix/')

@@ -52,17 +52,10 @@ class AlgoTestFactory():
         for f in list(AlgoTestFactory.goodFileDict.keys())[start:finish]:
             sentenceObj, dcsObj = self.loadSentence(f, AlgoTestFactory.goodFileDict[f])
             if(sentenceObj != None):
-                result = self.algo.predict(sentenceObj, dcsObj)
-                # try:
-                    # if result == None:
-                    #     print(f)
-                # except (ZeroDivisionError, IndexError) as e:
-                #     print("FROM HERE")
-                #     result = None
-                #     pass
-                # except KeyError as e:
-                #     print("KeyError:", e)
-                #     print(f)
+                try:
+                    result = self.algo.predict(sentenceObj, dcsObj)
+                except RuntimeWarning:
+                    print(f)
                 
 
                 if result != None:
@@ -112,11 +105,11 @@ class AlgoTestFactory():
 
 
 def Accuracy(prediction, dcsObj):
-    solution = [rom_slp(c) for c in dcsObj.dcs_chunks]
-    ac = 100*sum(list(map(lambda x: x in solution, prediction)))/len(prediction)
+    solution = [rom_slp(c) for arr in dcsObj.lemmas for c in arr]
+    ac = 100*sum(list(map(lambda x: x in prediction, solution)))/len(solution)
     return ac
 
-AlgoTestFactory.goodFileDict = pickle.load(open('mergedGood_v2.p', 'rb'))
+AlgoTestFactory.goodFileDict = pickle.load(open('mergedGood_v3.p', 'rb'))
 AlgoTestFactory.allAccuracies = []
 AlgoTestFactory.pb = ProbModels(fullCo_oc_mat = ProbData.fullCo_oc_mat, unigram_counts = ProbData.unigram_counts,
                cng2cngFullMat = ProbData.cng2cngFullMat, cng2index_dict = ProbData.cng2index_dict,
