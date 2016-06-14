@@ -104,6 +104,34 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, all
     
     return(papMat)
 
+def CanCoExist_simple(p1, p2, n1, n2):
+    # Make sure p1 is < p2, always
+    if(p1 < p2):
+        if(p1 + len(n1) - 1 < p2):
+            return True
+    return False
+
+sandhiRules = pickle.load(open('extras/sandhiRules.p','rb'))    
+def CanCoExist_sandhi(p1, p2, name1, name2):
+    # P1 must be less than P2
+    # Just send it in the proper order
+    if(p1 < p2):
+        overlap = max((p1 + len(name1)) - p2, 0)
+        if overlap == 0:
+            return True
+        p1 = (name1[len(name1) - overlap:len(name1):], name2[0])
+        p2 = (name1[-1], name2[0:overlap:])
+        # print(p1, p2)
+        if p1 in sandhiRules:
+            # print(name1, name2, p1, ' = ', sandhiRules[p1])
+            if(sandhiRules[p1]['length'] == 1):
+                return True
+        if p2 in sandhiRules:
+            # print(name1, name2, p2, ' = ', sandhiRules[p2])
+            if(sandhiRules[p2]['length'] == 1):
+                return True
+    return False
+
 """
 Loads the Model_CBOW from file
 Keeps a full list of train files and target sentences
@@ -231,7 +259,7 @@ class SktWsegRWR(object):
                         # Remove overlapping competitors
                         cid, pos, tid = revMap2Chunk[r]
                         # print("Result", r)
-                        # print("Winner:", lemmaList[r])
+                        # print("Winner:", wordList[r], '<-', lemmaList[r])
                         # print(cid, pos, chunkDict[cid][pos])
                         break
 
@@ -242,6 +270,7 @@ class SktWsegRWR(object):
                     # Remove overlapping words
                     activeChunk = chunkDict[cid]
                     r = qu[len(qu) - 1]
+                    winwin = wordList[r]
                     for _pos in activeChunk:
                         if(_pos < pos):
                             for indexDummy in activeChunk[_pos]:
@@ -250,16 +279,16 @@ class SktWsegRWR(object):
                                     index = tup[0]
                                     if index not in deactivated and index not in qu:
                                         w = wordList[index]
-                                        if(_pos+len(w)-1 > pos):
+                                        if CanCoExist_sandhi(_pos, pos, w, winwin):
                                             deactivate(index)
                         elif(_pos > pos):
-                            winwin = wordList[r]
                             for indexDummy in activeChunk[_pos]:
                                 tupSet = tuplesMain[indexDummy]
                                 for tup in tupSet:
                                     index = tup[0]
                                     if index not in deactivated and index not in qu:
-                                        if(_pos < pos + len(winwin) - 1):
+                                        w = wordList[index]
+                                        if CanCoExist_sandhi(pos, _pos, winwin, w):
                                             deactivate(index)                    
                         else:
                             for indexDummy in activeChunk[_pos]:
