@@ -88,11 +88,11 @@ def SentencePreprocess(sentenceObj):
         chunkDict[cid] = {}
         canBeQuery = 0
         if len(chunk.chunk_words.keys()) == 1:
-            canBeQuery = 1 # Unsegmentable Chunk
+            canBeQuery = 1 # Single pos confirmed
         for pos in chunk.chunk_words.keys():
             chunkDict[cid][pos] = []
             if(canBeQuery == 1) and (len(chunk.chunk_words[pos]) == 1):
-                canBeQuery = 2 # No cng alternative for the word
+                canBeQuery = 2 # Single derived form confirmed
             for word_sense in chunk.chunk_words[pos]:
                 nama = rom_slp(word_sense.names)
                 if(len(word_sense.lemmas) > 0 and len(word_sense.forms) > 0):
@@ -113,10 +113,8 @@ def SentencePreprocess(sentenceObj):
                     k = len(tuplesMain)
                     chunkDict[cid][pos].append(k)
                     tuplesMain.append(tuples)
-                    if canBeQuery == 2:
-                        # The word has a lemma available - in some pickle file it's not
-                        # Make this word query
-                        # print("Query: ", len(tuples))
+                    if canBeQuery == 2 and len(tuples) == 1:
+                        # Single (lemma, cng) tuple - Confirmed
                         qu.append(tuples[0][0])
 
     verbs = []

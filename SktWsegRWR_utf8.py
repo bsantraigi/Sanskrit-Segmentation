@@ -156,7 +156,7 @@ class SktWsegRWR(object):
     def predict(self, sentenceObj, dcsObj):
         partition = self.partition
         (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
-
+        # print("Initial: ", qu)
         if(len(lemmaList) <= 1):
             # print("ERROR: Zero or one word in sentence...")
             return None
@@ -180,10 +180,12 @@ class SktWsegRWR(object):
                 prioriVec[0, q] = 0
             prioriVec[0, qu[0]] = 1
 
-            def deactivate(index):    
-                # print("Remove:", wordList[index])
-                deactivated.append(index)
-                prioriVec[0,index] = 0
+            def deactivate(index):
+                # print("Remove:", wordList[index], '<-', lemmaList[index])
+                if(index not in qu):
+                    deactivated.append(index)
+                    prioriVec[0,index] = 0
+                    
 
             while((len(qu) + len(deactivated)) <= (nodeCount - 1)):
                 try:
@@ -279,7 +281,7 @@ class SktWsegRWR(object):
                                     index = tup[0]
                                     if index not in deactivated and index not in qu:
                                         w = wordList[index]
-                                        if CanCoExist_sandhi(_pos, pos, w, winwin):
+                                        if not CanCoExist_sandhi(_pos, pos, w, winwin):
                                             deactivate(index)
                         elif(_pos > pos):
                             for indexDummy in activeChunk[_pos]:
@@ -288,7 +290,7 @@ class SktWsegRWR(object):
                                     index = tup[0]
                                     if index not in deactivated and index not in qu:
                                         w = wordList[index]
-                                        if CanCoExist_sandhi(pos, _pos, winwin, w):
+                                        if not CanCoExist_sandhi(pos, _pos, winwin, w):
                                             deactivate(index)                    
                         else:
                             for indexDummy in activeChunk[_pos]:
@@ -306,6 +308,9 @@ class SktWsegRWR(object):
                 # print(solution)
 
             result = list(map(lambda x: lemmaList[x], qu))
+            # print(lemmaList)
+            # print("Complete qu:", qu)
+            # print(deactivated)
             # print(result)
             # if(result == None):
             #     print("NONE")
