@@ -164,33 +164,38 @@ class SktWsegRWR(object):
         partition = self.partition
         (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
 
-        if verbose:
-            runDetails = {}
-            runDetails['sentence'] = sentenceObj.sentence
-            runDetails['DCSLemmas'] = []
-            for a in dcsObj.lemmas:
-                runDetails['DCSLemmas'].append([rom_slp(c) for c in a])
-
-        if(len(lemmaList) <= 1):
-            # print("ERROR: Zero or one word in sentence...")
+        if(len(tuplesMain) <= 1):
             if verbose:
                 return None, None
             return None
 
-        # ALL FUNC USES KN SMOOTHING
-        # USE THE SECOND ARGUMENT TO TURN IN OFF BY PASSING FALSE
-        TransitionMat_t2t = self.t2t_modelFunc(tuplesMain, chunkDict)
-        TransitionMat_w2w = self.w2w_modelFunc(tuplesMain, chunkDict)
-        TransitionMat_w2w_samecng = self.sameCng_modelFunc(tuplesMain, chunkDict)
-
-        if verbose:
-            runDetails['TransitionMat_w2w'] = TransitionMat_w2w
-            runDetails['TransitionMat_t2t'] = TransitionMat_t2t
-            runDetails['TransitionMat_w2w_samecng'] = TransitionMat_w2w_samecng
-            runDetails['nodeList'] = tuplesMain
-            runDetails['initialQuery'] = str(qu)
-
         if(len(qu) > 0):
+            if verbose:
+                runDetails = {}
+                runDetails['sentence'] = sentenceObj.sentence
+                runDetails['DCSLemmas'] = []
+                for a in dcsObj.lemmas:
+                    runDetails['DCSLemmas'].append([rom_slp(c) for c in a])
+
+            if(len(lemmaList) <= 1):
+                # print("ERROR: Zero or one word in sentence...")
+                if verbose:
+                    return None, None
+                return None
+
+            # ALL FUNC USES KN SMOOTHING
+            # USE THE SECOND ARGUMENT TO TURN IN OFF BY PASSING FALSE
+            TransitionMat_t2t = self.t2t_modelFunc(tuplesMain, chunkDict)
+            TransitionMat_w2w = self.w2w_modelFunc(tuplesMain, chunkDict)
+            TransitionMat_w2w_samecng = self.sameCng_modelFunc(tuplesMain, chunkDict)
+
+            if verbose:
+                runDetails['TransitionMat_w2w'] = TransitionMat_w2w
+                runDetails['TransitionMat_t2t'] = TransitionMat_t2t
+                runDetails['TransitionMat_w2w_samecng'] = TransitionMat_w2w_samecng
+                runDetails['nodeList'] = tuplesMain
+                runDetails['initialQuery'] = str(qu)
+
             solution = [w for w in dcsObj.dcs_chunks]
 
             # INITIALIZATION OF RWR VECTORS/MATRICES

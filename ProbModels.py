@@ -5,6 +5,7 @@ import math
 import pickle
 from wordTypeCheckFunction import *
 from collections import defaultdict
+import pprint
 
 def sigmoid(x):
   return 1 / (1 + math.exp(-x))
@@ -23,13 +24,12 @@ def CanCoExist_sandhi(p1, p2, name1, name2):
             # print(name1, name2, p1, p2)
             # print(p1, p2)
             if p1 in sandhiRules:
-                # print(name1, name2, p1, ' = ', sandhiRules[p1])
                 if(sandhiRules[p1]['length'] < len(p1[0]) + len(p1[1])):
                     return True
             if p2 in sandhiRules:
-                # print(name1, name2, p2, ' = ', sandhiRules[p2])
                 if(sandhiRules[p2]['length'] < len(p2[0]) + len(p2[1])):
                     return True
+
     return False
 
 """
@@ -107,9 +107,7 @@ class ProbModels():
         self.samecng_total_co_oc = samecng_total_co_oc
         return
 
-
-    def get_cng2cng_mat(self, tuplesMain, chunkDict, kn_smooth = True):
-        
+    def RemoveCompetingEdges(self, TransitionMat, tuplesMain, chunkDict):
         lastTuple = tuplesMain[len(tuplesMain) - 1]
         nodeCount = lastTuple[len(lastTuple) - 1][0] + 1
         wordList = ['']*nodeCount
@@ -117,6 +115,56 @@ class ProbModels():
             # print(tuplesMain[i])
             for tup in tuplesMain[i]:
                 wordList[tup[0]] = tup[1]
+        # REMOVE EDGES FROM COMPETETING NODES
+        # IN THE SAME CHUNK
+        cDict2 = {}
+        for cid in chunkDict.keys():
+            chunk = chunkDict[cid]
+            cDict2[cid] = {}
+            for pos in chunk.keys():
+                wids = []
+                for zz in chunk[pos]:
+                    for tup in tuplesMain[zz]:
+                        wids.append(tup[0])
+                cDict2[cid][pos]=wids
+
+        for cid in chunkDict.keys():
+            chunk = chunkDict[cid]
+            for pos in chunk.keys():
+                wids = chunk[pos]
+                # Remove edge b/w nodes at same location
+                for u in range(len(wids) - 1):
+                    for v in range(u + 1, len(wids)):
+                        # print('Remvoe b/w', wordList[wids[u]], wordList[wids[v]])
+                        TransitionMat[wids[u], wids[v]] = 0
+                        TransitionMat[wids[v], wids[u]] = 0
+                # Remove edge b/w competing nodes from diff location
+                for _pos in chunk.keys():
+                    wids2 = chunk[_pos]
+                    if(pos < _pos):
+                        for wi1 in wids:
+                            for wi2 in wids2:
+                                name1 = wordList[wi1]
+                                name2 = wordList[wi2]
+                                if not CanCoExist_sandhi(pos, _pos, name1, name2):
+                                    # print('Remvoe b/w', name1, name2)
+                                    TransitionMat[wi1, wi2] = 0
+
+                    elif(_pos < pos):
+                        for wi1 in wids:
+                            for wi2 in wids2:
+                                name1 = wordList[wi1]
+                                name2 = wordList[wi2]
+                                if not CanCoExist_sandhi(_pos, pos, name2, name1):
+                                    # print('Remvoe b/w', name2, name1)
+                                    TransitionMat[wi1, wi2] = 0                                        
+        
+    def get_cng2cng_mat(self, tuplesMain, chunkDict, kn_smooth = True):
+        # pprint.pprint(tuplesMain)
+        # pprint.pprint(chunkDict)
+
+        lastTuple = tuplesMain[len(tuplesMain) - 1]
+        nodeCount = lastTuple[len(lastTuple) - 1][0] + 1
 
         TransitionMat = np.zeros((nodeCount, nodeCount))
         if kn_smooth:
@@ -132,47 +180,7 @@ class ProbModels():
                             TransitionMat[row][col] = self.kn_cng2cng(tup1[3], tup2[3])
                             TransitionMat[col][row] = self.kn_cng2cng(tup2[3], tup1[3])
 
-            # REMOVE EDGES FROM COMPETETING NODES
-            # IN THE SAME CHUNK
-            cDict2 = {}
-            for cid in chunkDict.keys():
-                chunk = chunkDict[cid]
-                cDict2[cid] = {}
-                for pos in chunk.keys():
-                    wids = []
-                    for zz in chunk[pos]:
-                        for tup in tuplesMain[zz]:
-                            wids.append(tup[0])
-                    cDict2[cid][pos]=wids
-
-            for cid in chunkDict.keys():
-                chunk = chunkDict[cid]
-                for pos in chunk.keys():
-                    wids = chunk[pos]
-                    # Remove edge b/w nodes at same location
-                    for u in range(len(wids) - 1):
-                        for v in range(u + 1, len(wids)):
-                            print('Remvoe b/w', wordList[wids[u]], wordList[wids[v]])
-                    # Remove edge b/w competing nodes from diff location
-                    for _pos in chunk.keys():
-                        wids2 = chunk[_pos]
-                        if(pos < _pos):
-                            for wi1 in wids:
-                                for wi2 in wids2:
-                                    name1 = wordList[wi1]
-                                    name2 = wordList[wi2]
-                                    if not CanCoExist_sandhi(pos, _pos, name1, name2):
-                                        print('Remvoe b/w', name1, name2)
-
-                        elif(_pos < pos):
-                            for wi1 in wids:
-                                for wi2 in wids2:
-                                    name1 = wordList[wi1]
-                                    name2 = wordList[wi2]
-                                    if not CanCoExist_sandhi(_pos, pos, name2, name1):
-                                        print('Remvoe b/w', name2, name1)
-
-
+            self.RemoveCompetingEdges(TransitionMat, tuplesMain, chunkDict)
             for row in range(nodeCount):
                 row_sum = np.sum(TransitionMat[row, :])
                 if(row_sum == 0):
@@ -237,7 +245,8 @@ class ProbModels():
                             # row != col, always
                             TransitionMat[row][col] = self.kn_word2word(tup1[2], tup2[2])
                             TransitionMat[col][row] = self.kn_word2word(tup2[2], tup1[2])
-                            
+            self.RemoveCompetingEdges(TransitionMat, tuplesMain, chunkDict)
+            
             for row in range(nodeCount):
                 row_sum = np.sum(TransitionMat[row, :])
                 if(row_sum == 0):
@@ -288,7 +297,9 @@ class ProbModels():
                             # row != col, always
                             TransitionMat[row][col] = self.kn_word2word_samecng(tup1[2], tup2[2])
                             TransitionMat[col][row] = self.kn_word2word_samecng(tup2[2], tup1[2])
-                            
+            
+            self.RemoveCompetingEdges(TransitionMat, tuplesMain, chunkDict)
+            
             for row in range(nodeCount):
                 row_sum = np.sum(TransitionMat[row, :])
                 if(row_sum == 0):
