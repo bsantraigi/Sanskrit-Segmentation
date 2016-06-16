@@ -1,6 +1,7 @@
 #Loading of SKT Pickles
 from romtoslp import rom_slp
 from json import *
+import pprint
 class word_new():
     def __init__(self,names):
         self.lemmas=[]
@@ -19,6 +20,16 @@ class sentences:
         self.sentence=sentence
         self.chunk=[]
 
+def getCNGs(formsDict):
+        l = []
+        for form, configs in formsDict.items():
+            for c in configs:
+                if(form == 'verbform'):                
+                    continue
+                else:
+                    l.append(wtc_recursive(form, configs))
+        return list(set(l))
+
 def SeeSentence(sentenceObj):
     print(sentenceObj.sentence)
     for chunk in sentenceObj.chunk:
@@ -26,6 +37,8 @@ def SeeSentence(sentenceObj):
         for pos in chunk.chunk_words.keys():
             for word_sense in chunk.chunk_words[pos]:
                 print(pos, ": ", rom_slp(word_sense.names), list(map(rom_slp,word_sense.lemmas)), word_sense.forms)
+                # for formsDict in word_sense.forms:
+                #     print(getCNGs(formsDict))
 
 def getWord(sentenceObj, cid, pos,kii):
     ch = sentenceObj.chunk[cid]
@@ -83,13 +96,15 @@ def SentencePreprocess(sentenceObj):
 
     cid = -1
     tidExclusive = 0
-    for chunk in sentenceObj.chunk:        
+    for chunk in sentenceObj.chunk:
+        # print(chunk.chunk_name)
         cid = cid+1
         chunkDict[cid] = {}
         canBeQuery = 0
         if len(chunk.chunk_words.keys()) == 1:
             canBeQuery = 1 # Single pos confirmed
         for pos in chunk.chunk_words.keys():
+            tupleSet = {}
             chunkDict[cid][pos] = []
             if(canBeQuery == 1) and (len(chunk.chunk_words[pos]) == 1):
                 canBeQuery = 2 # Single derived form confirmed
@@ -99,23 +114,29 @@ def SentencePreprocess(sentenceObj):
                     tuples = []
                     for lemmaI in range(len(word_sense.lemmas)):
                         lemma = rom_slp(word_sense.lemmas[lemmaI].split('_')[0])
+                        if lemma == '':
+                            continue
                         tempCNGs = getCNGs(word_sense.forms[lemmaI])
                         for cng in tempCNGs:
                             # UPDATE LISTS
-                            tuples.append((tidExclusive, nama, lemma, cng)) # Remember the order
-                            lemmaList.append(lemma)
-                            wordList.append(nama)
-                            cngList.append(cng)
+                            newT_Key = (lemma, cng)
+                            newT = (tidExclusive, nama, lemma, cng)
+                            if(newT_Key not in tupleSet):
+                                tupleSet[newT_Key] = 1
+                                tuples.append(newT) # Remember the order
+                                lemmaList.append(lemma)
+                                wordList.append(nama)
+                                cngList.append(cng)
+                                revMap2Chunk.append((cid, pos, len(tuplesMain)))
+                                tidExclusive += 1
 
-                            revMap2Chunk.append((cid, pos, len(tuplesMain)))
-                            tidExclusive += 1
-                    
-                    k = len(tuplesMain)
-                    chunkDict[cid][pos].append(k)
-                    tuplesMain.append(tuples)
-                    if canBeQuery == 2 and len(tuples) == 1:
-                        # Single (lemma, cng) tuple - Confirmed
-                        qu.append(tuples[0][0])
+                    if(len(tuples) > 0):
+                        k = len(tuplesMain)
+                        chunkDict[cid][pos].append(k)
+                        tuplesMain.append(tuples)
+                        if canBeQuery == 2 and len(tuples) == 1:
+                            # Single (lemma, cng) tuple - Confirmed
+                            qu.append(tuples[0][0])
 
     verbs = []
     i = -1
@@ -125,6 +146,8 @@ def SentencePreprocess(sentenceObj):
             verbs.append(i)
 
 
-    # print(tuplesMain)
+    # pprint.pprint(tuplesMain)
+    # pprint.pprint(chunkDict)
+    # pprint.pprint(revMap2Chunk)
     
     return (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain)

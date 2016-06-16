@@ -9,6 +9,28 @@ from collections import defaultdict
 def sigmoid(x):
   return 1 / (1 + math.exp(-x))
 
+sandhiRules = pickle.load(open('extras/sandhiRules.p','rb'))    
+def CanCoExist_sandhi(p1, p2, name1, name2):
+    # P1 must be less than P2
+    # Just send it in the proper order
+    if(p1 < p2):
+        overlap = max((p1 + len(name1)) - p2, 0)
+        if overlap == 0:
+            return True
+        if overlap == 1 or overlap == 2:
+            p1 = (name1[len(name1) - overlap:len(name1):], name2[0])
+            p2 = (name1[-1], name2[0:overlap:])
+            # print(name1, name2, p1, p2)
+            # print(p1, p2)
+            if p1 in sandhiRules:
+                # print(name1, name2, p1, ' = ', sandhiRules[p1])
+                if(sandhiRules[p1]['length'] < len(p1[0]) + len(p1[1])):
+                    return True
+            if p2 in sandhiRules:
+                # print(name1, name2, p2, ' = ', sandhiRules[p2])
+                if(sandhiRules[p2]['length'] < len(p2[0]) + len(p2[1])):
+                    return True
+    return False
 
 """
 These models are count based probabilistic model
@@ -86,10 +108,15 @@ class ProbModels():
         return
 
 
-    def get_cng2cng_mat(self, tuplesMain, kn_smooth = True):
+    def get_cng2cng_mat(self, tuplesMain, chunkDict, kn_smooth = True):
         
         lastTuple = tuplesMain[len(tuplesMain) - 1]
         nodeCount = lastTuple[len(lastTuple) - 1][0] + 1
+        wordList = ['']*nodeCount
+        for i in range(0, len(tuplesMain)):
+            # print(tuplesMain[i])
+            for tup in tuplesMain[i]:
+                wordList[tup[0]] = tup[1]
 
         TransitionMat = np.zeros((nodeCount, nodeCount))
         if kn_smooth:
@@ -104,6 +131,47 @@ class ProbModels():
                             # row != col, always
                             TransitionMat[row][col] = self.kn_cng2cng(tup1[3], tup2[3])
                             TransitionMat[col][row] = self.kn_cng2cng(tup2[3], tup1[3])
+
+            # REMOVE EDGES FROM COMPETETING NODES
+            # IN THE SAME CHUNK
+            cDict2 = {}
+            for cid in chunkDict.keys():
+                chunk = chunkDict[cid]
+                cDict2[cid] = {}
+                for pos in chunk.keys():
+                    wids = []
+                    for zz in chunk[pos]:
+                        for tup in tuplesMain[zz]:
+                            wids.append(tup[0])
+                    cDict2[cid][pos]=wids
+
+            for cid in chunkDict.keys():
+                chunk = chunkDict[cid]
+                for pos in chunk.keys():
+                    wids = chunk[pos]
+                    # Remove edge b/w nodes at same location
+                    for u in range(len(wids) - 1):
+                        for v in range(u + 1, len(wids)):
+                            print('Remvoe b/w', wordList[wids[u]], wordList[wids[v]])
+                    # Remove edge b/w competing nodes from diff location
+                    for _pos in chunk.keys():
+                        wids2 = chunk[_pos]
+                        if(pos < _pos):
+                            for wi1 in wids:
+                                for wi2 in wids2:
+                                    name1 = wordList[wi1]
+                                    name2 = wordList[wi2]
+                                    if not CanCoExist_sandhi(pos, _pos, name1, name2):
+                                        print('Remvoe b/w', name1, name2)
+
+                        elif(_pos < pos):
+                            for wi1 in wids:
+                                for wi2 in wids2:
+                                    name1 = wordList[wi1]
+                                    name2 = wordList[wi2]
+                                    if not CanCoExist_sandhi(_pos, pos, name2, name1):
+                                        print('Remvoe b/w', name2, name1)
+
 
             for row in range(nodeCount):
                 row_sum = np.sum(TransitionMat[row, :])
@@ -152,7 +220,7 @@ class ProbModels():
 
     
 
-    def get_w2w_mat(self, tuplesMain, kn_smooth = True):
+    def get_w2w_mat(self, tuplesMain, chunkDict, kn_smooth = True):
         lastTuple = tuplesMain[len(tuplesMain) - 1]
         nodeCount = lastTuple[len(lastTuple) - 1][0] + 1
         
@@ -203,7 +271,7 @@ class ProbModels():
         # MakeRowStochastic(TransitionMat)
         return TransitionMat
 
-    def get_w2w_samecng_mat(self, tuplesMain, kn_smooth = True):
+    def get_w2w_samecng_mat(self, tuplesMain, chunkDict, kn_smooth = True):
         lastTuple = tuplesMain[len(tuplesMain) - 1]
         nodeCount = lastTuple[len(lastTuple) - 1][0] + 1
         

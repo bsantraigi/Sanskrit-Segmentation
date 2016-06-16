@@ -104,10 +104,7 @@ class AlgoTestFactory():
 
 
 
-def Accuracy(prediction, dcsObj):
-    solution = [rom_slp(c) for arr in dcsObj.lemmas for c in arr]
-    ac = 100*sum(list(map(lambda x: x in prediction, solution)))/len(solution)
-    return ac
+
 
 AlgoTestFactory.goodFileDict = pickle.load(open('mergedGood_v3.p', 'rb'))
 AlgoTestFactory.allAccuracies = []
