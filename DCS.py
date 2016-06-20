@@ -10,7 +10,10 @@ class DCS:
         self.cng=[]
 
 def SeeDCS(dcsObj):
+    print('DCS ANALYZE')
+    print('-'*15)
     print(dcsObj.sentence)
     print(dcsObj.lemmas)
     print("Lemmas:", [rom_slp(c) for arr in dcsObj.lemmas for c in arr])
     print(dcsObj.cng)
+    print()

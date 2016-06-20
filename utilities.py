@@ -20,7 +20,7 @@ def printProgress (iteration, total, prefix = '', suffix = '', decimals = 2, bar
         print("\n")
 
 def pickleFixLoad(filename):
-    return pickle.load(open(filename, 'rb'), encoding=u'utf8')
+    return pickle.load(open(filename, 'rb'), encoding=u'utf-8')
 
 def validatePickleName(fName):
     m = re.search("^[\w]*.p$", fName)

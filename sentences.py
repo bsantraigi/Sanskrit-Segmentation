@@ -31,6 +31,8 @@ def getCNGs(formsDict):
         return list(set(l))
 
 def SeeSentence(sentenceObj):
+    print('SKT ANALYZE')
+    print('-'*15)
     print(sentenceObj.sentence)
     for chunk in sentenceObj.chunk:
         print("Analyzing ", rom_slp(chunk.chunk_name))
@@ -39,6 +41,7 @@ def SeeSentence(sentenceObj):
                 print(pos, ": ", rom_slp(word_sense.names), list(map(rom_slp,word_sense.lemmas)), word_sense.forms)
                 # for formsDict in word_sense.forms:
                 #     print(getCNGs(formsDict))
+    print()
 
 def getWord(sentenceObj, cid, pos,kii):
     ch = sentenceObj.chunk[cid]

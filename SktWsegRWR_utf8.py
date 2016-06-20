@@ -170,18 +170,30 @@ class SktWsegRWR(object):
             return None
 
         if(len(qu) > 0):
+            if(len(lemmaList) <= 1):
+                # print("ERROR: Zero or one word in sentence...")
+                if verbose:
+                    return None, None
+                return None
+                
+            solution = [rom_slp(l) for ls in dcsObj.lemmas for l in ls]
+            solTuples = []
+            for i in range(len(dcsObj.lemmas)):
+                for j in range(len(dcsObj.lemmas[i])):
+                    solTuples.append((rom_slp(dcsObj.lemmas[i][j]), int(dcsObj.cng[i][j])))
+
             if verbose:
+                metPerfFH = open('.temp/metPerfFH.csv', 'a')
+                metPerfFH_bin = open('.temp/metPerfFH_bin.csv', 'a')
+                # print(solTuples)
                 runDetails = {}
                 runDetails['sentence'] = sentenceObj.sentence
                 runDetails['DCSLemmas'] = []
                 for a in dcsObj.lemmas:
                     runDetails['DCSLemmas'].append([rom_slp(c) for c in a])
 
-            if(len(lemmaList) <= 1):
-                # print("ERROR: Zero or one word in sentence...")
-                if verbose:
-                    return None, None
-                return None
+
+            tuplesUnrolled = [t for tl in tuplesMain for t in tl]
 
             # ALL FUNC USES KN SMOOTHING
             # USE THE SECOND ARGUMENT TO TURN IN OFF BY PASSING FALSE
@@ -196,7 +208,6 @@ class SktWsegRWR(object):
                 runDetails['nodeList'] = tuplesMain
                 runDetails['initialQuery'] = str(qu)
 
-            solution = [w for w in dcsObj.dcs_chunks]
 
             # INITIALIZATION OF RWR VECTORS/MATRICES
             lastTuple = tuplesMain[len(tuplesMain) - 1]
@@ -287,7 +298,7 @@ class SktWsegRWR(object):
                     # print("W2W: ", ranking_w2w)
                     # print("W2W CNG: ", ranking_t2t)
                     # print("W2W SAMECNG: ", ranking_w2w_samecng)
-                    # print("V2C Ranking: ", ranking_v2cng)
+                    # # print("V2C Ranking: ", ranking_v2cng)
                     # print("*********************************")
                     # print("COMBINED: ", ranking_combined)
                     # print()
@@ -295,6 +306,29 @@ class SktWsegRWR(object):
 
                     cid = -1
                     pos = -1
+
+                    if verbose:
+                        winner_w2w = -1
+                        for r in ranking_w2w:
+                            if(r in qu or r in deactivated):
+                                continue
+                            winner_w2w = r
+                            break
+
+                        winner_t2t = -1
+                        for r in ranking_t2t:
+                            if(r in qu or r in deactivated):
+                                continue
+                            winner_t2t = r
+                            break
+
+                        winner_w2w_samecng = -1
+                        for r in ranking_w2w_samecng:
+                            if(r in qu or r in deactivated):
+                                continue
+                            winner_w2w_samecng = r
+                            break
+
                     
                     # FIND OUT THE WINNER
                     for r in ranking_combined:
@@ -306,7 +340,14 @@ class SktWsegRWR(object):
                         cid, pos, tid = revMap2Chunk[r]
 
                         if verbose:
+                            # print(winner_w2w, winner_t2t, winner_w2w_samecng, r)
                             stepDetails["winner"] = (r, wordList[r], lemmaList[r], cngList[r])
+                            wt = (lemmaList[r], cngList[r])
+                            # print(wt, wt in solTuples)
+                            s1 = ','.join([str(t) for t in [int(k) for k in [r == winner_w2w, r == winner_t2t, r == winner_w2w_samecng, lemmaList[r] in solution]]])
+                            s2 = ','.join([str(t) for t in [np.where(ranking_w2w == r)[0][0], np.where(ranking_t2t == r)[0][0], np.where(ranking_w2w_samecng == r)[0][0], int(lemmaList[r] in solution)]])
+                            metPerfFH_bin.write(s1 + '\n')
+                            metPerfFH.write(s2 + '\n')
                         break
 
                     for tup in tuplesMain[tid]:
@@ -345,12 +386,14 @@ class SktWsegRWR(object):
                                         if index not in deactivated:
                                             deactivate(index) 
 
-                        stepDetails['updated_query'] = list(qu)
+                        if verbose:
+                            stepDetails['updated_query'] = list(qu)
 
                 except KeyError:
                     break
 
-                runDetails[str(stepCount)] = stepDetails
+                if verbose:
+                    runDetails[str(stepCount)] = stepDetails
 
                 # print([lemmaList[i] for i in qu])
                 # print(solution)
@@ -358,6 +401,8 @@ class SktWsegRWR(object):
             result = list(map(lambda x: lemmaList[x], qu))
 
             if verbose:
+                metPerfFH.close()
+                metPerfFH_bin.close()
                 runDetails['prediction'] = result
                 runDetails['accuracy'] = Accuracy(result, dcsObj)
                 runDetails['steps'] = stepCount
