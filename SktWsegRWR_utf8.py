@@ -12,6 +12,7 @@ from wordTypeCheckFunction import *
 import multiprocessing
 from ProbModels import *
 from graph import *
+import csv
 
 class Method():
     word2vec = 0
@@ -120,22 +121,28 @@ sandhiRules = pickle.load(open('extras/sandhiRules.p','rb'))
 def CanCoExist_sandhi(p1, p2, name1, name2):
     # P1 must be less than P2
     # Just send it in the proper order
+    
+
     if(p1 < p2):
         overlap = max((p1 + len(name1)) - p2, 0)
         if overlap == 0:
             return True
-        if overlap == 1 or overlap == 2:
-            p1 = (name1[len(name1) - overlap:len(name1):], name2[0])
-            p2 = (name1[-1], name2[0:overlap:])
+        if overlap == 1:
+            pair1 = (name1[len(name1) - overlap:len(name1):], name2[0])
+            pair2 = (name1[-1], name2[0:overlap:])
             # print(name1, name2, p1, p2)
             # print(p1, p2)
-            if p1 in sandhiRules:
-                # print(name1, name2, p1, ' = ', sandhiRules[p1])
-                if(sandhiRules[p1]['length'] < len(p1[0]) + len(p1[1])):
+            if pair1 in sandhiRules:
+                if(sandhiRules[pair1]['length'] < len(pair1[0]) + len(pair1[1])):
+                    with open('.temp/sandhi_encounters.csv', 'a') as fh:
+                        fcsv = csv.writer(fh)
+                        fcsv.writerow([pair1[0], pair1[1], sandhiRules[pair1]['derivations'], name1, name2, p1, p2])
                     return True
-            if p2 in sandhiRules:
-                # print(name1, name2, p2, ' = ', sandhiRules[p2])
-                if(sandhiRules[p2]['length'] < len(p2[0]) + len(p2[1])):
+            if pair2 in sandhiRules:
+                if(sandhiRules[pair2]['length'] < len(pair2[0]) + len(pair2[1])):
+                    with open('.temp/sandhi_encounters.csv', 'a') as fh:
+                        fcsv = csv.writer(fh)
+                        fcsv.writerow([pair2[0], pair2[1], sandhiRules[pair2]['derivations'], name1, name2, p1, p2])
                     return True
     return False
 
@@ -175,7 +182,7 @@ class SktWsegRWR(object):
                 if verbose:
                     return None, None
                 return None
-                
+
             solution = [rom_slp(l) for ls in dcsObj.lemmas for l in ls]
             solTuples = []
             for i in range(len(dcsObj.lemmas)):
@@ -192,8 +199,6 @@ class SktWsegRWR(object):
                 for a in dcsObj.lemmas:
                     runDetails['DCSLemmas'].append([rom_slp(c) for c in a])
 
-
-            tuplesUnrolled = [t for tl in tuplesMain for t in tl]
 
             # ALL FUNC USES KN SMOOTHING
             # USE THE SECOND ARGUMENT TO TURN IN OFF BY PASSING FALSE
