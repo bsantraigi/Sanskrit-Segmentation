@@ -2,6 +2,7 @@
 from romtoslp import rom_slp
 from json import *
 import pprint
+from utilities import *
 class word_new():
     def __init__(self,names):
         self.lemmas=[]
@@ -34,11 +35,27 @@ def SeeSentence(sentenceObj):
     print('SKT ANALYZE')
     print('-'*15)
     print(sentenceObj.sentence)
+    zz = 0
+    (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
+    for cid in chunkDict.keys():
+        print('Analyzing:', rom_slp(sentenceObj.chunk[cid].chunk_name))
+        for pos in chunkDict[cid].keys():
+            tupIds = chunkDict[cid][pos]
+            for ti in tupIds:
+                print('%d :' % (pos, ), end = ' ')
+                print(tuplesMain[ti][0][1], end=' ')
+                for tup in tuplesMain[ti]:
+                    print([zz, tup[2], tup[3]], end=' ')
+                    zz += 1
+                print('')
+        print('-'*25)
+
     for chunk in sentenceObj.chunk:
         print("Analyzing ", rom_slp(chunk.chunk_name))
         for pos in chunk.chunk_words.keys():
             for word_sense in chunk.chunk_words[pos]:
-                print(pos, ": ", rom_slp(word_sense.names), list(map(rom_slp,word_sense.lemmas)), word_sense.forms)
+                word_sense = fix_w_new(word_sense)
+                print(pos, ": ", rom_slp(word_sense.names), word_sense.lemmas, word_sense.forms)
                 # for formsDict in word_sense.forms:
                 #     print(getCNGs(formsDict))
     print()
@@ -74,6 +91,16 @@ def wtc_recursive(form, c):
     else:
         return wordTypeCheck(form, c)
 
+def CanBeQuery(chunk):
+    allLemmas = []
+    for pos, words in chunk.chunk_words.items():
+        for word in words:
+            for lemma in word.lemmas:
+                if lemma != '':
+                    allLemmas.append(lemma)
+    if(len(allLemmas) == 1):
+        return True
+
 def SentencePreprocess(sentenceObj):
     """
     Considering word names only
@@ -83,10 +110,10 @@ def SentencePreprocess(sentenceObj):
         l = []
         for form, configs in formsDict.items():
             for c in configs:
-                if(form == 'verbform'):                
+                if(form == 'verbform'):
                     continue
                 else:
-                    l.append(wtc_recursive(form, configs))
+                    l.append(wtc_recursive(form, c))
         return list(set(l))
 
     chunkDict = {}
@@ -99,24 +126,23 @@ def SentencePreprocess(sentenceObj):
 
     cid = -1
     tidExclusive = 0
+
+    ## Traverse sentence and form data-structures
     for chunk in sentenceObj.chunk:
         # print(chunk.chunk_name)
         cid = cid+1
         chunkDict[cid] = {}
-        canBeQuery = 0
-        if len(chunk.chunk_words.keys()) == 1:
-            canBeQuery = 1 # Single pos confirmed
         for pos in chunk.chunk_words.keys():
             tupleSet = {}
             chunkDict[cid][pos] = []
-            if(canBeQuery == 1) and (len(chunk.chunk_words[pos]) == 1):
-                canBeQuery = 2 # Single derived form confirmed
             for word_sense in chunk.chunk_words[pos]:
+                word_sense = fix_w_new(word_sense)
                 nama = rom_slp(word_sense.names)
                 if(len(word_sense.lemmas) > 0 and len(word_sense.forms) > 0):
                     tuples = []
                     for lemmaI in range(len(word_sense.lemmas)):
-                        lemma = rom_slp(word_sense.lemmas[lemmaI].split('_')[0])
+                        # lemma = rom_slp(word_sense.lemmas[lemmaI].split('_')[0]) # NOT REQUIRED - DONE IN FIX_W_NEW
+                        lemma = word_sense.lemmas[lemmaI]
                         if lemma == '':
                             continue
                         tempCNGs = getCNGs(word_sense.forms[lemmaI])
@@ -134,12 +160,40 @@ def SentencePreprocess(sentenceObj):
                                 tidExclusive += 1
 
                     if(len(tuples) > 0):
+                        # print(tuples)
                         k = len(tuplesMain)
                         chunkDict[cid][pos].append(k)
                         tuplesMain.append(tuples)
-                        if canBeQuery == 2 and len(tuples) == 1:
-                            # Single (lemma, cng) tuple - Confirmed
-                            qu.append(tuples[0][0])
+
+    ## Find QUERY nodes now
+    for cid in chunkDict.keys():
+        tuples = []
+        for pos in chunkDict[cid].keys():
+            tupIds = chunkDict[cid][pos]
+            for tupId in tupIds:
+                [tuples.append((pos, tup[0], tup[1])) for tup in tuplesMain[tupId]]
+        for u in range(len(tuples)):
+            tup1 = tuples[u]
+            quFlag = True
+            for v in range(len(tuples)):
+                if(u == v):
+                    continue
+                tup2 = tuples[v]
+                if(tup1[0] < tup2[0]):
+                    if not CanCoExist_sandhi(tup1[0], tup2[0], tup1[2], tup2[2]):
+                        ## Found a competing node - hence can't be a query
+                        quFlag = False
+                        break
+                elif(tup1[0] > tup2[0]):
+                    if not CanCoExist_sandhi(tup2[0], tup1[0], tup2[2], tup1[2]):
+                        ## Found a competing node - hence can't be a query
+                        quFlag = False
+                        break
+                else:
+                    quFlag = False
+                    break
+            if quFlag:
+                qu.append(tup1[1])
 
     verbs = []
     i = -1
@@ -152,5 +206,6 @@ def SentencePreprocess(sentenceObj):
     # pprint.pprint(tuplesMain)
     # pprint.pprint(chunkDict)
     # pprint.pprint(revMap2Chunk)
+    # print(qu)
     
     return (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain)

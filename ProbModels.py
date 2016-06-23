@@ -1,5 +1,5 @@
 import pickle
-from utilities import printProgress, validatePickleName, pickleFixLoad
+from utilities import *
 import numpy as np
 import math
 import pickle
@@ -9,28 +9,6 @@ import pprint
 
 def sigmoid(x):
   return 1 / (1 + math.exp(-x))
-
-sandhiRules = pickle.load(open('extras/sandhiRules.p','rb'))    
-def CanCoExist_sandhi(p1, p2, name1, name2):
-    # P1 must be less than P2
-    # Just send it in the proper order
-    if(p1 < p2):
-        overlap = max((p1 + len(name1)) - p2, 0)
-        if overlap == 0:
-            return True
-        if overlap == 1 or overlap == 2:
-            p1 = (name1[len(name1) - overlap:len(name1):], name2[0])
-            p2 = (name1[-1], name2[0:overlap:])
-            # print(name1, name2, p1, p2)
-            # print(p1, p2)
-            if p1 in sandhiRules:
-                if(sandhiRules[p1]['length'] < len(p1[0]) + len(p1[1])):
-                    return True
-            if p2 in sandhiRules:
-                if(sandhiRules[p2]['length'] < len(p2[0]) + len(p2[1])):
-                    return True
-
-    return False
 
 """
 These models are count based probabilistic model

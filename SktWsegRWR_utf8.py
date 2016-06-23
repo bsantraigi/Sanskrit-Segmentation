@@ -2,7 +2,7 @@ import os, sys
 import pickle
 from DCS import *
 from sentences import *
-from utilities import printProgress, validatePickleName, pickleFixLoad
+from utilities import *
 import re
 import numpy as np
 import math
@@ -105,11 +105,6 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, all
     
     return(papMat)
 
-def Accuracy(prediction, dcsObj):
-    solution = [rom_slp(c) for arr in dcsObj.lemmas for c in arr]
-    ac = 100*sum(list(map(lambda x: x in prediction, solution)))/len(solution)
-    return ac
-
 def CanCoExist_simple(p1, p2, n1, n2):
     # Make sure p1 is < p2, always
     if(p1 < p2):
@@ -134,15 +129,15 @@ def CanCoExist_sandhi(p1, p2, name1, name2):
             # print(p1, p2)
             if pair1 in sandhiRules:
                 if(sandhiRules[pair1]['length'] < len(pair1[0]) + len(pair1[1])):
-                    with open('.temp/sandhi_encounters.csv', 'a') as fh:
-                        fcsv = csv.writer(fh)
-                        fcsv.writerow([pair1[0], pair1[1], sandhiRules[pair1]['derivations'], name1, name2, p1, p2])
+                    # with open('.temp/sandhi_encounters.csv', 'a') as fh:
+                    #     fcsv = csv.writer(fh)
+                    #     fcsv.writerow([pair1[0], pair1[1], sandhiRules[pair1]['derivations'], name1, name2, p1, p2])
                     return True
             if pair2 in sandhiRules:
                 if(sandhiRules[pair2]['length'] < len(pair2[0]) + len(pair2[1])):
-                    with open('.temp/sandhi_encounters.csv', 'a') as fh:
-                        fcsv = csv.writer(fh)
-                        fcsv.writerow([pair2[0], pair2[1], sandhiRules[pair2]['derivations'], name1, name2, p1, p2])
+                    # with open('.temp/sandhi_encounters.csv', 'a') as fh:
+                    #     fcsv = csv.writer(fh)
+                    #     fcsv.writerow([pair2[0], pair2[1], sandhiRules[pair2]['derivations'], name1, name2, p1, p2])
                     return True
     return False
 
@@ -363,6 +358,7 @@ class SktWsegRWR(object):
                     activeChunk = chunkDict[cid]
                     r = qu[len(qu) - 1]
                     winwin = wordList[r]
+                    # print('Winner:', winwin)
                     for _pos in activeChunk:
                         if(_pos < pos):
                             for indexDummy in activeChunk[_pos]:
@@ -381,7 +377,7 @@ class SktWsegRWR(object):
                                     if index not in deactivated and index not in qu:
                                         w = wordList[index]
                                         if not CanCoExist_sandhi(pos, _pos, winwin, w):
-                                            deactivate(index)                    
+                                            deactivate(index)
                         else:
                             for indexDummy in activeChunk[_pos]:
                                 tupSet = tuplesMain[indexDummy]
@@ -389,10 +385,44 @@ class SktWsegRWR(object):
                                     index = tup[0]
                                     if(index != r):
                                         if index not in deactivated:
-                                            deactivate(index) 
+                                            deactivate(index)
 
-                        if verbose:
-                            stepDetails['updated_query'] = list(qu)
+                    ## Find QUERY nodes now
+                    # print(qu)
+                    tuples = []
+                    for pos in activeChunk.keys():
+                        tupIds = chunkDict[cid][pos]
+                        for tupId in tupIds:
+                            for tup in tuplesMain[tupId]:
+                                if tup[0] not in qu and tup[0] not in deactivated:
+                                    tuples.append((pos, tup[0], tup[1]))
+                    for u in range(len(tuples)):
+                        tup1 = tuples[u]
+                        quFlag = True
+                        for v in range(len(tuples)):
+                            if(u == v):
+                                continue
+                            tup2 = tuples[v]
+                            if(tup1[0] < tup2[0]):
+                                if not CanCoExist_sandhi(tup1[0], tup2[0], tup1[2], tup2[2]):
+                                    ## Found a competing node - hence can't be a query
+                                    quFlag = False
+                                    break
+                            elif(tup1[0] > tup2[0]):
+                                if not CanCoExist_sandhi(tup2[0], tup1[0], tup2[2], tup1[2]):
+                                    ## Found a competing node - hence can't be a query
+                                    quFlag = False
+                                    break
+                            else:
+                                quFlag = False
+                                break
+                        if quFlag:
+                            qu.append(tup1[1])
+                    ## NEW CODE - END
+                    # print(qu)
+
+                    if verbose:
+                        stepDetails['updated_query'] = list(qu)
 
                 except KeyError:
                     break
