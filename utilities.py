@@ -53,8 +53,12 @@ def CanCoExist_sandhi(p1, p2, name1, name2):
     return False
 
 def fix_w_new(word_new_obj):    
+    # dicto= { 'asmad':'mad','yuzmad':'tvad','ayam':'idam','agn':'agni','ya':'yad','eza':'etad',
+    #          'tad':'sa','vd':'vid','va':'vE','-tva':'tva','ptta':'pitta','mahat':'mahant','ndra':'indra',
+    #          'ap':'api','h':'hi','t':'iti','tr':'tri','va':'iva'}
+
     dicto= { 'asmad':'mad','yuzmad':'tvad','ayam':'idam','agn':'agni','ya':'yad','eza':'etad',
-             'tad':'sa','vd':'vid','va':'vE','-tva':'tva','ptta':'pitta','mahat':'mahant','ndra':'indra',
+             'vd':'vid','va':'vE','-tva':'tva','ptta':'pitta','mahat':'mahant','ndra':'indra',
              'ap':'api','h':'hi','t':'iti','tr':'tri','va':'iva'}
 
     for i in range(0,len(word_new_obj.lemmas)):
@@ -71,15 +75,24 @@ def fix_w_new(word_new_obj):
                 
     return(word_new_obj)
 
-def loadSentence(fName, folderTag):
+# def loadSentence(fName, folderTag):
+#     try:
+#         dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)           
+#         if folderTag == "C1020" :
+#             sentenceObj = pickleFixLoad('../TextSegmentation/corrected_10to20/' + fName)
+#         else:
+#             sentenceObj = pickleFixLoad('../TextSegmentation/Pickle_Files/' + fName)
+
+#     except (KeyError, EOFError, pickle.UnpicklingError) as e:
+#         return None, None
+#     return(sentenceObj, dcsObj)
+
+def loadSentence(fName, sntcPath):
     try:
         dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)           
-        if folderTag == "C1020" :
-            sentenceObj = pickleFixLoad('../TextSegmentation/corrected_10to20/' + fName)
-        else:
-            sentenceObj = pickleFixLoad('../TextSegmentation/Pickle_Files/' + fName)
-
+        sentenceObj = pickleFixLoad(sntcPath)
     except (KeyError, EOFError, pickle.UnpicklingError) as e:
+        print('Failed to load', sntcPath)
         return None, None
     return(sentenceObj, dcsObj)
 
@@ -97,6 +110,8 @@ def Accuracy(prediction, dcsObj):
     solution = [rom_slp(c) for arr in dcsObj.lemmas for c in arr]
     solution_no_pvb = [removePrefix(l) for l in solution]
 
+    print('Solution:', solution)
+    print('Solution No Pvb:', solution_no_pvb)
     ac = 0
     for x in range(len(solution)):
         if(solution[x] in prediction):
