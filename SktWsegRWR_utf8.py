@@ -39,7 +39,7 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, all
     transMat = np.copy(transMat)
     
 #     MERGE THE NEW QUERY NODE(IF ANY), CHANGES IN TRANSMAT AND PRIORI-VEC
-    doMax = True
+    doMax = False
     if(len(queryList) > 1):
         dest = queryList[0]
         if(doMax):
@@ -161,8 +161,8 @@ class SktWsegRWR(object):
         partition /= sum(partition)
         self.partition = partition
 
-
-    def predict(self, sentenceObj, dcsObj, verbose = False):
+    def predict(self, sentenceObj, dcsObj, verbose = False, eta = 0.1):
+        # eta = 0.1
         partition = self.partition
         (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
 
@@ -178,7 +178,8 @@ class SktWsegRWR(object):
                     return None, None
                 return None
 
-            solution = [rom_slp(l) for ls in dcsObj.lemmas for l in ls]
+            solution, solution_no_pvb = GetSolutions(dcsObj)
+            
             solTuples = []
             for i in range(len(dcsObj.lemmas)):
                 for j in range(len(dcsObj.lemmas[i])):
@@ -307,27 +308,47 @@ class SktWsegRWR(object):
                     cid = -1
                     pos = -1
 
-                    if verbose:
+                    if verbose or True:
                         winner_w2w = -1
+                        diff_w2w = 0
                         for r in ranking_w2w:
                             if(r in qu or r in deactivated):
                                 continue
-                            winner_w2w = r
-                            break
+                            if winner_w2w == -1:
+                                winner_w2w = r
+                            else:
+                                diff_w2w += 1
+                            if lemmaList[r] in solution or lemmaList[r] in solution_no_pvb:
+                                break
 
                         winner_t2t = -1
+                        diff_t2t = 0
                         for r in ranking_t2t:
                             if(r in qu or r in deactivated):
                                 continue
-                            winner_t2t = r
-                            break
+                            if winner_t2t == -1:
+                                winner_t2t = r
+                            else:
+                                diff_t2t += 1
+                            if lemmaList[r] in solution or lemmaList[r] in solution_no_pvb:
+                                break
 
                         winner_w2w_samecng = -1
+                        diff_w2w_samecng = 0
                         for r in ranking_w2w_samecng:
                             if(r in qu or r in deactivated):
                                 continue
-                            winner_w2w_samecng = r
-                            break
+                            if winner_w2w_samecng == -1:
+                                winner_w2w_samecng = r
+                            else:
+                                diff_w2w_samecng += 1
+                            if lemmaList[r] in solution or lemmaList[r] in solution_no_pvb:
+                                break
+                        print((diff_w2w), (diff_t2t), (diff_w2w_samecng))
+                        partition[0] = partition[0] - eta*diff_w2w
+                        partition[1] = partition[1] - eta*diff_t2t
+                        partition[2] = partition[2] - eta*diff_w2w_samecng
+                        print(partition)
 
                     
                     # FIND OUT THE WINNER
@@ -335,6 +356,7 @@ class SktWsegRWR(object):
                         if(r in qu or r in deactivated):
                             continue
                         qu.append(r)
+                        print(r)
                         prioriVec[0,r] = 0
                         # Remove overlapping competitors
                         cid, pos, tid = revMap2Chunk[r]

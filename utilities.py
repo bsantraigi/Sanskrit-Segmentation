@@ -75,22 +75,52 @@ def fix_w_new(word_new_obj):
                 
     return(word_new_obj)
 
-# def loadSentence(fName, folderTag):
-#     try:
-#         dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)           
-#         if folderTag == "C1020" :
-#             sentenceObj = pickleFixLoad('../TextSegmentation/corrected_10to20/' + fName)
-#         else:
-#             sentenceObj = pickleFixLoad('../TextSegmentation/Pickle_Files/' + fName)
+def FixSentence(sentenceObj):
+    for ci in range(len(sentenceObj.chunk)):
+        for pos in sentenceObj.chunk[ci].chunk_words.keys():
+            for wsi in range(len(sentenceObj.chunk[ci].chunk_words[pos])):
+                sentenceObj.chunk[ci].chunk_words[pos][wsi] = fix_w_new(sentenceObj.chunk[ci].chunk_words[pos][wsi])
+    
+    return sentenceObj
 
-#     except (KeyError, EOFError, pickle.UnpicklingError) as e:
-#         return None, None
-#     return(sentenceObj, dcsObj)
+def FillMissing(sentenceObj, dcsObj):
+    for ci in range(len(sentenceObj.chunk)):
+        corrLemmas = dcsObj.lemmas[ci]
+        cli = 0
+        iamdone = False
+        for pos in sentenceObj.chunk[ci].chunk_words.keys():
+            for wsi in range(len(sentenceObj.chunk[ci].chunk_words[pos])):
+                ws = sentenceObj.chunk[ci].chunk_words[pos][wsi]
+                for li in range(len(ws.lemmas)):
+                    if ws.lemmas[li] == rom_slp(corrLemmas[cli]):
+                        # print('MATCHED:', ws.lemmas[li], rom_slp(corrLemmas[cli]))
+                        # print('CNG LIST:', ws.forms[li] if li < len(ws.forms) else [dcsObj.cng[ci][cli]])
+                        
+                        if li >= len(ws.forms):
+                            a = ['']*(li + 1)
+                            for i in range(len(ws.forms)):
+                                a[i] = ws.forms[i]
+                            a[li] = int(dcsObj.cng[ci][cli])
+                            sentenceObj.chunk[ci].chunk_words[pos][wsi].forms = a
+
+                        cli += 1
+                        if cli == len(corrLemmas):
+                            iamdone = True
+                            break
+                if iamdone:
+                    break
+            if iamdone:
+                break
+    return sentenceObj
+
+
 
 def loadSentence(fName, sntcPath):
     try:
-        dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)           
+        dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)
         sentenceObj = pickleFixLoad(sntcPath)
+        sentenceObj = FixSentence(sentenceObj)
+        sentenceObj = FillMissing(sentenceObj, dcsObj)
     except (KeyError, EOFError, pickle.UnpicklingError) as e:
         print('Failed to load', sntcPath)
         return None, None
@@ -106,12 +136,15 @@ def removePrefix(lemma):
             return (lemma.split(pat)[1])
     return lemma
 
-def Accuracy(prediction, dcsObj):
+def GetSolutions(dcsObj):
     solution = [rom_slp(c) for arr in dcsObj.lemmas for c in arr]
     solution_no_pvb = [removePrefix(l) for l in solution]
-
-    print('Solution:', solution)
-    print('Solution No Pvb:', solution_no_pvb)
+    return (solution, solution_no_pvb)
+    
+def Accuracy(prediction, dcsObj):
+    solution, solution_no_pvb = GetSolutions(dcsObj)
+    # print('Solution:', solution)
+    # print('Solution No Pvb:', solution_no_pvb)
     ac = 0
     for x in range(len(solution)):
         if(solution[x] in prediction):

@@ -23,38 +23,41 @@ class sentences:
 
 def getCNGs(formsDict):
         l = []
-        for form, configs in formsDict.items():
-            for c in configs:
-                if(form == 'verbform'):                
-                    continue
-                else:
-                    l.append(wtc_recursive(form, configs))
-        return list(set(l))
+        if type(formsDict) == int:
+            return [formsDict]
+        else:
+            for form, configs in formsDict.items():
+                for c in configs:
+                    if(form == 'verbform'):                
+                        continue
+                    else:
+                        l.append(wtc_recursive(form, configs))
+            return list(set(l))
 
 def SeeSentence(sentenceObj):
     print('SKT ANALYZE')
     print('-'*15)
     print(sentenceObj.sentence)
     zz = 0
-    (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
-    for cid in chunkDict.keys():
-        print('Analyzing:', rom_slp(sentenceObj.chunk[cid].chunk_name))
-        for pos in chunkDict[cid].keys():
-            tupIds = chunkDict[cid][pos]
-            for ti in tupIds:
-                print('%d :' % (pos, ), end = ' ')
-                print(tuplesMain[ti][0][1], end=' ')
-                for tup in tuplesMain[ti]:
-                    print([zz, tup[2], tup[3]], end=' ')
-                    zz += 1
-                print('')
-        print('-'*25)
+    # (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
+    # for cid in chunkDict.keys():
+    #     print('Analyzing:', rom_slp(sentenceObj.chunk[cid].chunk_name))
+    #     for pos in chunkDict[cid].keys():
+    #         tupIds = chunkDict[cid][pos]
+    #         for ti in tupIds:
+    #             print('%d :' % (pos, ), end = ' ')
+    #             print(tuplesMain[ti][0][1], end=' ')
+    #             for tup in tuplesMain[ti]:
+    #                 print([zz, tup[2], tup[3]], end=' ')
+    #                 zz += 1
+    #             print('')
+    #     print('-'*25)
 
     for chunk in sentenceObj.chunk:
         print("Analyzing ", rom_slp(chunk.chunk_name))
         for pos in chunk.chunk_words.keys():
             for word_sense in chunk.chunk_words[pos]:
-                word_sense = fix_w_new(word_sense)
+                # word_sense = fix_w_new(word_sense)
                 print(pos, ": ", rom_slp(word_sense.names), word_sense.lemmas, word_sense.forms)
                 # for formsDict in word_sense.forms:
                 #     print(getCNGs(formsDict))
@@ -107,14 +110,17 @@ def SentencePreprocess(sentenceObj):
     ***{Word forms or cngs can also be used}
     """
     def getCNGs(formsDict):
-        l = []
-        for form, configs in formsDict.items():
-            for c in configs:
-                if(form == 'verbform'):
-                    continue
-                else:
-                    l.append(wtc_recursive(form, c))
-        return list(set(l))
+        if type(formsDict) == int:
+            return [formsDict]
+        else:
+            l = []
+            for form, configs in formsDict.items():
+                for c in configs:
+                    if(form == 'verbform'):
+                        continue
+                    else:
+                        l.append(wtc_recursive(form, c))
+            return list(set(l))
 
     chunkDict = {}
     lemmaList = []
@@ -136,7 +142,7 @@ def SentencePreprocess(sentenceObj):
             tupleSet = {}
             chunkDict[cid][pos] = []
             for word_sense in chunk.chunk_words[pos]:
-                word_sense = fix_w_new(word_sense)
+                # word_sense = fix_w_new(word_sense)
                 nama = rom_slp(word_sense.names)
                 if(len(word_sense.lemmas) > 0 and len(word_sense.forms) > 0):
                     tuples = []
