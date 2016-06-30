@@ -151,7 +151,7 @@ Pass weights for each method in partition array in the following order
 """
 class SktWsegRWR(object):
     # print("Loaded: ", model_cbow)
-    def __init__(self, w2w_modelFunc, t2t_modelFunc, v2c_modelFunc, sameCng_modelFunc, partition = [1/3, 1/3, 1/3, 0]):
+    def __init__(self, w2w_modelFunc, t2t_modelFunc, v2c_modelFunc, sameCng_modelFunc, partition = np.array([1/3, 1/3, 1/3, 0])):
         self.w2w_modelFunc = w2w_modelFunc
         self.t2t_modelFunc = t2t_modelFunc
         self.sameCng_modelFunc = sameCng_modelFunc
@@ -344,11 +344,12 @@ class SktWsegRWR(object):
                                 diff_w2w_samecng += 1
                             if lemmaList[r] in solution or lemmaList[r] in solution_no_pvb:
                                 break
-                        print((diff_w2w), (diff_t2t), (diff_w2w_samecng))
+                        # print((diff_w2w), (diff_t2t), (diff_w2w_samecng))
                         partition[0] = partition[0] - eta*diff_w2w
                         partition[1] = partition[1] - eta*diff_t2t
                         partition[2] = partition[2] - eta*diff_w2w_samecng
-                        print(partition)
+                        partition = partition/np.sum(partition)
+                        # print(partition)
 
                     
                     # FIND OUT THE WINNER
@@ -356,7 +357,6 @@ class SktWsegRWR(object):
                         if(r in qu or r in deactivated):
                             continue
                         qu.append(r)
-                        print(r)
                         prioriVec[0,r] = 0
                         # Remove overlapping competitors
                         cid, pos, tid = revMap2Chunk[r]
