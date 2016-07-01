@@ -57,7 +57,7 @@ def SeeSentence(sentenceObj):
         print("Analyzing ", rom_slp(chunk.chunk_name))
         for pos in chunk.chunk_words.keys():
             for word_sense in chunk.chunk_words[pos]:
-                # word_sense = fix_w_new(word_sense)
+                word_sense = fix_w_new(word_sense)
                 print(pos, ": ", rom_slp(word_sense.names), word_sense.lemmas, word_sense.forms)
                 # for formsDict in word_sense.forms:
                 #     print(getCNGs(formsDict))
