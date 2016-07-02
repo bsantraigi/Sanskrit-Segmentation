@@ -126,6 +126,15 @@ def loadSentence(fName, sntcPath):
         return None, None
     return(sentenceObj, dcsObj)
 
+def loadSentence_nopre(fName, sntcPath):
+    try:
+        dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)
+        sentenceObj = pickleFixLoad(sntcPath)
+    except (KeyError, EOFError, pickle.UnpicklingError) as e:
+        print('Failed to load', sntcPath)
+        return None, None
+    return(sentenceObj, dcsObj)
+
 preList = pickle.load(open('pvb.p', 'rb'))
 def removePrefix(lemma):
     for pre in preList:
@@ -154,3 +163,27 @@ def Accuracy(prediction, dcsObj):
 
     ac = 100*ac/len(solution)
     return ac
+
+def FullCoverage(skt, dcs):
+    # print('-'*40)
+    # print('NEW FILE RCVD')
+    goodFlag = True
+    for ci in range(len(dcs.lemmas)):
+        dlemmas = [rom_slp(l) for l in dcs.lemmas[ci]]
+        slemmas = []
+        chunk = skt.chunk[ci]
+        for pos in chunk.chunk_words.keys():
+            for wsi in range(len(chunk.chunk_words[pos])):
+                ws = chunk.chunk_words[pos][wsi]
+                [slemmas.append(wsl) for wsl in ws.lemmas]
+        # print('DCS:', dlemmas)
+        # print('SKT:', slemmas)
+        for l in dlemmas:
+            if l not in slemmas:
+                # print(l, 'not found')
+                goodFlag = False
+                break
+        if not goodFlag:
+            break
+#     print(goodFlag)
+    return goodFlag
