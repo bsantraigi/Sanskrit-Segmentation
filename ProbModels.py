@@ -124,18 +124,28 @@ class ProbModels():
                             for wi2 in wids2:
                                 name1 = wordList[wi1]
                                 name2 = wordList[wi2]
+                                # '''
+                                # # FIXME:
+                                # '''
+                                # try: 
                                 if not CanCoExist_sandhi(pos, _pos, name1, name2):
                                     # print('Remvoe b/w', name1, name2)
                                     TransitionMat[wi1, wi2] = 0
+                                # except IndexError:
+                                #     pass
 
                     elif(_pos < pos):
                         for wi1 in wids:
                             for wi2 in wids2:
                                 name1 = wordList[wi1]
                                 name2 = wordList[wi2]
+
+                                # try:
                                 if not CanCoExist_sandhi(_pos, pos, name2, name1):
                                     # print('Remvoe b/w', name2, name1)
-                                    TransitionMat[wi1, wi2] = 0                                        
+                                    TransitionMat[wi1, wi2] = 0
+                                # except IndexError:
+                                #     pass
         
     def get_cng2cng_mat(self, tuplesMain, chunkDict, kn_smooth = True):
         # pprint.pprint(tuplesMain)

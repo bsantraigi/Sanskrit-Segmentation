@@ -21,18 +21,24 @@ class sentences:
         self.sentence=sentence
         self.chunk=[]
 
-def getCNGs(formsDict):
-        l = []
-        if type(formsDict) == int:
-            return [formsDict]
-        else:
-            for form, configs in formsDict.items():
-                for c in configs:
-                    if(form == 'verbform'):                
-                        continue
-                    else:
-                        l.append(wtc_recursive(form, configs))
-            return list(set(l))
+# def getCNGs(formsDict):
+#         l = []
+#         if type(formsDict) == int or type(formsDict) == str:
+#             return [int(formsDict)]
+#         else:
+#             for form, configs in formsDict.items():
+#                 for c in configs:
+#                     if(form == 'verbform'):                
+#                         continue
+#                     else:
+#                         l.append(wtc_recursive(form, configs))
+#             return list(set(l))
+
+class SentenceError(Exception):
+    def __init__(self, message):
+
+        # Call the base class constructor with the parameters it needs
+        super(SentenceError, self).__init__(message)
 
 def SeeSentence(sentenceObj):
     print('SKT ANALYZE')
@@ -110,8 +116,8 @@ def SentencePreprocess(sentenceObj):
     ***{Word forms or cngs can also be used}
     """
     def getCNGs(formsDict):
-        if type(formsDict) == int:
-            return [formsDict]
+        if type(formsDict) == int or type(formsDict) == str:
+            return [int(formsDict)]
         else:
             l = []
             for form, configs in formsDict.items():
@@ -144,6 +150,8 @@ def SentencePreprocess(sentenceObj):
             for word_sense in chunk.chunk_words[pos]:
                 # word_sense = fix_w_new(word_sense)
                 nama = rom_slp(word_sense.names)
+                if nama == '':
+                    raise SentenceError('Empty Name Detected')
                 if(len(word_sense.lemmas) > 0 and len(word_sense.forms) > 0):
                     tuples = []
                     for lemmaI in range(len(word_sense.lemmas)):
@@ -185,6 +193,11 @@ def SentencePreprocess(sentenceObj):
                 if(u == v):
                     continue
                 tup2 = tuples[v]
+                
+                # '''
+                # FIXME: REMOVE TRY CATCH
+                # '''
+                # try:
                 if(tup1[0] < tup2[0]):
                     if not CanCoExist_sandhi(tup1[0], tup2[0], tup1[2], tup2[2]):
                         ## Found a competing node - hence can't be a query
@@ -198,6 +211,10 @@ def SentencePreprocess(sentenceObj):
                 else:
                     quFlag = False
                     break
+                # except IndexError:
+                #     print('From SentencePreprocess IndexError:', sentenceObj.sent_id)
+                #     raise IndexError
+
             if quFlag:
                 qu.append(tup1[1])
 

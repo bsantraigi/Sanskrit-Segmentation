@@ -39,6 +39,7 @@ def CanCoExist_sandhi(p1, p2, name1, name2):
         if overlap == 0:
             return True
         if overlap == 1 or overlap == 2:
+            # try:
             p1 = (name1[len(name1) - overlap:len(name1):], name2[0])
             p2 = (name1[-1], name2[0:overlap:])
             # print(name1, name2, p1, p2)
@@ -49,6 +50,9 @@ def CanCoExist_sandhi(p1, p2, name1, name2):
             if p2 in sandhiRules:
                 if(sandhiRules[p2]['length'] < len(p2[0]) + len(p2[1])):
                     return True
+            # except IndexError:
+            #     print('Sandhi function Error: arguments were', (p1, p2, name1, name2))
+            #     return False
 
     return False
 
@@ -115,20 +119,23 @@ def FillMissing(sentenceObj, dcsObj):
 
 
 
-def loadSentence(fName, sntcPath):
-    try:
-        dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)
-        sentenceObj = pickleFixLoad(sntcPath)
-        sentenceObj = FixSentence(sentenceObj)
-        sentenceObj = FillMissing(sentenceObj, dcsObj)
-    except (KeyError, EOFError, pickle.UnpicklingError) as e:
-        print('Failed to load', sntcPath)
-        return None, None
-    return(sentenceObj, dcsObj)
+# def loadSentence(fName, sntcPath):
+#     try:
+#         dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)
+#         sentenceObj = pickleFixLoad(sntcPath)
+#         sentenceObj = FixSentence(sentenceObj)
+#         sentenceObj = FillMissing(sentenceObj, dcsObj)
+#     except (KeyError, EOFError, pickle.UnpicklingError) as e:
+#         print('Failed to load', sntcPath)
+#         return None, None
+#     return(sentenceObj, dcsObj)
 
 def loadSentence_nopre(fName, sntcPath):
     try:
-        dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)
+        if fName[-1] == '2':
+            dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName[:-1])
+        else:
+            dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)
         sentenceObj = pickleFixLoad(sntcPath)
     except (KeyError, EOFError, pickle.UnpicklingError) as e:
         print('Failed to load', sntcPath)
@@ -158,8 +165,8 @@ def Accuracy(prediction, dcsObj):
     for x in range(len(solution)):
         if(solution[x] in prediction):
             ac += 1
-        elif(solution_no_pvb[x] in prediction):
-            ac += 1
+        # elif(solution_no_pvb[x] in prediction):
+        #     ac += 1
 
     ac = 100*ac/len(solution)
     return ac

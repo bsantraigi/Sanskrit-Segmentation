@@ -112,34 +112,34 @@ def CanCoExist_simple(p1, p2, n1, n2):
             return True
     return False
 
-sandhiRules = pickle.load(open('extras/sandhiRules.p','rb'))    
-def CanCoExist_sandhi(p1, p2, name1, name2):
-    # P1 must be less than P2
-    # Just send it in the proper order
+# sandhiRules = pickle.load(open('extras/sandhiRules.p','rb'))    
+# def CanCoExist_sandhi(p1, p2, name1, name2):
+#     # P1 must be less than P2
+#     # Just send it in the proper order
     
 
-    if(p1 < p2):
-        overlap = max((p1 + len(name1)) - p2, 0)
-        if overlap == 0:
-            return True
-        if overlap == 1:
-            pair1 = (name1[len(name1) - overlap:len(name1):], name2[0])
-            pair2 = (name1[-1], name2[0:overlap:])
-            # print(name1, name2, p1, p2)
-            # print(p1, p2)
-            if pair1 in sandhiRules:
-                if(sandhiRules[pair1]['length'] < len(pair1[0]) + len(pair1[1])):
-                    # with open('.temp/sandhi_encounters.csv', 'a') as fh:
-                    #     fcsv = csv.writer(fh)
-                    #     fcsv.writerow([pair1[0], pair1[1], sandhiRules[pair1]['derivations'], name1, name2, p1, p2])
-                    return True
-            if pair2 in sandhiRules:
-                if(sandhiRules[pair2]['length'] < len(pair2[0]) + len(pair2[1])):
-                    # with open('.temp/sandhi_encounters.csv', 'a') as fh:
-                    #     fcsv = csv.writer(fh)
-                    #     fcsv.writerow([pair2[0], pair2[1], sandhiRules[pair2]['derivations'], name1, name2, p1, p2])
-                    return True
-    return False
+#     if(p1 < p2):
+#         overlap = max((p1 + len(name1)) - p2, 0)
+#         if overlap == 0:
+#             return True
+#         if overlap == 1:
+#             pair1 = (name1[len(name1) - overlap:len(name1):], name2[0])
+#             pair2 = (name1[-1], name2[0:overlap:])
+#             # print(name1, name2, p1, p2)
+#             # print(p1, p2)
+#             if pair1 in sandhiRules:
+#                 if(sandhiRules[pair1]['length'] < len(pair1[0]) + len(pair1[1])):
+#                     # with open('.temp/sandhi_encounters.csv', 'a') as fh:
+#                     #     fcsv = csv.writer(fh)
+#                     #     fcsv.writerow([pair1[0], pair1[1], sandhiRules[pair1]['derivations'], name1, name2, p1, p2])
+#                     return True
+#             if pair2 in sandhiRules:
+#                 if(sandhiRules[pair2]['length'] < len(pair2[0]) + len(pair2[1])):
+#                     # with open('.temp/sandhi_encounters.csv', 'a') as fh:
+#                     #     fcsv = csv.writer(fh)
+#                     #     fcsv.writerow([pair2[0], pair2[1], sandhiRules[pair2]['derivations'], name1, name2, p1, p2])
+#                     return True
+#     return False
 
 """
 Loads the Model_CBOW from file
@@ -164,7 +164,13 @@ class SktWsegRWR(object):
     def predict(self, sentenceObj, dcsObj, verbose = False, eta = 0.1):
         # eta = 0.1
         partition = self.partition
-        (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
+        try:
+            (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
+        except SentenceError as e:
+            print('Empty name in file', sentenceObj.sent_id)
+            if verbose:
+                return None, None
+            return None
 
         if(len(tuplesMain) <= 1):
             if verbose:
@@ -308,7 +314,8 @@ class SktWsegRWR(object):
                     cid = -1
                     pos = -1
 
-                    if verbose or True:
+                    # if verbose or True:
+                    if verbose:
                         winner_w2w = -1
                         diff_w2w = 0
                         for r in ranking_w2w:
@@ -345,10 +352,14 @@ class SktWsegRWR(object):
                             if lemmaList[r] in solution or lemmaList[r] in solution_no_pvb:
                                 break
                         # print((diff_w2w), (diff_t2t), (diff_w2w_samecng))
-                        partition[0] = partition[0] - eta*diff_w2w
-                        partition[1] = partition[1] - eta*diff_t2t
-                        partition[2] = partition[2] - eta*diff_w2w_samecng
-                        partition = partition/np.sum(partition)
+
+                        #==============================================
+                        # Supervised Learning of Weights
+                        #==============================================
+                        # partition[0] = partition[0] - eta*diff_w2w
+                        # partition[1] = partition[1] - eta*diff_t2t
+                        # partition[2] = partition[2] - eta*diff_w2w_samecng
+                        # partition = partition/np.sum(partition)
                         # print(partition)
 
                     
@@ -389,8 +400,21 @@ class SktWsegRWR(object):
                                     index = tup[0]
                                     if index not in deactivated and index not in qu:
                                         w = wordList[index]
-                                        if not CanCoExist_sandhi(_pos, pos, w, winwin):
-                                            deactivate(index)
+
+
+
+                                        '''
+                                        # FIXME: REMOVE TRY-CATCH
+                                        '''
+                                        try:
+                                            if not CanCoExist_sandhi(_pos, pos, w, winwin):
+                                                deactivate(index)
+                                        except IndexError:
+                                            print('Sandhi Related IndexError Occurred:', sentenceObj.sent_id)
+                                            raise IndexError
+
+
+
                         elif(_pos > pos):
                             for indexDummy in activeChunk[_pos]:
                                 tupSet = tuplesMain[indexDummy]
@@ -398,8 +422,20 @@ class SktWsegRWR(object):
                                     index = tup[0]
                                     if index not in deactivated and index not in qu:
                                         w = wordList[index]
+
+
+                                        # '''
+                                        # # FIXME: REMOVE TRY-CATCH
+                                        # '''
+                                        # try:
                                         if not CanCoExist_sandhi(pos, _pos, winwin, w):
                                             deactivate(index)
+                                        # except IndexError:
+                                        #     print('Sandhi Related IndexError Occurred:', sentenceObj.sent_id)
+                                        #     raise IndexError
+
+
+
                         else:
                             for indexDummy in activeChunk[_pos]:
                                 tupSet = tuplesMain[indexDummy]
@@ -408,6 +444,7 @@ class SktWsegRWR(object):
                                     if(index != r):
                                         if index not in deactivated:
                                             deactivate(index)
+                                        
 
                     ## Find QUERY nodes now
                     # print(qu)
@@ -417,7 +454,9 @@ class SktWsegRWR(object):
                         for tupId in tupIds:
                             for tup in tuplesMain[tupId]:
                                 if tup[0] not in qu and tup[0] not in deactivated:
+                                    # POS, ID, NAME
                                     tuples.append((pos, tup[0], tup[1]))
+
                     for u in range(len(tuples)):
                         tup1 = tuples[u]
                         quFlag = True
@@ -425,6 +464,12 @@ class SktWsegRWR(object):
                             if(u == v):
                                 continue
                             tup2 = tuples[v]
+
+
+                            # '''
+                            # # FIXME: REMOVE TRY-CATCH
+                            # '''
+                            # try:
                             if(tup1[0] < tup2[0]):
                                 if not CanCoExist_sandhi(tup1[0], tup2[0], tup1[2], tup2[2]):
                                     ## Found a competing node - hence can't be a query
@@ -438,8 +483,14 @@ class SktWsegRWR(object):
                             else:
                                 quFlag = False
                                 break
+                            # except IndexError:
+                            #     print('Sandhi Related IndexError Occurred:', sentenceObj.sent_id)
+                            #     raise IndexError
+
+
                         if quFlag:
                             qu.append(tup1[1])
+                    
                     ## NEW CODE - END
                     # print(qu)
 
