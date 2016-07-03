@@ -161,7 +161,7 @@ class SktWsegRWR(object):
         partition /= sum(partition)
         self.partition = partition
 
-    def predict(self, sentenceObj, dcsObj, verbose = False, eta = 0.1):
+    def predict(self, sentenceObj, dcsObj, verbose = False, supervised = False, eta = 0.1):
         # eta = 0.1
         partition = self.partition
         try:
@@ -255,6 +255,8 @@ class SktWsegRWR(object):
                         prioriVec = prioriVec1, transMat = TransitionMat_w2w, 
                         restartP = restartP, maxIteration = 500, queryList = qu, 
                         deactivated = deactivated, allowRPModify = False)
+                    print('After: W2W')
+                    print(weights_w2w)
                     ranking_w2w = weights_w2w[0].argsort()[::-1]
                     # print(weights_w2w)
                     # print(ranking_w2w)
@@ -263,6 +265,8 @@ class SktWsegRWR(object):
                         prioriVec = prioriVec2, transMat = TransitionMat_t2t, 
                         restartP = restartP, maxIteration = 500, queryList = qu, 
                         deactivated = deactivated, allowRPModify = False)
+                    print('After: T2T')
+                    print(weights_t2t)
                     ranking_t2t = weights_t2t[0].argsort()[::-1]
                     # print(weights_t2t)
                     # print(ranking_t2t)
@@ -271,6 +275,8 @@ class SktWsegRWR(object):
                         prioriVec = prioriVec3, transMat = TransitionMat_w2w_samecng, 
                         restartP = restartP, maxIteration = 500, queryList = qu,
                         deactivated = deactivated, allowRPModify = False)
+                    print('After: SAMECNG')
+                    print(weights_w2w_samecng)
                     ranking_w2w_samecng = weights_w2w_samecng[0].argsort()[::-1]
                     # print(weights_w2w_samecng)
                     # print(ranking_w2w_samecng)
@@ -315,52 +321,93 @@ class SktWsegRWR(object):
                     pos = -1
 
                     # if verbose or True:
-                    if verbose:
+                    if verbose or supervised:
                         winner_w2w = -1
+                        dcsScore = -1
+                        wrongLemmaScore = -1
                         diff_w2w = 0
                         for r in ranking_w2w:
                             if(r in qu or r in deactivated):
                                 continue
-                            if winner_w2w == -1:
-                                winner_w2w = r
+                            if lemmaList[r] in solution:
+                                # DCS lemma found
+                                if dcsScore < 0:
+                                    dcsScore = weights_w2w[0,r]
+                                if wrongLemmaScore >= 0:
+                                    # Both have been set
+                                    break
                             else:
-                                diff_w2w += 1
-                            if lemmaList[r] in solution or lemmaList[r] in solution_no_pvb:
-                                break
+                                # WRONG PREDICTION FOUND
+                                if winner_w2w == -1:
+                                    winner_w2w = r
+                                    wrongLemmaScore = weights_w2w[0,r]
+                                if dcsScore >= 0:
+                                    # Both set
+                                    break
+                        diff_w2w = dcsScore - wrongLemmaScore
 
                         winner_t2t = -1
                         diff_t2t = 0
+                        dcsScore = -1
+                        wrongLemmaScore = -1
                         for r in ranking_t2t:
                             if(r in qu or r in deactivated):
                                 continue
-                            if winner_t2t == -1:
-                                winner_t2t = r
+                            if lemmaList[r] in solution:
+                                # DCS lemma found
+                                if dcsScore < 0:
+                                    dcsScore = weights_t2t[0,r]
+                                if wrongLemmaScore >= 0:
+                                    # Both have been set
+                                    break
                             else:
-                                diff_t2t += 1
-                            if lemmaList[r] in solution or lemmaList[r] in solution_no_pvb:
-                                break
+                                # WRONG PREDICTION FOUND
+                                if winner_w2w == -1:
+                                    winner_w2w = r
+                                    wrongLemmaScore = weights_t2t[0,r]
+                                if dcsScore >= 0:
+                                    # Both set
+                                    break
+                        diff_t2t = dcsScore - wrongLemmaScore
 
                         winner_w2w_samecng = -1
                         diff_w2w_samecng = 0
+                        dcsScore = -1
+                        wrongLemmaScore = -1
                         for r in ranking_w2w_samecng:
                             if(r in qu or r in deactivated):
                                 continue
-                            if winner_w2w_samecng == -1:
-                                winner_w2w_samecng = r
+                            if lemmaList[r] in solution:
+                                # DCS lemma found
+                                if dcsScore < 0:
+                                    dcsScore = weights_w2w_samecng[0,r]
+                                if wrongLemmaScore >= 0:
+                                    # Both have been set
+                                    break
                             else:
-                                diff_w2w_samecng += 1
-                            if lemmaList[r] in solution or lemmaList[r] in solution_no_pvb:
-                                break
-                        # print((diff_w2w), (diff_t2t), (diff_w2w_samecng))
+                                # WRONG PREDICTION FOUND
+                                if winner_w2w == -1:
+                                    winner_w2w = r
+                                    wrongLemmaScore = weights_w2w_samecng[0,r]
+                                if dcsScore >= 0:
+                                    # Both set
+                                    break
+                        diff_w2w_samecng = dcsScore - wrongLemmaScore
+                        
+                        if supervised:
+                            if np.isnan(diff_w2w_samecng):
+                                print(weights_w2w_samecng)
+                            print((diff_w2w), (diff_t2t), (diff_w2w_samecng))
 
-                        #==============================================
-                        # Supervised Learning of Weights
-                        #==============================================
-                        # partition[0] = partition[0] - eta*diff_w2w
-                        # partition[1] = partition[1] - eta*diff_t2t
-                        # partition[2] = partition[2] - eta*diff_w2w_samecng
-                        # partition = partition/np.sum(partition)
-                        # print(partition)
+                            #==============================================
+                            # Supervised Learning of Weights
+                            #==============================================
+                            partition[0] = partition[0] - eta*diff_w2w
+                            partition[1] = partition[1] - eta*diff_t2t
+                            partition[2] = partition[2] - eta*diff_w2w_samecng
+                            partition = partition/np.sum(partition)
+                            self.partition = partition
+                            print(partition)
 
                     
                     # FIND OUT THE WINNER
