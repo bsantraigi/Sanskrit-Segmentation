@@ -130,6 +130,22 @@ def FillMissing(sentenceObj, dcsObj):
 #         return None, None
 #     return(sentenceObj, dcsObj)
 
+def loadSentence_with_rom_slp(fName, sntcPath):
+    try:
+        try:
+            if fName[-1] == '2':
+                dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName[:-1])
+            else:
+                dcsObj = pickleFixLoad('../Text Segmentation/DCS_pick/' + fName)
+        except FileNotFoundError:
+            dcsObj = None
+        sentenceObj = pickleFixLoad(sntcPath)
+        sentenceObj = FixSentence(sentenceObj)
+    except (KeyError, EOFError, pickle.UnpicklingError) as e:
+        print('Failed to load', sntcPath)
+        return None, None
+    return(sentenceObj, dcsObj)
+
 def loadSentence_nopre(fName, sntcPath):
     try:
         if fName[-1] == '2':

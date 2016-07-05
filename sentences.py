@@ -211,6 +211,7 @@ def SentencePreprocess(sentenceObj):
                 else:
                     quFlag = False
                     break
+
                 # except IndexError:
                 #     print('From SentencePreprocess IndexError:', sentenceObj.sent_id)
                 #     raise IndexError
@@ -230,5 +231,4 @@ def SentencePreprocess(sentenceObj):
     # pprint.pprint(chunkDict)
     # pprint.pprint(revMap2Chunk)
     # print(qu)
-    
     return (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain)

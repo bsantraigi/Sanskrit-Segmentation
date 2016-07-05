@@ -192,22 +192,22 @@ class SktWsegRWR(object):
                     return None, None
                 return None
 
-            solution, solution_no_pvb = GetSolutions(dcsObj)
-            
-            solTuples = []
-            for i in range(len(dcsObj.lemmas)):
-                for j in range(len(dcsObj.lemmas[i])):
-                    solTuples.append((rom_slp(dcsObj.lemmas[i][j]), int(dcsObj.cng[i][j])))
+            if dcsObj != None:
+                solution, solution_no_pvb = GetSolutions(dcsObj)
+                
+                solTuples = []
+                for i in range(len(dcsObj.lemmas)):
+                    for j in range(len(dcsObj.lemmas[i])):
+                        solTuples.append((rom_slp(dcsObj.lemmas[i][j]), int(dcsObj.cng[i][j])))
 
             if verbose:
-                metPerfFH = open('.temp/metPerfFH.csv', 'a')
-                metPerfFH_bin = open('.temp/metPerfFH_bin.csv', 'a')
                 # print(solTuples)
                 runDetails = {}
                 runDetails['sentence'] = sentenceObj.sentence
                 runDetails['DCSLemmas'] = []
-                for a in dcsObj.lemmas:
-                    runDetails['DCSLemmas'].append([rom_slp(c) for c in a])
+                if dcsObj != None:
+                    for a in dcsObj.lemmas:
+                        runDetails['DCSLemmas'].append([rom_slp(c) for c in a])
 
 
             # ALL FUNC USES KN SMOOTHING
@@ -369,49 +369,49 @@ class SktWsegRWR(object):
                                 # print(winner_w2w, winner_t2t, winner_w2w_samecng, r)
                                 stepDetails["winner"] = (r, wordList[r], lemmaList[r], cngList[r])
                                 wt = (lemmaList[r], cngList[r])
-                                # print(wt, wt in solTuples)
-                                s1 = ','.join([str(t) for t in [int(k) for k in [r == winner_w2w, r == winner_t2t, r == winner_w2w_samecng, lemmaList[r] in solution]]])
-                                s2 = ','.join([str(t) for t in [np.where(ranking_w2w == r)[0][0], np.where(ranking_t2t == r)[0][0], np.where(ranking_w2w_samecng == r)[0][0], int(lemmaList[r] in solution)]])
-                                metPerfFH_bin.write(s1 + '\n')
-                                metPerfFH.write(s2 + '\n')
+
+                            if supervised:
+                                if (lemmaList[r] in solution) or (lemmaList[r] in solution_no_pvb):
+                                    #It's a correct weight, don't change anything
+                                    break
+                            else:
+                                break
+
+                        if supervised:
                             if (lemmaList[r] in solution) or (lemmaList[r] in solution_no_pvb):
-                                #It's a correct weight, don't change anything
-                                break
+                                # DCS lemma found
+                                if dcsScores[0] < 0:
+                                    dcsScores[0] = weights_w2w[0,r]
+                                    dcsScores[1] = weights_t2t[0,r]
+                                    dcsScores[2] = weights_w2w_samecng[0,r]
+                            else:
+                                # WRONG PREDICTION FOUND
+                                if wrongLemmaScores[0] < 0:
+                                    wrongLemmaScores[0] = weights_w2w[0,r]
+                                    wrongLemmaScores[1] = weights_t2t[0,r]
+                                    wrongLemmaScores[2] = weights_w2w_samecng[0,r]
+                            if wrongLemmaScores[0] >= 0 and dcsScores[0] >= 0:
+                                    # Both have been set
+                                    diff_w2w = dcsScores[0] - wrongLemmaScores[0]
+                                    diff_t2t = dcsScores[1] - wrongLemmaScores[1]
+                                    diff_w2w_samecng = dcsScores[2] - wrongLemmaScores[2]
 
-                        if (lemmaList[r] in solution) or (lemmaList[r] in solution_no_pvb):
-                            # DCS lemma found
-                            if dcsScores[0] < 0:
-                                dcsScores[0] = weights_w2w[0,r]
-                                dcsScores[1] = weights_t2t[0,r]
-                                dcsScores[2] = weights_w2w_samecng[0,r]
-                        else:
-                            # WRONG PREDICTION FOUND
-                            if wrongLemmaScores[0] < 0:
-                                wrongLemmaScores[0] = weights_w2w[0,r]
-                                wrongLemmaScores[1] = weights_t2t[0,r]
-                                wrongLemmaScores[2] = weights_w2w_samecng[0,r]
-                        if wrongLemmaScores[0] >= 0 and dcsScores[0] >= 0:
-                                # Both have been set
-                                diff_w2w = dcsScores[0] - wrongLemmaScores[0]
-                                diff_t2t = dcsScores[1] - wrongLemmaScores[1]
-                                diff_w2w_samecng = dcsScores[2] - wrongLemmaScores[2]
+                                    if supervised:
+                                        #==============================================
+                                        # Supervised Learning of Weights
+                                        #==============================================
 
-                                if supervised:
-                                    #==============================================
-                                    # Supervised Learning of Weights
-                                    #==============================================
-
-                                    # HOW THE LAST SET OF PARTITION VALUES PERFORMED
-                                    if wcsv != None:
-                                        wcsv.writerow(np.append(partition,[diff_w2w, diff_t2t, diff_w2w_samecng]))
-                                    
-                                    partition[0] = partition[0] + eta*diff_w2w
-                                    partition[1] = partition[1] + eta*diff_t2t
-                                    partition[2] = partition[2] + eta*diff_w2w_samecng
-                                    # partition = partition/np.sum(partition)
-                                    self.partition = partition
-                                    # print(partition)
-                                break
+                                        # HOW THE LAST SET OF PARTITION VALUES PERFORMED
+                                        if wcsv != None:
+                                            wcsv.writerow(np.append(partition,[diff_w2w, diff_t2t, diff_w2w_samecng]))
+                                        
+                                        partition[0] = partition[0] + eta*diff_w2w
+                                        partition[1] = partition[1] + eta*diff_t2t
+                                        partition[2] = partition[2] + eta*diff_w2w_samecng
+                                        # partition = partition/np.sum(partition)
+                                        self.partition = partition
+                                        # print(partition)
+                                    break
 
 
 
@@ -541,10 +541,9 @@ class SktWsegRWR(object):
             result = list(map(lambda x: lemmaList[x], qu))
 
             if verbose:
-                metPerfFH.close()
-                metPerfFH_bin.close()
                 runDetails['prediction'] = result
-                runDetails['accuracy'] = Accuracy(result, dcsObj)
+                if dcsObj != None:
+                    runDetails['accuracy'] = Accuracy(result, dcsObj)
                 runDetails['steps'] = stepCount
                 return(result, runDetails)
             else:

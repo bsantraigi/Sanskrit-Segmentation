@@ -1,0 +1,1705 @@
+
+========================================
+264956.P
+[QUERY] (0, 'bahu', 3)
+Pair Match: (0, 'bahu', 'bahu', 3)
+[QUERY] (0, 'ratna', 34)
+Pair Match: (2, 'ratnO', 'ratna', 34)
+[QUERY] (1, 'bahu', 3)
+Pair Match: (3, 'bahu', 'bahu', 3)
+[QUERY] (1, 'Dana', 34)
+Pair Match: (8, 'DanO', 'Dana', 34)
+[QUERY] (2, 'hfz', -190)
+Pair Match: (10, 'hfzwa', 'hfz', -190)
+[QUERY] (2, 'puz', -190)
+Pair Match: (12, 'puzwa', 'puz', -190)
+[QUERY] (2, 'jana', 3)
+Pair Match: (14, 'jana', 'jana', 3)
+[QUERY] (2, 'Avf', -190)
+Words remaining in skt[264956.p]: 8
+
+========================================
+274890.P
+[QUERY] (0, 'patnI', 70)
+Pair Match: (0, 'patnIm', 'patnI', 70)
+[QUERY] (1, 'ca', 2)
+Pair Match: (1, 'ca', 'ca', 2)
+Words remaining in skt[274890.p]: 0
+
+========================================
+395772.P
+[QUERY] (0, 'DAv', -10)
+Pair Match: (1, 'DAvamAnAn', 'DAv', -10)
+[REMOVED]: [(3, 'mAnAn', 'mAna', 79)]
+[REMOVED]: [(4, 'mAnAn', 'man', -190), (5, 'mAnAn', 'man', 79)]
+[REMOVED]: [(6, 'mA', 'mA', 2)]
+[REMOVED]: [(7, 'mA', 'mad', 72)]
+[REMOVED]: [(8, 'AnAn', 'Ana', 79)]
+[QUERY] (1, 'raRa', 169)
+Lemma Match: (9, 'raRe', 'raRa', 49)
+[QUERY] (2, 'vyagra', 79)
+Pair Match: (16, 'vyagrAn', 'vyagra', 79)
+[REMOVED]: [(18, 'at', 'ad', 31), (19, 'at', 'ad', 29), (20, 'at', 'ad', 30), (21, 'at', 'ad', 71)]
+[REMOVED]: [(22, 'at', 'ad', 3)]
+[QUERY] (2, 'man', -11)
+Pair Match: (25, 'manye', 'man', -11)
+[QUERY] (3, 'Suc', -19)
+Pair Match: (35, 'Socanti', 'Suc', -19)
+[QUERY] (4, 'putraka', 39)
+Pair Match: (43, 'putrakAs', 'putraka', 39)
+Words remaining in skt[395772.p]: 0
+
+========================================
+305755.P
+[QUERY] (0, 'niDA', -230)
+[QUERY] (1, 'putra', 169)
+Lemma Match: (1, 'putre', 'putra', 49)
+[QUERY] (2, 'tad', 71)
+Pair Match: (4, 'tat', 'tad', 71)
+[QUERY] (2, 'rAjya', 71)
+Pair Match: (8, 'rAjyam', 'rAjya', 71)
+[REMOVED]: [(15, 'Ajyam', 'Ajya', 31), (16, 'Ajyam', 'Ajya', 71)]
+[REMOVED]: [(17, 'Ajyam', 'aj', 31), (18, 'Ajyam', 'aj', 69), (19, 'Ajyam', 'aj', -210), (20, 'Ajyam', 'aj', 71)]
+[QUERY] (3, 'yoga', 3)
+Pair Match: (22, 'yoga', 'yoga', 3)
+[REMOVED]: [(24, 'gAs', 'ga', 80), (25, 'gAs', 'ga', 40), (26, 'gAs', 'ga', 39), (27, 'gAs', 'go', 80), (28, 'gAs', 'go', 79)]
+[REMOVED]: [(29, 'gAs', 'gA', -302)]
+[REMOVED]: [(30, 'ga', 'ga', 3)]
+[REMOVED]: [(31, 'gA', 'ga', 30)]
+[QUERY] (3, 'aByAsa', 3)
+Pair Match: (32, 'aByAsa', 'aByAsa', 3)
+[REMOVED]: [(35, 'BI', 'BI', 3)]
+[REMOVED]: [(36, 'Asa', 'Asan', 3)]
+[REMOVED]: [(37, 'Asa', 'Asa', 3)]
+[REMOVED]: [(38, 'Asa', 'as', -151), (39, 'Asa', 'as', -158), (40, 'Asa', 'as', -153)]
+[REMOVED]: [(41, 'saratas', 'sf', 129), (42, 'saratas', 'sf', 131), (43, 'saratas', 'sf', 79), (44, 'saratas', 'sf', 149), (45, 'saratas', 'sf', -10), (46, 'saratas', 'sf', 151)]
+[REMOVED]: [(47, 'saratas', 'sf', -16)]
+[QUERY] (3, 'ram', -190)
+Pair Match: (49, 'ratas', 'ram', -190)
+[QUERY] (4, 'BU', -43)
+Pair Match: (50, 'aBavat', 'BU', -43)
+[REMOVED]: [(52, 'Bavat', 'Bavat', 31), (53, 'Bavat', 'Bavat', 71), (54, 'Bavat', 'BU', -10)]
+[REMOVED]: [(55, 'Bavat', 'Bavat', 51)]
+Words remaining in skt[305755.p]: 1
+
+========================================
+433540.P
+[QUERY] (0, 'brahman', 29)
+Pair Match: (2, 'brahmA', 'brahman', 29)
+[REMOVED]: [(4, 'uvAca', 'vac', -151), (5, 'uvAca', 'vac', -153)]
+[REMOVED]: [(6, 'uvA', 'vA', -151), (7, 'uvA', 'vA', -153)]
+[REMOVED]: [(8, 'Uva', 'vA', -158)]
+[QUERY] (0, 'vac', -153)
+Words remaining in skt[433540.p]: 2
+
+========================================
+312185.P
+[QUERY] (0, 'kutas', 2)
+Pair Match: (0, 'kutas', 'kutas', 2)
+Words remaining in skt[312185.p]: 0
+
+========================================
+186781.P
+[QUERY] (0, 'BU', -19)
+Pair Match: (0, 'Bavanti', 'BU', -19)
+[QUERY] (1, 'ca', 2)
+Pair Match: (6, 'ca', 'ca', 2)
+[QUERY] (1, 'atra', 2)
+Pair Match: (7, 'atra', 'atra', 2)
+Words remaining in skt[186781.p]: 0
+
+========================================
+280324.P
+[QUERY] (0, 'kaSyapa', 29)
+Pair Match: (0, 'kaSyapas', 'kaSyapa', 29)
+[REMOVED]: [(2, 'Si', 'SI', 31), (3, 'Si', 'SI', 71)]
+[REMOVED]: [(4, 'Si', 'SI', 3)]
+[REMOVED]: [(5, 'apas', 'apas', 31), (6, 'apas', 'apas', 71), (7, 'apas', 'api', 80)]
+[REMOVED]: [(8, 'apas', 'apas', 51)]
+[QUERY] (1, 'gotra', 3)
+Pair Match: (9, 'gotra', 'gotra', 3)
+[REMOVED]: [(12, 'tra', 'tra', 3)]
+[QUERY] (1, 'kAma', 29)
+Pair Match: (14, 'kAmas', 'kAma', 29)
+[REMOVED]: [(13, 'Amas', 'Ama', 29)]
+[QUERY] (1, 'tu', 2)
+Pair Match: (11, 'tu', 'tu', 2)
+[QUERY] (2, 'car', -153)
+Pair Match: (17, 'cacAra', 'car', -153)
+[REMOVED]: [(19, 'cAra', 'cAra', 49)]
+[REMOVED]: [(20, 'ca', 'ca', 2)]
+[REMOVED]: [(21, 'ara', 'f', -151), (22, 'ara', 'f', -158), (23, 'ara', 'f', -153)]
+[REMOVED]: [(24, 'ara', 'ara', 49), (25, 'ara', 'ara', 51)]
+[REMOVED]: [(26, 'Ara', 'Ara', 49), (27, 'Ara', 'Ara', 51)]
+[QUERY] (3, 'tad', 29)
+Pair Match: (28, 'sa', 'tad', 29)
+[QUERY] (4, 'punar', 2)
+Pair Match: (29, 'punar', 'punar', 2)
+[QUERY] (4, 'tapas', 71)
+Pair Match: (32, 'tapas', 'tapas', 71)
+Words remaining in skt[280324.p]: 0
+
+========================================
+198679.P
+[QUERY] (0, 'taTA', 2)
+Pair Match: (0, 'taTA', 'taTA', 2)
+[QUERY] (1, 'ca', 2)
+Pair Match: (1, 'ca', 'ca', 2)
+[QUERY] (1, 'vac', -190)
+Pair Match: (5, 'uktam', 'vac', -190)
+Words remaining in skt[198679.p]: 0
+
+========================================
+286522.P
+[QUERY] (0, 'vyAsa', 29)
+Pair Match: (0, 'vyAsas', 'vyAsa', 29)
+[REMOVED]: [(1, 'Asas', 'as', -42)]
+Words remaining in skt[286522.p]: 0
+
+========================================
+230436.P
+[QUERY] (0, 'puRya', 3)
+Pair Match: (0, 'puRya', 'puRya', 3)
+[QUERY] (0, 'Sloka', 3)
+Pair Match: (8, 'Sloka', 'Sloka', 3)
+[QUERY] (0, 'purARa', 161)
+Pair Match: (1, 'purARAnAm', 'purARa', 161)
+[REMOVED]: [(7, 'rARA', 'rARA', 89)]
+[REMOVED]: [(9, 'AnAm', 'Ana', 70)]
+[QUERY] (1, 'kaTA', 3)
+Pair Match: (10, 'kaTA', 'kaTA', 3)
+[QUERY] (1, 'samBAzaRa', 101)
+Pair Match: (18, 'samBAzaREs', 'samBAzaRa', 101)
+[REMOVED]: [(12, 'Asam', 'Asa', 31), (13, 'Asam', 'Asa', 69), (14, 'Asam', 'Asa', 71)]
+[REMOVED]: [(15, 'Asam', 'as', -230)]
+[REMOVED]: [(16, 'Asam', 'as', -41)]
+[REMOVED]: [(19, 'BAzaREs', 'BAzaRa', 101)]
+[QUERY] (2, 'SuBa', 101)
+Pair Match: (21, 'SuBEs', 'SuBa', 101)
+Words remaining in skt[230436.p]: 1
+
+========================================
+18548.P
+[QUERY] (0, 'yajana', 131)
+Pair Match: (0, 'yajanAt', 'yajana', 131)
+[REMOVED]: [(2, 'at', 'ad', 31), (3, 'at', 'ad', 29), (4, 'at', 'ad', 30), (5, 'at', 'ad', 71)]
+[QUERY] (1, 'ca', 2)
+Pair Match: (6, 'ca', 'ca', 2)
+[QUERY] (1, 'Ayatana', 31)
+Pair Match: (7, 'Ayatanam', 'Ayatana', 31)
+[REMOVED]: [(10, 'yatanam', 'yatana', 31), (11, 'yatanam', 'yatana', 71)]
+Words remaining in skt[18548.p]: 0
+
+========================================
+336368.P
+[QUERY] (0, 'puRya', 81)
+Pair Match: (0, 'puRyAni', 'puRya', 81)
+[QUERY] (1, 'ca', 2)
+Pair Match: (3, 'ca', 'ca', 2)
+[QUERY] (1, 'eva', 2)
+Pair Match: (4, 'eva', 'eva', 2)
+[QUERY] (2, 'tIrTa', 81)
+Pair Match: (5, 'tIrTAni', 'tIrTa', 81)
+[QUERY] (3, 'tad', 29)
+Pair Match: (8, 'sas', 'tad', 29)
+[QUERY] (4, 'atikram', -230)
+[QUERY] (5, 'taTA', 2)
+Pair Match: (14, 'taTA', 'taTA', 2)
+[REMOVED]: [(18, 'aDvanas', 'Dvan', -42)]
+[QUERY] (5, 'aDvan', 79)
+Pair Match: (17, 'aDvanas', 'aDvan', 79)
+Words remaining in skt[336368.p]: 3
+
+========================================
+139835.P
+[QUERY] (0, 'mUrDan', 169)
+Lemma Match: (0, 'mUrDni', 'mUrDan', 49)
+[QUERY] (0, 'upAGrA', -230)
+[QUERY] (1, 'putraka', 69)
+Pair Match: (2, 'putrakam', 'putraka', 69)
+Words remaining in skt[139835.p]: 1
+
+========================================
+274772.P
+[QUERY] (0, 'tad', 70)
+Pair Match: (0, 'tAm', 'tad', 70)
+[QUERY] (1, 'ca', 2)
+Pair Match: (1, 'ca', 'ca', 2)
+[QUERY] (2, 'Bf', -23)
+Pair Match: (2, 'biBfyAt', 'Bf', -23)
+Words remaining in skt[274772.p]: 0
+
+========================================
+318051.P
+[QUERY] (0, 'nara', 39)
+Pair Match: (0, 'narAs', 'nara', 39)
+[REMOVED]: [(3, 'rAs', 'ra', 29), (4, 'rAs', 'ra', 30)]
+[REMOVED]: [(5, 'astam', 'asta', 31), (6, 'astam', 'asta', 69), (7, 'astam', 'asta', 71), (8, 'astam', 'as', -190)]
+[QUERY] (0, 'tad', 69)
+Pair Match: (9, 'tam', 'tad', 69)
+[QUERY] (1, 'upajIv', -19)
+[QUERY] (2, 'nfpa', 69)
+Pair Match: (16, 'nfpam', 'nfpa', 69)
+[REMOVED]: [(18, 'pam', 'pa', 31), (19, 'pam', 'pa', 69), (20, 'pam', 'pa', 71)]
+[QUERY] (3, 'sarva', 3)
+Pair Match: (21, 'sarva', 'sarva', 3)
+[QUERY] (3, 'arTa', 3)
+Pair Match: (26, 'arTa', 'arTa', 3)
+[QUERY] (3, 'sADaka', 69)
+Pair Match: (24, 'sADakam', 'sADaka', 69)
+Words remaining in skt[318051.p]: 3
+
+========================================
+125879.P
+[QUERY] (0, 'tatra', 2)
+Pair Match: (0, 'tatra', 'tatra', 2)
+[QUERY] (0, 'as', -46)
+Pair Match: (2, 'AstAm', 'as', -46)
+[QUERY] (1, 'rAvaRa', 3)
+Pair Match: (9, 'rAvaRa', 'rAvaRa', 3)
+[QUERY] (1, 'amAtya', 34)
+Pair Match: (12, 'amAtyO', 'amAtya', 34)
+[REMOVED]: [(21, 'mA', 'mA', 2)]
+[REMOVED]: [(22, 'mA', 'mad', 72)]
+[REMOVED]: [(23, 'AtyO', 'at', 74), (24, 'AtyO', 'at', 34), (25, 'AtyO', 'at', -210)]
+[REMOVED]: [(26, 'AtyO', 'at', 54)]
+[QUERY] (2, 'rAkzasa', 34)
+Pair Match: (28, 'rAkzasO', 'rAkzasa', 34)
+[QUERY] (3, 'Suka', 3)
+Pair Match: (30, 'Suka', 'Suka', 3)
+[QUERY] (3, 'sAraRa', 34)
+Pair Match: (32, 'sAraRO', 'sAraRa', 34)
+Words remaining in skt[125879.p]: 0
+
+========================================
+352616.P
+[QUERY] (0, 'Kara', 3)
+Pair Match: (0, 'Kara', 'Kara', 3)
+[QUERY] (0, 'pulkasa', 3)
+Pair Match: (4, 'pulkasa', 'pulkasa', 3)
+[QUERY] (0, 'vena', 159)
+Pair Match: (2, 'venAnAm', 'vena', 159)
+[REMOVED]: [(5, 'AnAm', 'Ana', 70)]
+[QUERY] (1, 'surApa', 29)
+Pair Match: (6, 'surApas', 'surApa', 29)
+[REMOVED]: [(10, 'apas', 'apas', 31), (11, 'apas', 'apas', 71), (12, 'apas', 'api', 80)]
+[REMOVED]: [(13, 'Apas', 'Apa', 29), (14, 'Apas', 'api', 40)]
+[REMOVED]: [(15, 'apas', 'apas', 51)]
+[REMOVED]: [(16, 'Apas', 'api', 60)]
+[REMOVED]: [(17, 'Apas', 'Ap', -92)]
+[QUERY] (2, 'na', 2)
+Pair Match: (18, 'na', 'na', 2)
+[QUERY] (2, 'atra', 2)
+Pair Match: (19, 'atra', 'atra', 2)
+[QUERY] (3, 'saMSaya', 29)
+Pair Match: (20, 'saMSayas', 'saMSaya', 29)
+Words remaining in skt[352616.p]: 0
+
+========================================
+388663.P
+[QUERY] (0, 'sOBadra', 29)
+Pair Match: (0, 'sOBadras', 'sOBadra', 29)
+[QUERY] (1, 'pOrava', 69)
+Pair Match: (2, 'pOravam', 'pOrava', 69)
+[QUERY] (2, 'tu', 2)
+Pair Match: (4, 'tu', 'tu', 2)
+[QUERY] (2, 'anya', 99)
+Pair Match: (5, 'anyEs', 'anya', 99)
+[QUERY] (3, 'vyaD', -230)
+Pair Match: (9, 'vidDvA', 'vyaD', -230)
+[QUERY] (4, 'saptan', 99)
+Lemma Match: (10, 'saptaBis', 'saptan', 102)
+[QUERY] (5, 'ASuga', 99)
+Pair Match: (11, 'ASugEs', 'ASuga', 99)
+[REMOVED]: [(18, 'gEs', 'ga', 99), (19, 'gEs', 'ga', 101)]
+[REMOVED]: [(20, 'gA', 'ga', 30)]
+[REMOVED]: [(21, 'gA', 'gA', 30)]
+Words remaining in skt[388663.p]: 0
+
+========================================
+217382.P
+[QUERY] (0, 'mAMsa', 3)
+Pair Match: (0, 'mAMsa', 'mAMsa', 3)
+[REMOVED]: [(6, 'aMsa', 'aMsa', 3)]
+[REMOVED]: [(7, 'sa', 'tad', 29)]
+[QUERY] (0, 'KaRqa', 3)
+Pair Match: (9, 'KaRqa', 'KaRqa', 3)
+[QUERY] (0, 'sama', 3)
+Pair Match: (13, 'sama', 'sama', 3)
+[QUERY] (0, 'Akara', 29)
+Pair Match: (17, 'Akaras', 'Akara', 29)
+[REMOVED]: [(10, 'ras', 'rA', 129), (11, 'ras', 'rA', 149), (12, 'ras', 'rA', 79)]
+[REMOVED]: [(19, 'karas', 'kara', 29)]
+[REMOVED]: [(20, 'ka', 'ka', 3)]
+[QUERY] (1, 'ca', 2)
+Pair Match: (21, 'ca', 'ca', 2)
+[QUERY] (1, 'antyaja', 29)
+Pair Match: (22, 'antyajas', 'antyaja', 29)
+[REMOVED]: [(25, 'ajas', 'aja', 29)]
+[REMOVED]: [(26, 'jas', 'ja', 29)]
+[QUERY] (2, 'pApa', 3)
+Pair Match: (27, 'pApa', 'pApa', 3)
+[QUERY] (2, 'kAraka', 29)
+Pair Match: (28, 'kArakas', 'kAraka', 29)
+Words remaining in skt[217382.p]: 1
+
+========================================
+256489.P
+[QUERY] (0, 'rAvaRa', 89)
+Pair Match: (0, 'rAvaRena', 'rAvaRa', 89)
+[REMOVED]: [(10, 'inA', 'na', 30)]
+[REMOVED]: [(11, 'na', 'na', 2)]
+[QUERY] (0, 'evam', 2)
+Pair Match: (12, 'evam', 'evam', 2)
+[QUERY] (1, 'vac', -190)
+Pair Match: (16, 'uktAs', 'vac', -190)
+[REMOVED]: [(18, 'astu', 'as', -33)]
+[QUERY] (1, 'tu', 2)
+Pair Match: (19, 'tu', 'tu', 2)
+[QUERY] (2, 'mArIca', 3)
+Pair Match: (20, 'mArIca', 'mArIca', 3)
+[REMOVED]: [(23, 'arI', 'ar', 35), (24, 'arI', 'ar', 74), (25, 'arI', 'ar', 75), (26, 'arI', 'ar', 34), (27, 'arI', 'arn', 74), (28, 'arI', 'arn', 34)]
+[REMOVED]: [(31, 'ca', 'ca', 2)]
+[QUERY] (2, 'Suka', 3)
+Pair Match: (32, 'Suka', 'Suka', 3)
+[QUERY] (2, 'sAraRa', 39)
+Pair Match: (29, 'sAraRAs', 'sAraRa', 39)
+Words remaining in skt[256489.p]: 0
+
+========================================
+243315.P
+[QUERY] (0, 'tad', 69)
+Pair Match: (0, 'tam', 'tad', 69)
+[QUERY] (1, 'nihan', -230)
+[QUERY] (2, 'raRa', 169)
+Lemma Match: (2, 'raRe', 'raRa', 49)
+[QUERY] (3, 'rAjan', 49)
+Pair Match: (9, 'rAjan', 'rAjan', 49)
+[QUERY] (4, 'svayam', 2)
+Pair Match: (12, 'svayam', 'svayam', 2)
+[REMOVED]: [(15, 'ayam', 'aya', 2)]
+[REMOVED]: [(16, 'yam', 'yad', 31), (17, 'yam', 'yad', 71)]
+[QUERY] (5, 'eva', 2)
+Pair Match: (18, 'eva', 'eva', 2)
+[QUERY] (6, 'na', 2)
+Pair Match: (19, 'na', 'na', 2)
+[QUERY] (7, 'lajj', -12)
+Pair Match: (20, 'lajjase', 'lajj', -12)
+Words remaining in skt[243315.p]: 1
+
+========================================
+24221.P
+[QUERY] (0, 'na', 2)
+Pair Match: (0, 'na', 'na', 2)
+Words remaining in skt[24221.p]: 0
+
+========================================
+147821.P
+[QUERY] (0, 'mAdrI', 30)
+Pair Match: (0, 'mAdrI', 'mAdrI', 30)
+[REMOVED]: [(3, 'adrI', 'adr', 74), (4, 'adrI', 'adr', 34)]
+[REMOVED]: [(5, 'adrI', 'adr', 54)]
+Words remaining in skt[147821.p]: 0
+Failed to load ../TextSegmentation/Pickle_Files/382931.p
+
+========================================
+412044.P
+[QUERY] (0, 'yavIyas', 149)
+Pair Match: (3, 'yavIyasas', 'yavIyas', 149)
+[QUERY] (0, 'taTA', 2)
+Pair Match: (5, 'taTA', 'taTA', 2)
+[QUERY] (1, 'kzattf', 149)
+Pair Match: (7, 'kzattur', 'kzattf', 149)
+[QUERY] (2, 'kuru', 3)
+Pair Match: (8, 'kuru', 'kuru', 3)
+[QUERY] (2, 'vaMSa', 3)
+Pair Match: (15, 'vaMSa', 'vaMSa', 3)
+[QUERY] (2, 'vivarDana', 29)
+Words remaining in skt[412044.p]: 5
+
+========================================
+59768.P
+[QUERY] (0, 'rasAyana', 3)
+Pair Match: (0, 'rasAyana', 'rasAyana', 3)
+[REMOVED]: [(7, 'ayana', 'ayana', 3)]
+[REMOVED]: [(8, 'Ayana', 'Ayana', 3)]
+[REMOVED]: [(9, 'a', 'a', 3)]
+[REMOVED]: [(10, 'yan', 'yat', 29)]
+[REMOVED]: [(11, 'an', 'an', 3)]
+[REMOVED]: [(12, 'na', 'na', 2)]
+[QUERY] (0, 'viDAna', 91)
+[QUERY] (1, 'kAla', 3)
+Pair Match: (68, 'kAla', 'kAla', 3)
+[REMOVED]: [(75, 'ala', 'ala', 3)]
+[REMOVED]: [(76, 'ale', 'ala', 51), (77, 'ale', 'ala', 76), (78, 'ale', 'ala', 36)]
+[QUERY] (1, 'yuj', -190)
+Pair Match: (81, 'yuktena', 'yuj', -190)
+[REMOVED]: [(90, 'uktena', 'ukta', 89), (91, 'uktena', 'ukta', 91), (92, 'uktena', 'vac', -190)]
+[REMOVED]: [(93, 'uktA', 'ukta', 30)]
+[REMOVED]: [(94, 'ukte', 'ukta', 35), (95, 'ukte', 'ukta', 36), (96, 'ukte', 'ukta', 75), (97, 'ukte', 'ukta', 76), (98, 'ukte', 'ukta', 49), (99, 'ukte', 'ukta', 51)]
+[REMOVED]: [(100, 'ukta', 'ukta', 3)]
+[REMOVED]: [(101, 'ina', 'na', 49), (102, 'ina', 'na', 51)]
+[REMOVED]: [(103, 'na', 'na', 2)]
+[QUERY] (2, 'ca', 2)
+Pair Match: (104, 'ca', 'ca', 2)
+[QUERY] (2, 'Ayus', 91)
+Pair Match: (106, 'AyuzA', 'Ayus', 91)
+Words remaining in skt[59768.p]: 27
+
+========================================
+110525.P
+[QUERY] (0, 'Pala', 3)
+Pair Match: (0, 'Pala', 'Pala', 3)
+[QUERY] (0, 'mUla', 3)
+Pair Match: (4, 'mUla', 'mUla', 3)
+[QUERY] (0, 'ambu', 3)
+Pair Match: (7, 'ambu', 'ambu', 3)
+[QUERY] (0, 'Bakza', 29)
+Pair Match: (2, 'Bakzas', 'Bakza', 29)
+[REMOVED]: [(6, 'kzas', 'kza', 29)]
+[QUERY] (1, 'BU', -83)
+Pair Match: (10, 'aBUt', 'BU', -83)
+[QUERY] (2, 'sahasra', 71)
+Pair Match: (12, 'sahasram', 'sahasra', 71)
+[QUERY] (3, 'parivatsara', 79)
+Words remaining in skt[110525.p]: 2
+
+========================================
+128588.P
+[QUERY] (0, 'pA', -43)
+Pair Match: (0, 'apibat', 'pA', -43)
+[REMOVED]: [(2, 'pibat', 'pbat', 3), (3, 'pibat', 'pA', -10)]
+[REMOVED]: [(4, 'pibat', 'pbat', 31), (5, 'pibat', 'pbat', 71)]
+[QUERY] (0, 'SItala', 71)
+Pair Match: (8, 'SItalam', 'SItala', 71)
+[REMOVED]: [(10, 'talam', 'tala', 31), (11, 'talam', 'tala', 69), (12, 'talam', 'tala', 71)]
+[QUERY] (1, 'toya', 71)
+Pair Match: (14, 'toyam', 'toya', 71)
+[QUERY] (2, 'pA', -230)
+Pair Match: (15, 'pItvA', 'pA', -230)
+[QUERY] (3, 'ca', 2)
+Pair Match: (17, 'ca', 'ca', 2)
+[QUERY] (4, 'nipat', -153)
+[QUERY] (5, 'ha', 2)
+Pair Match: (25, 'ha', 'ha', 2)
+Words remaining in skt[128588.p]: 4
+
+========================================
+439915.P
+[QUERY] (0, 'palAy', -19)
+Pair Match: (0, 'palAyante', 'palAy', -19)
+[REMOVED]: [(3, 'ayam', 'aya', 31), (4, 'ayam', 'aya', 69), (5, 'ayam', 'aya', 71)]
+[REMOVED]: [(6, 'yam', 'yad', 69)]
+[REMOVED]: [(7, 'ante', 'anta', 49)]
+[REMOVED]: [(8, 'te', 'tad', 35), (9, 'te', 'tad', 75), (10, 'te', 'tad', 76), (11, 'te', 'tad', 36), (12, 'te', 'tad', 39), (13, 'te', 'tvad', 152), (14, 'te', 'tvad', 112)]
+[QUERY] (1, 'na', 2)
+Pair Match: (15, 'na', 'na', 2)
+[QUERY] (2, 'Sak', -190)
+Pair Match: (19, 'SaktAs', 'Sak', -190)
+[QUERY] (3, 'tad', 39)
+Pair Match: (26, 'te', 'tad', 39)
+[QUERY] (4, 'sev', -19)
+Pair Match: (29, 'sevante', 'sev', -19)
+[REMOVED]: [(32, 'te', 'tad', 35), (33, 'te', 'tad', 75), (34, 'te', 'tad', 76), (35, 'te', 'tad', 36), (36, 'te', 'tad', 39), (37, 'te', 'tvad', 152), (38, 'te', 'tvad', 112)]
+[QUERY] (5, 'kf', -190)
+Pair Match: (41, 'kfta', 'kf', -190)
+[QUERY] (5, 'cAwu', 39)
+Pair Match: (45, 'cAwavas', 'cAwu', 39)
+[REMOVED]: [(42, 'vas', 'tvad', 162), (43, 'vas', 'tvad', 82), (44, 'vas', 'tvad', 122)]
+[REMOVED]: [(48, 'Awavas', 'Awu', 39)]
+[REMOVED]: [(49, 'Awavas', 'Awu', 59)]
+[REMOVED]: [(50, 'awa', 'aw', -32)]
+[REMOVED]: [(51, 'Awa', 'aw', -151), (52, 'Awa', 'aw', -158), (53, 'Awa', 'aw', -153)]
+Words remaining in skt[439915.p]: 0
+
+========================================
+388958.P
+[QUERY] (0, 'tatas', 2)
+Pair Match: (0, 'tatas', 'tatas', 2)
+[QUERY] (1, 'jvalana', 69)
+Pair Match: (13, 'jvalanam', 'jvalana', 69)
+[QUERY] (2, 'AdA', -230)
+[QUERY] (3, 'hu', -230)
+Pair Match: (16, 'hutvA', 'hu', -230)
+[QUERY] (4, 'sarva', 39)
+Pair Match: (21, 'sarve', 'sarva', 39)
+[QUERY] (5, 'pfTak', 2)
+Pair Match: (22, 'pfTak', 'pfTak', 2)
+[QUERY] (6, 'pfTak', 2)
+Pair Match: (23, 'pfTak', 'pfTak', 2)
+Words remaining in skt[388958.p]: 1
+
+========================================
+438915.P
+[QUERY] (0, 'yaTA', 2)
+Pair Match: (0, 'yaTA', 'yaTA', 2)
+[QUERY] (0, 'a', 2)
+Lemma Match: (10, 'a', 'a', 3)
+[QUERY] (0, 'sAdfSya', 171)
+Lemma Match: (11, 'sAdfSye', 'sAdfSya', 51)
+[REMOVED]: [(18, 'adfSye', 'dfS', -271)]
+[REMOVED]: [(19, 'at', 'ad', 2)]
+[REMOVED]: [(20, 'at', 'ad', 31), (21, 'at', 'ad', 29), (22, 'at', 'ad', 30), (23, 'at', 'ad', 71)]
+[REMOVED]: [(24, 'at', 'ad', 3)]
+[REMOVED]: [(25, 'a', 'a', 3)]
+[REMOVED]: [(26, 'dfSye', 'dfS', -241)]
+[REMOVED]: [(27, 'dfSye', 'dfSya', 35), (28, 'dfSye', 'dfSya', 36), (29, 'dfSye', 'dfSya', 75), (30, 'dfSye', 'dfSya', 76), (31, 'dfSye', 'dfSya', 49), (32, 'dfSye', 'dfSya', 51), (33, 'dfSye', 'dfS', -210)]
+[REMOVED]: [(34, 'dfSye', 'dfSya', 56), (35, 'dfSye', 'dfSya', 50), (36, 'dfSye', 'dfSya', 55)]
+[REMOVED]: [(37, 'fSye', 'fSya', 49)]
+Words remaining in skt[438915.p]: 0
+
+========================================
+142848.P
+[QUERY] (0, 'tad', 149)
+Pair Match: (0, 'tasya', 'tad', 149)
+[QUERY] (1, 'tad', 71)
+Pair Match: (3, 'tat', 'tad', 71)
+[QUERY] (2, 'duzkara', 71)
+Pair Match: (6, 'duzkaram', 'duzkara', 71)
+[QUERY] (3, 'karman', 71)
+Pair Match: (8, 'karma', 'karman', 71)
+[QUERY] (4, 'praSaMs', -159)
+[QUERY] (5, 'nara', 3)
+Pair Match: (11, 'nara', 'nara', 3)
+[QUERY] (5, 'aDipa', 39)
+Words remaining in skt[142848.p]: 5
+
+========================================
+65048.P
+[QUERY] (0, 'tatas', 2)
+Pair Match: (0, 'tatas', 'tatas', 2)
+[QUERY] (1, 'SUrpaRaKA', 70)
+Pair Match: (12, 'SUrpaRaKAm', 'SUrpaRaKA', 70)
+[QUERY] (2, 'kruD', -190)
+Pair Match: (13, 'krudDAm', 'kruD', -190)
+[REMOVED]: [(16, 'DAm', 'DA', 69), (17, 'DAm', 'DA', 70), (18, 'DAm', 'DA', 159)]
+[QUERY] (3, 'brU', -10)
+Pair Match: (20, 'bruvatIm', 'brU', -10)
+[QUERY] (4, 'paruza', 71)
+Pair Match: (23, 'paruzam', 'paruza', 71)
+[QUERY] (5, 'vacas', 71)
+Pair Match: (25, 'vacas', 'vacas', 71)
+Words remaining in skt[65048.p]: 0
+
+========================================
+156082.P
+[QUERY] (0, 'na', 2)
+Pair Match: (0, 'na', 'na', 2)
+[QUERY] (0, 'AraB', -243)
+[QUERY] (1, 'gam', -240)
+Pair Match: (16, 'gamyamAne', 'gam', -240)
+[REMOVED]: [(30, 'mAne', 'mAna', 35), (31, 'mAne', 'mAna', 36), (32, 'mAne', 'mAna', 75), (33, 'mAne', 'mAna', 76), (34, 'mAne', 'mAna', 49), (35, 'mAne', 'mAna', 51)]
+[REMOVED]: [(36, 'mAne', 'man', -190), (37, 'mAne', 'man', 35), (38, 'mAne', 'man', 36), (39, 'mAne', 'man', 75), (40, 'mAne', 'man', 76), (41, 'mAne', 'man', 49), (42, 'mAne', 'man', 51)]
+[REMOVED]: [(43, 'mAne', 'mAna', 56), (44, 'mAne', 'mAna', 50), (45, 'mAne', 'mAna', 55)]
+[REMOVED]: [(46, 'mAne', 'man', 56), (47, 'mAne', 'man', 50), (48, 'mAne', 'man', 55)]
+[REMOVED]: [(49, 'Ane', 'Ana', 35), (50, 'Ane', 'Ana', 36), (51, 'Ane', 'Ana', 75), (52, 'Ane', 'Ana', 76), (53, 'Ane', 'Ana', 49), (54, 'Ane', 'Ana', 51)]
+[REMOVED]: [(55, 'Ane', 'Ana', 56), (56, 'Ane', 'Ana', 50), (57, 'Ane', 'Ana', 55)]
+[QUERY] (2, 'gam', -220)
+Pair Match: (58, 'gantum', 'gam', -220)
+[QUERY] (3, 'AraB', -243)
+[QUERY] (4, 'kuha', 2)
+Lemma Match: (68, 'kuha', 'kuha', 49)
+Words remaining in skt[156082.p]: 6
+
+========================================
+383638.P
+[QUERY] (0, 'tad', 29)
+Pair Match: (0, 'sa', 'tad', 29)
+[QUERY] (1, 'tad', 71)
+Pair Match: (2, 'tat', 'tad', 71)
+[QUERY] (1, 'na', 2)
+Pair Match: (4, 'na', 'na', 2)
+[QUERY] (2, 'mfz', -153)
+Pair Match: (7, 'mamfze', 'mfz', -153)
+[QUERY] (3, 'BIma', 29)
+Pair Match: (8, 'BImas', 'BIma', 29)
+[QUERY] (4, 'Satru', 99)
+Pair Match: (9, 'SatruBis', 'Satru', 99)
+[QUERY] (5, 'vaDa', 69)
+Pair Match: (11, 'vaDam', 'vaDa', 69)
+[QUERY] (6, 'Ahava', 169)
+Lemma Match: (13, 'Ahave', 'Ahava', 49)
+[REMOVED]: [(15, 'have', 'hU', -11)]
+Words remaining in skt[383638.p]: 0
+
+========================================
+265681.P
+[QUERY] (0, 'duryoDana', 29)
+Pair Match: (0, 'duryoDanas', 'duryoDana', 29)
+[QUERY] (0, 'ca', 2)
+Pair Match: (1, 'ca', 'ca', 2)
+[QUERY] (1, 'duz', -190)
+Pair Match: (3, 'duzwA', 'duz', -190)
+[QUERY] (1, 'Atman', 29)
+Pair Match: (6, 'AtmA', 'Atman', 29)
+[QUERY] (2, 'karRa', 29)
+Pair Match: (7, 'karRas', 'karRa', 29)
+[REMOVED]: [(10, 'fRas', 'fRa', 29)]
+[QUERY] (2, 'ca', 2)
+Pair Match: (11, 'ca', 'ca', 2)
+[QUERY] (3, 'saha', 2)
+Pair Match: (18, 'saha', 'saha', 2)
+[REMOVED]: [(21, 'hasO', 'hasa', 74), (22, 'hasO', 'hasa', 34)]
+[REMOVED]: [(23, 'ha', 'ha', 2)]
+[QUERY] (3, 'sObala', 29)
+Pair Match: (24, 'sObalas', 'sObala', 29)
+[REMOVED]: [(25, 'balas', 'bala', 29)]
+Words remaining in skt[265681.p]: 0
+
+========================================
+271313.P
+[QUERY] (0, 'tatas', 2)
+Pair Match: (0, 'tatas', 'tatas', 2)
+[QUERY] (1, 'Bfgu', 29)
+Pair Match: (12, 'Bfgus', 'Bfgu', 29)
+[QUERY] (2, 'gA', -83)
+Pair Match: (14, 'agAt', 'gA', -83)
+[REMOVED]: [(17, 'gAt', 'ga', 129), (18, 'gAt', 'ga', 131)]
+[REMOVED]: [(19, 'ga', 'ga', 3)]
+[REMOVED]: [(20, 'at', 'ad', 31), (21, 'at', 'ad', 29), (22, 'at', 'ad', 30), (23, 'at', 'ad', 71)]
+[QUERY] (3, 'BUyas', 2)
+Pair Match: (24, 'BUyas', 'BUyas', 2)
+[QUERY] (4, 'snuzA', 70)
+Pair Match: (28, 'snuzAm', 'snuzA', 70)
+[QUERY] (5, 'evam', 2)
+Pair Match: (29, 'evam', 'evam', 2)
+[QUERY] (6, 'vac', -153)
+Pair Match: (31, 'uvAca', 'vac', -153)
+[REMOVED]: [(34, 'aca', 'a\\xf1c', -32)]
+[REMOVED]: [(35, 'ca', 'ca', 2)]
+[QUERY] (7, 'ca', 2)
+Pair Match: (36, 'ca', 'ca', 2)
+Words remaining in skt[271313.p]: 0
+
+========================================
+354183.P
+[QUERY] (0, 'kedAra', 171)
+Lemma Match: (0, 'kedAre', 'kedAra', 49)
+Words remaining in skt[354183.p]: 0
+
+========================================
+353222.P
+[QUERY] (0, 'prI', -273)
+Pair Match: (0, 'aprIyata', 'prI', -273)
+[QUERY] (1, 'ca', 2)
+Pair Match: (1, 'ca', 'ca', 2)
+[QUERY] (2, 'Bartf', 29)
+Pair Match: (2, 'BartA', 'Bartf', 29)
+[REMOVED]: [(5, 'ftA', 'fta', 30), (6, 'ftA', 'f', -190)]
+Words remaining in skt[353222.p]: 0
+
+========================================
+429068.P
+[QUERY] (0, 'tad', 160)
+Pair Match: (0, 'tAsAm', 'tad', 160)
+[QUERY] (1, 'putra', 39)
+Pair Match: (1, 'putrAs', 'putra', 39)
+[QUERY] (1, 'ca', 2)
+Pair Match: (2, 'ca', 'ca', 2)
+[QUERY] (2, 'pOtra', 3)
+Pair Match: (5, 'pOtra', 'pOtra', 3)
+[QUERY] (2, 'Adya', 39)
+Pair Match: (8, 'AdyAs', 'Adya', 39)
+[REMOVED]: [(25, 'yAs', 'yad', 80), (26, 'yAs', 'yad', 40)]
+[QUERY] (3, 'SataSas', 2)
+Pair Match: (27, 'SataSas', 'SataSas', 2)
+[QUERY] (4, 'aTa', 2)
+Pair Match: (28, 'aTa', 'aTa', 2)
+[QUERY] (5, 'sahasraSas', 2)
+Pair Match: (29, 'sahasraSas', 'sahasraSas', 2)
+Words remaining in skt[429068.p]: 0
+
+========================================
+212979.P
+[QUERY] (0, 'krIq', -10)
+Pair Match: (1, 'krIqate', 'krIq', -10)
+[REMOVED]: [(5, 'Iqate', 'Iq', -19)]
+[REMOVED]: [(6, 'te', 'tad', 35), (7, 'te', 'tad', 75), (8, 'te', 'tad', 76), (9, 'te', 'tad', 36), (10, 'te', 'tad', 39), (11, 'te', 'tvad', 152), (12, 'te', 'tvad', 112)]
+[QUERY] (1, 'rudra', 3)
+Pair Match: (13, 'rudra', 'rudra', 3)
+[QUERY] (1, 'loka', 3)
+Pair Match: (15, 'loka', 'loka', 3)
+[QUERY] (1, 'sTa', 29)
+Pair Match: (14, 'sTas', 'sTa', 29)
+[QUERY] (1, 'tad', 3)
+Pair Match: (22, 'tat', 'tad', 3)
+[QUERY] (1, 'anta', 169)
+Lemma Match: (16, 'ante', 'anta', 49)
+[QUERY] (2, 'BU', 170)
+Lemma Match: (25, 'Buvi', 'BU', 50)
+[QUERY] (3, 'ca', 2)
+Pair Match: (26, 'ca', 'ca', 2)
+[QUERY] (3, 'Agam', -190)
+Words remaining in skt[212979.p]: 4
+
+========================================
+423811.P
+[QUERY] (0, 'na', 2)
+Pair Match: (0, 'na', 'na', 2)
+[QUERY] (1, 'samprasAraRa', 171)
+Lemma Match: (1, 'samprasAraRe', 'samprasAraRa', 51)
+[QUERY] (2, 'samprasAraRa', 31)
+Pair Match: (5, 'samprasAraRam', 'samprasAraRa', 31)
+Words remaining in skt[423811.p]: 0
+
+========================================
+207348.P
+[QUERY] (0, 'evam', 2)
+Pair Match: (0, 'evam', 'evam', 2)
+[QUERY] (1, 'sarvatra', 2)
+Pair Match: (1, 'sarvatra', 'sarvatra', 2)
+[QUERY] (2, 'Seza', 31)
+Pair Match: (2, 'Sezam', 'Seza', 31)
+[QUERY] (3, 'sugama', 31)
+Pair Match: (5, 'sugamam', 'sugama', 31)
+[REMOVED]: [(9, 'gamam', 'gama', 2)]
+Words remaining in skt[207348.p]: 0
+
+========================================
+259.P
+[QUERY] (0, 'Sru', -32)
+Pair Match: (0, 'SfRu', 'Sru', -32)
+[QUERY] (1, 'nATa', 49)
+Pair Match: (2, 'nATa', 'nATa', 49)
+[REMOVED]: [(4, 'ATa', 'ah', -152)]
+[REMOVED]: [(5, 'aTa', 'aTa', 2)]
+[QUERY] (2, 'parAnanda', 49)
+[QUERY] (3, 'para', 3)
+Pair Match: (17, 'para', 'para', 3)
+[QUERY] (3, 'apara', 3)
+Pair Match: (25, 'apara', 'apara', 3)
+[REMOVED]: [(24, 'para', 'para', 3)]
+[QUERY] (3, 'kula', 3)
+Pair Match: (20, 'kula', 'kula', 3)
+[QUERY] (3, 'Atmaka', 49)
+Pair Match: (22, 'Atmaka', 'Atmaka', 49)
+Words remaining in skt[259.p]: 9
+
+========================================
+401679.P
+[QUERY] (0, 'aSvatTAman', 29)
+Pair Match: (0, 'aSvatTAmA', 'aSvatTAman', 29)
+[REMOVED]: [(6, 'Amas', 'Ama', 29)]
+[REMOVED]: [(7, 'Amas', 'am', -42)]
+[REMOVED]: [(8, 'AmA', 'Ama', 30)]
+[REMOVED]: [(9, 'ama', 'am', -32)]
+[REMOVED]: [(10, 'Ama', 'am', -151), (11, 'Ama', 'am', -158), (12, 'Ama', 'am', -153)]
+[REMOVED]: [(13, 'amA', 'amA', 2)]
+[REMOVED]: [(14, 'mA', 'mA', 2)]
+[REMOVED]: [(15, 'mA', 'mad', 72)]
+[REMOVED]: [(16, 'uvAca', 'vac', -151), (17, 'uvAca', 'vac', -153)]
+[REMOVED]: [(18, 'uvA', 'vA', -151), (19, 'uvA', 'vA', -153)]
+[REMOVED]: [(20, 'Uva', 'vA', -158)]
+[QUERY] (0, 'vac', -153)
+Words remaining in skt[401679.p]: 3
+
+========================================
+399039.P
+[QUERY] (0, 'sahasraSas', 2)
+Pair Match: (0, 'sahasraSas', 'sahasraSas', 2)
+[QUERY] (1, 'Sara', 99)
+Pair Match: (1, 'SarEs', 'Sara', 99)
+[QUERY] (2, 'muc', -190)
+Pair Match: (4, 'muktEs', 'muc', -190)
+[REMOVED]: [(10, 'tEs', 'tad', 99), (11, 'tEs', 'tad', 101)]
+[QUERY] (3, 'pARqava', 89)
+Pair Match: (12, 'pARqavena', 'pARqava', 89)
+[REMOVED]: [(17, 'ina', 'na', 49), (18, 'ina', 'na', 51)]
+[REMOVED]: [(19, 'na', 'na', 2)]
+[QUERY] (4, 'vfza', 89)
+Pair Match: (20, 'vfzeRa', 'vfza', 89)
+[QUERY] (5, 'ca', 2)
+Pair Match: (21, 'ca', 'ca', 2)
+Words remaining in skt[399039.p]: 0
+
+========================================
+416620.P
+[QUERY] (0, 'snAtaka', 29)
+Pair Match: (0, 'snAtakas', 'snAtaka', 29)
+[REMOVED]: [(2, 'kas', 'ka', 29)]
+Words remaining in skt[416620.p]: 0
+
+========================================
+287474.P
+[QUERY] (0, 'tatra', 2)
+Pair Match: (0, 'tatra', 'tatra', 2)
+[QUERY] (1, 'manu', 29)
+Pair Match: (1, 'manus', 'manu', 29)
+Words remaining in skt[287474.p]: 0
+
+========================================
+369500.P
+[QUERY] (0, 'rAjan', 3)
+Pair Match: (0, 'rAja', 'rAjan', 3)
+[QUERY] (0, 'prasAda', 3)
+Pair Match: (6, 'prasAda', 'prasAda', 3)
+[QUERY] (0, 'laB', -190)
+Pair Match: (5, 'labDam', 'laB', -190)
+[QUERY] (1, 'ca', 2)
+Pair Match: (7, 'ca', 'ca', 2)
+[QUERY] (2, 'sarva', 159)
+Pair Match: (9, 'sarvezAm', 'sarva', 159)
+[REMOVED]: [(12, 'izAm', 'za', 70), (13, 'izAm', 'z', 160)]
+[REMOVED]: [(14, 'izAm', 'z', 161), (15, 'izAm', 'z', 159)]
+[QUERY] (3, 'eva', 2)
+Pair Match: (16, 'eva', 'eva', 2)
+[QUERY] (4, 'tad', 31)
+Pair Match: (18, 'tat', 'tad', 31)
+[QUERY] (4, 'sama', 31)
+Pair Match: (20, 'samam', 'sama', 31)
+Words remaining in skt[369500.p]: 0
+
+========================================
+373701.P
+[QUERY] (0, 'cakzus', 31)
+Pair Match: (0, 'cakzus', 'cakzus', 31)
+[QUERY] (1, 'aNgAra', 39)
+Pair Match: (3, 'aNgArAs', 'aNgAra', 39)
+[REMOVED]: [(12, 'arAs', 'ara', 80), (13, 'arAs', 'ara', 40), (14, 'arAs', 'ara', 39)]
+[REMOVED]: [(15, 'ArAs', 'Ara', 80), (16, 'ArAs', 'Ara', 40), (17, 'ArAs', 'Ara', 39)]
+[REMOVED]: [(18, 'arAs', 'ara', 59), (19, 'arAs', 'ara', 60)]
+[REMOVED]: [(20, 'ArAs', 'Ara', 59), (21, 'ArAs', 'Ara', 60)]
+[REMOVED]: [(22, 'arAs', 'rA', -42)]
+[REMOVED]: [(23, 'a', 'a', 3)]
+[REMOVED]: [(24, 'rAs', 'ra', 29), (25, 'rAs', 'ra', 30)]
+[REMOVED]: [(26, 'rAs', 'ra', 49), (27, 'rAs', 'ra', 50)]
+Words remaining in skt[373701.p]: 0
+
+========================================
+366887.P
+[QUERY] (0, 'tad', 29)
+Pair Match: (0, 'sa', 'tad', 29)
+[QUERY] (1, 'ha', 2)
+Pair Match: (1, 'ha', 'ha', 2)
+[REMOVED]: [(2, 'uvAca', 'vac', -151), (3, 'uvAca', 'vac', -153)]
+[REMOVED]: [(4, 'uvA', 'vA', -151), (5, 'uvA', 'vA', -153)]
+[REMOVED]: [(6, 'Uva', 'vA', -158)]
+[QUERY] (1, 'vac', -153)
+Words remaining in skt[366887.p]: 2
+
+========================================
+263519.P
+[QUERY] (0, 'tatas', 2)
+Pair Match: (0, 'tatas', 'tatas', 2)
+[QUERY] (1, 'pravft', -190)
+[QUERY] (2, 'maDura', 31)
+Pair Match: (16, 'maDuram', 'maDura', 31)
+[QUERY] (3, 'gAnDarva', 31)
+Pair Match: (19, 'gAnDarvam', 'gAnDarva', 31)
+[QUERY] (4, 'atimAnuza', 31)
+Words remaining in skt[263519.p]: 6
+
+========================================
+64723.P
+[QUERY] (0, 'tad', 69)
+Pair Match: (0, 'tam', 'tad', 69)
+[QUERY] (1, 'evam', 2)
+Pair Match: (1, 'evam', 'evam', 2)
+[QUERY] (2, 'aBisaMrabDa', 69)
+[QUERY] (3, 'brU', -10)
+Pair Match: (11, 'bruvARam', 'brU', -10)
+[QUERY] (4, 'rAGava', 69)
+Pair Match: (13, 'rAGavam', 'rAGava', 69)
+[QUERY] (5, 'raRa', 169)
+Lemma Match: (14, 'raRe', 'raRa', 49)
+Words remaining in skt[64723.p]: 4
+
+========================================
+318360.P
+[QUERY] (0, 'yatas', 2)
+Pair Match: (0, 'yatas', 'yatas', 2)
+[QUERY] (1, 'Darma', 29)
+Pair Match: (8, 'Darmas', 'Darma', 29)
+[QUERY] (1, 'tatas', 2)
+Pair Match: (9, 'tatas', 'tatas', 2)
+[QUERY] (2, 'vA', 2)
+Pair Match: (21, 'vA', 'vA', 2)
+[QUERY] (3, 'as', -23)
+Pair Match: (23, 'syAt', 'as', -23)
+[QUERY] (3, 'maDyasTa', 29)
+Pair Match: (26, 'maDyasTas', 'maDyasTa', 29)
+[REMOVED]: [(24, 'sTas', 'as', -15)]
+[REMOVED]: [(25, 'sTas', 'sTa', 29)]
+[QUERY] (4, 'vA', 2)
+Pair Match: (29, 'vA', 'vA', 2)
+[QUERY] (5, 'tatas', 2)
+Pair Match: (30, 'tatas', 'tatas', 2)
+[QUERY] (6, 'BU', -23)
+Pair Match: (42, 'Bavet', 'BU', -23)
+Words remaining in skt[318360.p]: 0
+
+========================================
+287155.P
+[QUERY] (0, 'taTA', 2)
+Pair Match: (0, 'taTA', 'taTA', 2)
+[QUERY] (0, 'ah', -153)
+Pair Match: (1, 'Aha', 'ah', -153)
+[REMOVED]: [(4, 'ha', 'ha', 2)]
+[QUERY] (1, 'manu', 29)
+Pair Match: (5, 'manus', 'manu', 29)
+Words remaining in skt[287155.p]: 0
+
+========================================
+115460.P
+[QUERY] (0, 'sTURA', 3)
+Lemma Match: (3, 'sTURA', 'sTURA', 30)
+[QUERY] (0, 'karRa', 71)
+Lemma Match: (8, 'karRam', 'karRa', 69)
+[REMOVED]: [(4, 'AkarRam', 'AkarRa', 31), (5, 'AkarRam', 'AkarRa', 69), (6, 'AkarRam', 'AkarRa', 71)]
+[REMOVED]: [(11, 'fRam', 'fRa', 31), (12, 'fRam', 'fRa', 69), (13, 'fRam', 'fRa', 71)]
+[QUERY] (1, 'ayas', 3)
+Pair Match: (14, 'ayas', 'ayas', 3)
+[REMOVED]: [(17, 'jAlam', 'jAla', 31), (18, 'jAlam', 'jAla', 71)]
+[REMOVED]: [(19, 'jA', 'ja', 30)]
+[REMOVED]: [(20, 'ja', 'ja', 3)]
+[QUERY] (1, 'jAla', 71)
+[QUERY] (2, 'Sara', 3)
+Pair Match: (24, 'Sara', 'Sara', 3)
+[QUERY] (2, 'varza', 71)
+Pair Match: (27, 'varzam', 'varza', 71)
+[QUERY] (3, 'Sara', 3)
+Pair Match: (28, 'Sara', 'Sara', 3)
+[QUERY] (3, 'ulbaRa', 71)
+Pair Match: (31, 'ulbaRam', 'ulbaRa', 71)
+Words remaining in skt[115460.p]: 3
+
+========================================
+198665.P
+[QUERY] (0, 'yatas', 2)
+Pair Match: (0, 'yatas', 'yatas', 2)
+Words remaining in skt[198665.p]: 0
+
+========================================
+141273.P
+[QUERY] (0, 'druhyu', 29)
+Pair Match: (0, 'druhyus', 'druhyu', 29)
+Words remaining in skt[141273.p]: 0
+
+========================================
+143349.P
+[QUERY] (0, 'BIzma', 29)
+Pair Match: (0, 'BIzmas', 'BIzma', 29)
+Words remaining in skt[143349.p]: 0
+
+========================================
+231263.P
+[QUERY] (0, 'na', 2)
+Pair Match: (0, 'na', 'na', 2)
+[QUERY] (1, 'para', 29)
+Pair Match: (2, 'paras', 'para', 29)
+[QUERY] (2, 'pApa', 71)
+Pair Match: (5, 'pApam', 'pApa', 71)
+[QUERY] (3, 'AdA', -13)
+[QUERY] (4, 'para', 159)
+Pair Match: (26, 'parezAm', 'para', 159)
+[REMOVED]: [(30, 'izAm', 'za', 70), (31, 'izAm', 'z', 160)]
+[REMOVED]: [(32, 'izAm', 'z', 161), (33, 'izAm', 'z', 159)]
+[QUERY] (5, 'pApa', 3)
+Pair Match: (34, 'pApa', 'pApa', 3)
+[QUERY] (5, 'karman', 159)
+Pair Match: (36, 'karmaRAm', 'karman', 159)
+Words remaining in skt[231263.p]: 5
+
+========================================
+409983.P
+[QUERY] (0, 'gAlava', 29)
+Pair Match: (0, 'gAlavas', 'gAlava', 29)
+[REMOVED]: [(9, 'Alavas', 'Alu', 39)]
+[REMOVED]: [(10, 'Alavas', 'Alu', 59)]
+[REMOVED]: [(11, 'a', 'a', 3)]
+[REMOVED]: [(12, 'lavas', 'lava', 29)]
+[QUERY] (1, 'vimfS', -10)
+[QUERY] (2, 'eva', 2)
+Pair Match: (16, 'eva', 'eva', 2)
+[QUERY] (3, 'sva', 3)
+Pair Match: (19, 'sva', 'sva', 3)
+[QUERY] (3, 'kArya', 3)
+Pair Match: (21, 'kArya', 'kArya', 3)
+[REMOVED]: [(32, 'arya', 'arya', 3), (33, 'arya', 'f', -210)]
+[REMOVED]: [(34, 'Arya', 'Arya', 3)]
+[REMOVED]: [(35, 'ari', 'ar', 3), (36, 'ari', 'arn', 3)]
+[REMOVED]: [(37, 'ari', 'ar', 31), (38, 'ari', 'ar', 71), (39, 'ari', 'arn', 31), (40, 'ari', 'arn', 71)]
+[REMOVED]: [(41, 'arI', 'ar', 35), (42, 'arI', 'ar', 74), (43, 'arI', 'ar', 75), (44, 'arI', 'ar', 34), (45, 'arI', 'arn', 74), (46, 'arI', 'arn', 34)]
+[QUERY] (3, 'gam', -190)
+Pair Match: (52, 'gatam', 'gam', -190)
+[REMOVED]: [(47, 'aga', 'aga', 3)]
+[REMOVED]: [(55, 'tamAs', 'tamas', 29)]
+[REMOVED]: [(56, 'mAnasas', 'mAnasa', 29)]
+[REMOVED]: [(57, 'mAs', 'mAs', 29)]
+[QUERY] (3, 'mAnasa', 29)
+Words remaining in skt[409983.p]: 7
+
+========================================
+320788.P
+[QUERY] (0, 'sahAya', 3)
+Pair Match: (1, 'sahAya', 'sahAya', 3)
+[REMOVED]: [(9, 'hAye', 'hA', -241)]
+[REMOVED]: [(10, 'ha', 'ha', 2)]
+[REMOVED]: [(11, 'ayas', 'ayas', 3)]
+[REMOVED]: [(12, 'ayas', 'ayas', 31), (13, 'ayas', 'ayas', 71)]
+[REMOVED]: [(14, 'yas', 'yad', 29)]
+[REMOVED]: [(15, 'ye', 'yad', 35), (16, 'ye', 'yad', 75), (17, 'ye', 'yad', 76), (18, 'ye', 'yad', 36), (19, 'ye', 'yad', 39)]
+[REMOVED]: [(20, 'ayukta', 'yuj', -113)]
+[QUERY] (0, 'yuj', -190)
+Pair Match: (24, 'yuktena', 'yuj', -190)
+[REMOVED]: [(33, 'uktena', 'ukta', 89), (34, 'uktena', 'ukta', 91), (35, 'uktena', 'vac', -190)]
+[REMOVED]: [(36, 'uktA', 'ukta', 30)]
+[REMOVED]: [(37, 'ukte', 'ukta', 35), (38, 'ukte', 'ukta', 36), (39, 'ukte', 'ukta', 75), (40, 'ukte', 'ukta', 76), (41, 'ukte', 'ukta', 49), (42, 'ukte', 'ukta', 51)]
+[REMOVED]: [(43, 'ukta', 'ukta', 3)]
+[REMOVED]: [(44, 'ina', 'na', 49), (45, 'ina', 'na', 51)]
+[REMOVED]: [(46, 'na', 'na', 2)]
+[QUERY] (1, 'mahI', 30)
+Pair Match: (47, 'mahI', 'mahI', 30)
+[QUERY] (2, 'kftsna', 30)
+Pair Match: (48, 'kftsnA', 'kftsna', 30)
+[QUERY] (3, 'Sakya', 30)
+Pair Match: (49, 'SakyA', 'Sakya', 30)
+[QUERY] (4, 'praSAs', -220)
+Words remaining in skt[320788.p]: 2
+
+========================================
+252935.P
+[QUERY] (0, 'SrI', 30)
+Pair Match: (1, 'SrIs', 'SrI', 30)
+[QUERY] (0, 'vac', -153)
+Pair Match: (3, 'uvAca', 'vac', -153)
+[REMOVED]: [(6, 'aca', 'a\\xf1c', -32)]
+[REMOVED]: [(7, 'ca', 'ca', 2)]
+Words remaining in skt[252935.p]: 0
+
+========================================
+382091.P
+[QUERY] (0, 'rajas', 91)
+Pair Match: (0, 'rajasA', 'rajas', 91)
+[QUERY] (1, 'ca', 2)
+Pair Match: (1, 'ca', 'ca', 2)
+[QUERY] (1, 'aBiBU', -190)
+[QUERY] (2, 'astra', 3)
+Pair Match: (28, 'astra', 'astra', 3)
+[QUERY] (2, 'jAla', 101)
+Pair Match: (37, 'jAlEs', 'jAla', 101)
+[REMOVED]: [(33, 'aja', 'aja', 3)]
+[REMOVED]: [(34, 'ajA', 'aja', 30)]
+[REMOVED]: [(35, 'aja', 'aj', -32)]
+[REMOVED]: [(40, 'alEs', 'ala', 101)]
+[QUERY] (2, 'ca', 2)
+Pair Match: (32, 'ca', 'ca', 2)
+[QUERY] (3, 'tud', -10)
+Lemma Match: (41, 'tudyatAm', 'tud', -263)
+[REMOVED]: [(43, 'dyatAm', 'dA', -36)]
+[REMOVED]: [(44, 'dya', 'dA', -32)]
+[REMOVED]: [(45, 'tAm', 'tad', 70)]
+Words remaining in skt[382091.p]: 18
+
+========================================
+182995.P
+[QUERY] (0, 'tad', 69)
+Pair Match: (0, 'tam', 'tad', 69)
+[QUERY] (1, 'brahman', 149)
+Pair Match: (3, 'brahmaRas', 'brahman', 149)
+[QUERY] (2, 'astra', 91)
+Pair Match: (6, 'astreRa', 'astra', 91)
+[REMOVED]: [(10, 'eRa', 'eRa', 49)]
+[QUERY] (3, 'niyuj', -230)
+[QUERY] (4, 'cApa', 169)
+Lemma Match: (12, 'cApe', 'cApa', 49)
+[REMOVED]: [(18, 'Ape', 'Apa', 49)]
+[REMOVED]: [(19, 'Ape', 'Ap', 49), (20, 'Ape', 'Ap', 50)]
+[QUERY] (5, 'Sara', 69)
+Pair Match: (21, 'Saram', 'Sara', 69)
+[QUERY] (6, 'su', 2)
+Lemma Match: (22, 'su', 'su', 3)
+[QUERY] (6, 'puNKa', 69)
+Lemma Match: (23, 'puNKam', 'puNKa', 2)
+[QUERY] (7, 'yama', 3)
+Pair Match: (24, 'yama', 'yama', 3)
+[QUERY] (7, 'dUta', 3)
+Pair Match: (30, 'dUta', 'dUta', 3)
+[REMOVED]: [(32, 'uta', 'uta', 3), (33, 'uta', 'vA', -190)]
+[REMOVED]: [(34, 'Uta', 'Uta', 3)]
+[QUERY] (7, 'kalpa', 69)
+Pair Match: (27, 'kalpam', 'kalpa', 69)
+Words remaining in skt[182995.p]: 2
+
+========================================
+149455.P
+[QUERY] (0, 'tatas', 2)
+Pair Match: (0, 'tatas', 'tatas', 2)
+[QUERY] (0, 'tad', 149)
+Pair Match: (12, 'tasya', 'tad', 149)
+[QUERY] (1, 'naga', 3)
+Pair Match: (14, 'naga', 'naga', 3)
+[REMOVED]: [(16, 'ga', 'ga', 3)]
+[QUERY] (1, 'sTa', 149)
+Pair Match: (17, 'sTasya', 'sTa', 149)
+[QUERY] (2, 'kzura', 89)
+Pair Match: (19, 'kzureRa', 'kzura', 89)
+[QUERY] (3, 'niSA', -190)
+[QUERY] (4, 'ha', 2)
+Pair Match: (55, 'ha', 'ha', 2)
+Words remaining in skt[149455.p]: 14
+
+========================================
+132600.P
+[QUERY] (0, 'na', 2)
+Pair Match: (0, 'na', 'na', 2)
+[QUERY] (1, 'Sam', -10)
+Pair Match: (6, 'SAmyatas', 'Sam', -10)
+[QUERY] (2, 'anna', 3)
+Pair Match: (8, 'anna', 'anna', 3)
+[QUERY] (2, 'pAna', 101)
+Pair Match: (10, 'pAnEs', 'pAna', 101)
+[REMOVED]: [(24, 'AnEs', 'Ana', 99), (25, 'AnEs', 'Ana', 101)]
+[REMOVED]: [(26, 'AnA', 'Ana', 30)]
+[REMOVED]: [(27, 'Ana', 'an', -151), (28, 'Ana', 'an', -158), (29, 'Ana', 'an', -153)]
+[REMOVED]: [(30, 'na', 'na', 2)]
+[QUERY] (3, 'ca', 2)
+Pair Match: (31, 'ca', 'ca', 2)
+[QUERY] (4, 'tad', 149)
+Pair Match: (32, 'tasya', 'tad', 149)
+[QUERY] (5, 'mftyu', 29)
+Pair Match: (34, 'mftyus', 'mftyu', 29)
+[QUERY] (5, 'upasTA', -190)
+Words remaining in skt[132600.p]: 1
+
+========================================
+156761.P
+[QUERY] (0, 'sarva', 3)
+Pair Match: (0, 'sarva', 'sarva', 3)
+[QUERY] (0, 'sOBAgya', 3)
+Pair Match: (1, 'sOBAgya', 'sOBAgya', 3)
+[REMOVED]: [(4, 'a', 'a', 3)]
+[REMOVED]: [(5, 'gI', 'ga', 3)]
+[QUERY] (0, 'janaka', 29)
+Pair Match: (9, 'janakas', 'janaka', 29)
+[REMOVED]: [(6, 'ajan', 'aj', 29), (7, 'ajan', 'aj', -10)]
+[REMOVED]: [(10, 'akar', 'kf', -83), (11, 'akar', 'kf', -82)]
+[QUERY] (1, 'sarva', 3)
+Pair Match: (12, 'sarva', 'sarva', 3)
+[QUERY] (1, 'mantra', 29)
+Pair Match: (16, 'mantras', 'mantra', 29)
+[REMOVED]: [(17, 'aGa', 'aGa', 3)]
+[REMOVED]: [(18, 'a', 'a', 3)]
+[QUERY] (1, 'aGa', 3)
+[QUERY] (1, 'nAyaka', 29)
+Pair Match: (24, 'nAyakas', 'nAyaka', 29)
+[REMOVED]: [(13, 'akar', 'kf', -83), (14, 'akar', 'kf', -82)]
+[REMOVED]: [(15, 'kas', 'ka', 29)]
+[REMOVED]: [(19, 'GanAya', 'Gana', 109), (20, 'GanAya', 'Gana', 111)]
+[REMOVED]: [(21, 'GanAs', 'Gana', 80), (22, 'GanAs', 'Gana', 40), (23, 'GanAs', 'Gana', 39)]
+Words remaining in skt[156761.p]: 1
+
+========================================
+285944.P
+[QUERY] (0, 'sarva', 159)
+Pair Match: (1, 'sarvezAm', 'sarva', 159)
+[REMOVED]: [(6, 'izAs', 'za', 80), (7, 'izAs', 'za', 40), (8, 'izAs', 'za', 39)]
+[REMOVED]: [(9, 'izAm', 'za', 70), (10, 'izAm', 'z', 160)]
+[REMOVED]: [(11, 'izAm', 'z', 161), (12, 'izAm', 'z', 159)]
+[REMOVED]: [(13, 'iza', 'za', 3)]
+[REMOVED]: [(14, 'izA', 'za', 30), (15, 'izA', 'z', 90)]
+[REMOVED]: [(16, 'izA', 'z', 89), (17, 'izA', 'z', 91)]
+[REMOVED]: [(18, 'Iza', 'z', -158)]
+[REMOVED]: [(19, 'ameva', 'am', -24)]
+[REMOVED]: [(20, 'AmA', 'Ama', 30)]
+[REMOVED]: [(21, 'ama', 'am', -32)]
+[REMOVED]: [(22, 'Ama', 'am', -151), (23, 'Ama', 'am', -158), (24, 'Ama', 'am', -153)]
+[REMOVED]: [(25, 'amA', 'amA', 2)]
+[REMOVED]: [(26, 'mA', 'mA', 2)]
+[REMOVED]: [(27, 'mA', 'mad', 72)]
+[QUERY] (0, 'eva', 2)
+Pair Match: (4, 'eva', 'eva', 2)
+[QUERY] (1, 'jantu', 159)
+Pair Match: (28, 'jantUnAm', 'jantu', 159)
+[REMOVED]: [(32, 'UnAm', 'Una', 70)]
+[QUERY] (2, 'hetu', 29)
+Pair Match: (33, 'hetus', 'hetu', 29)
+[QUERY] (2, 'mokza', 149)
+Pair Match: (34, 'mokzasya', 'mokza', 149)
+[QUERY] (3, 'sarvadA', 2)
+Pair Match: (35, 'sarvadA', 'sarvadA', 2)
+[REMOVED]: [(37, 'dA', 'da', 30)]
+Words remaining in skt[285944.p]: 0
+
+========================================
+61879.P
+[QUERY] (0, 'grah', -230)
+Pair Match: (0, 'gfhItvA', 'grah', -230)
+[QUERY] (1, 'tad', 69)
+Pair Match: (1, 'tam', 'tad', 69)
+[QUERY] (2, 'rasa', 69)
+Pair Match: (2, 'rasam', 'rasa', 69)
+[QUERY] (3, 'pU', -190)
+Pair Match: (6, 'pUtam', 'pU', -190)
+[QUERY] (4, 'gavya', 91)
+Pair Match: (9, 'gavyena', 'gavya', 91)
+[REMOVED]: [(19, 'ina', 'na', 49), (20, 'ina', 'na', 51)]
+[REMOVED]: [(21, 'na', 'na', 2)]
+[QUERY] (5, 'payas', 91)
+Pair Match: (22, 'payasA', 'payas', 91)
+[QUERY] (6, 'saha', 2)
+Pair Match: (23, 'saha', 'saha', 2)
+[REMOVED]: [(26, 'ha', 'ha', 2)]
+Words remaining in skt[61879.p]: 0
+
+========================================
+423201.P
+[QUERY] (0, 'yatas', 2)
+Pair Match: (0, 'yatas', 'yatas', 2)
+Words remaining in skt[423201.p]: 0
+
+========================================
+436110.P
+[QUERY] (0, 'brAhmaRa', 159)
+Pair Match: (1, 'brAhmaRAnAm', 'brAhmaRa', 159)
+[REMOVED]: [(3, 'AnAm', 'Ana', 70)]
+[QUERY] (1, 'tadA', 2)
+Pair Match: (4, 'tadA', 'tadA', 2)
+[QUERY] (2, 'kfzRa', 29)
+Pair Match: (5, 'kfzRas', 'kfzRa', 29)
+[QUERY] (2, 'tad', 31)
+Pair Match: (6, 'tat', 'tad', 31)
+[QUERY] (3, 'BU', -83)
+Pair Match: (8, 'aBUt', 'BU', -83)
+[QUERY] (4, 'roman', 3)
+Pair Match: (9, 'roma', 'roman', 3)
+[QUERY] (4, 'harzaRa', 31)
+Pair Match: (13, 'harzaRam', 'harzaRa', 31)
+Words remaining in skt[436110.p]: 0
+
+========================================
+349282.P
+[QUERY] (0, 'tad', 94)
+Pair Match: (7, 'tAByAm', 'tad', 94)
+[QUERY] (1, 'aBiDA', -190)
+Words remaining in skt[349282.p]: 6
+
+========================================
+441853.P
+[QUERY] (0, 'karman', 171)
+Lemma Match: (0, 'karmaRi', 'karman', 51)
+[QUERY] (1, 'ca', 2)
+Pair Match: (1, 'ca', 'ca', 2)
+Words remaining in skt[441853.p]: 0
+
+========================================
+112290.P
+[QUERY] (0, 'rAjan', 29)
+Pair Match: (10, 'rAjA', 'rAjan', 29)
+[REMOVED]: [(15, 'uvAca', 'vac', -151), (16, 'uvAca', 'vac', -153)]
+[REMOVED]: [(17, 'uvA', 'vA', -151), (18, 'uvA', 'vA', -153)]
+[REMOVED]: [(19, 'Uva', 'vA', -158)]
+[QUERY] (0, 'vac', -153)
+Words remaining in skt[112290.p]: 3
+
+========================================
+440899.P
+[QUERY] (0, 'Agama', 169)
+Lemma Match: (0, 'Agame', 'Agama', 35)
+Words remaining in skt[440899.p]: 0
+
+========================================
+66996.P
+[QUERY] (0, 'rAjya', 3)
+Pair Match: (0, 'rAjya', 'rAjya', 3)
+[QUERY] (0, 'BraMS', -190)
+Pair Match: (20, 'Brazwena', 'BraMS', -190)
+[REMOVED]: [(14, 'ina', 'na', 49), (15, 'ina', 'na', 51)]
+[REMOVED]: [(16, 'na', 'na', 2)]
+[QUERY] (1, 'dIna', 89)
+Pair Match: (29, 'dInena', 'dIna', 89)
+[REMOVED]: [(39, 'ina', 'na', 49), (40, 'ina', 'na', 51)]
+[REMOVED]: [(41, 'na', 'na', 2)]
+[QUERY] (2, 'tApasa', 89)
+Pair Match: (42, 'tApasena', 'tApasa', 89)
+[REMOVED]: [(45, 'ina', 'na', 49), (46, 'ina', 'na', 51)]
+[REMOVED]: [(47, 'na', 'na', 2)]
+[QUERY] (3, 'gam', -190)
+Pair Match: (54, 'gatAs', 'gam', -190)
+[REMOVED]: [(57, 'AyuzA', 'Ayus', 89), (58, 'AyuzA', 'Ayus', 91)]
+[REMOVED]: [(59, 'AyuzA', 'Ayus', 90)]
+[QUERY] (3, 'Ayus', 89)
+Words remaining in skt[66996.p]: 2
+
+========================================
+179806.P
+[QUERY] (0, 'viSuD', -190)
+[QUERY] (0, 'manas', 149)
+Pair Match: (9, 'manasas', 'manas', 149)
+[REMOVED]: [(15, 'anasas', 'anas', 131), (16, 'anasas', 'anas', 151)]
+[REMOVED]: [(17, 'a', 'a', 3)]
+[REMOVED]: [(18, 'nasas', 'nas', 130), (19, 'nasas', 'nas', 150)]
+[QUERY] (0, 'tad', 149)
+Pair Match: (20, 'tasya', 'tad', 149)
+[QUERY] (1, 'mAMsa', 31)
+Pair Match: (22, 'mAMsam', 'mAMsa', 31)
+[REMOVED]: [(26, 'aMsam', 'aMsa', 69)]
+[QUERY] (2, 'mAMsa', 91)
+Pair Match: (27, 'mAMsena', 'mAMsa', 91)
+[REMOVED]: [(36, 'aMsena', 'aMsa', 89)]
+[REMOVED]: [(37, 'aMsa', 'aMsa', 3)]
+[REMOVED]: [(38, 'aMse', 'aMsa', 49)]
+[REMOVED]: [(39, 'sena', 'san', -158)]
+[REMOVED]: [(40, 'sA', 'tad', 30)]
+[REMOVED]: [(41, 'ina', 'na', 49), (42, 'ina', 'na', 51)]
+[REMOVED]: [(43, 'na', 'na', 2)]
+[QUERY] (3, 'vfD', -13)
+Pair Match: (44, 'varDate', 'vfD', -13)
+[REMOVED]: [(49, 'te', 'tad', 35), (50, 'te', 'tad', 75), (51, 'te', 'tad', 76), (52, 'te', 'tad', 36), (53, 'te', 'tad', 39), (54, 'te', 'tvad', 152), (55, 'te', 'tvad', 112)]
+Words remaining in skt[179806.p]: 2
+
+========================================
+423055.P
+[QUERY] (0, 'yatas', 2)
+Pair Match: (0, 'yatas', 'yatas', 2)
+Words remaining in skt[423055.p]: 0
+
+========================================
+298530.P
+[QUERY] (0, 'cyu', -190)
+Pair Match: (3, 'cyutam', 'cyu', -190)
+[QUERY] (1, 'tu', 2)
+Pair Match: (4, 'tu', 'tu', 2)
+[QUERY] (2, 'gOtama', 69)
+Pair Match: (5, 'gOtamam', 'gOtama', 69)
+[QUERY] (3, 'sTAna', 131)
+Pair Match: (6, 'sTAnAt', 'sTAna', 131)
+[REMOVED]: [(9, 'AnAt', 'Ana', 129), (10, 'AnAt', 'Ana', 131)]
+[REMOVED]: [(11, 'Ana', 'Ana', 3)]
+[REMOVED]: [(12, 'at', 'ad', 31), (13, 'at', 'ad', 29), (14, 'at', 'ad', 30), (15, 'at', 'ad', 71)]
+[QUERY] (4, 'samIkz', -230)
+[QUERY] (5, 'kuru', 3)
+Pair Match: (20, 'kuru', 'kuru', 3)
+[QUERY] (5, 'nandana', 29)
+Pair Match: (25, 'nandanas', 'nandana', 29)
+[REMOVED]: [(22, 'nas', 'mad', 162), (23, 'nas', 'mad', 82), (24, 'nas', 'mad', 122)]
+Words remaining in skt[298530.p]: 2
+
+========================================
+142942.P
+[QUERY] (0, 'BUzaRa', 161)
+Pair Match: (1, 'BUzaRAnAm', 'BUzaRa', 161)
+[REMOVED]: [(6, 'uzaRAnAm', 'uzaRa', 160), (7, 'uzaRAnAm', 'uzaRa', 161)]
+[REMOVED]: [(8, 'uzaRa', 'uzaRa', 3)]
+[REMOVED]: [(9, 'uzaRA', 'uzaRa', 30)]
+[REMOVED]: [(10, 'AnAm', 'Ana', 70)]
+[QUERY] (1, 'ca', 2)
+Pair Match: (11, 'ca', 'ca', 2)
+[QUERY] (2, 'SuBra', 161)
+Pair Match: (13, 'SuBrARAm', 'SuBra', 161)
+[QUERY] (3, 'kavaca', 159)
+Pair Match: (16, 'kavacAnAm', 'kavaca', 159)
+[REMOVED]: [(18, 'AnAm', 'Ana', 70)]
+[QUERY] (4, 'ca', 2)
+Pair Match: (19, 'ca', 'ca', 2)
+[QUERY] (5, 'sarvaSas', 2)
+Pair Match: (20, 'sarvaSas', 'sarvaSas', 2)
+Words remaining in skt[142942.p]: 0
+
+========================================
+216055.P
+[QUERY] (0, 'taTA', 2)
+Pair Match: (0, 'taTA', 'taTA', 2)
+[QUERY] (0, 'apara', 31)
+Pair Match: (1, 'aparam', 'apara', 31)
+[REMOVED]: [(6, 'param', 'para', 31), (7, 'param', 'para', 69), (8, 'param', 'para', 71)]
+[REMOVED]: [(9, 'ram', 'rA', 2)]
+[QUERY] (1, 'ca', 2)
+Pair Match: (10, 'ca', 'ca', 2)
+Words remaining in skt[216055.p]: 0
+
+========================================
+124860.P
+[QUERY] (0, 'brahman', 29)
+Pair Match: (2, 'brahmA', 'brahman', 29)
+[REMOVED]: [(4, 'uvAca', 'vac', -151), (5, 'uvAca', 'vac', -153)]
+[REMOVED]: [(6, 'uvA', 'vA', -151), (7, 'uvA', 'vA', -153)]
+[REMOVED]: [(8, 'Uva', 'vA', -158)]
+[QUERY] (0, 'vac', -153)
+Words remaining in skt[124860.p]: 2
+
+========================================
+271449.P
+[QUERY] (0, 'tad', 169)
+Lemma Match: (0, 'tasmin', 'tad', 49)
+[QUERY] (1, 'dAna', 41)
+Pair Match: (3, 'dAnAni', 'dAna', 41)
+[QUERY] (2, 'dA', -190)
+Pair Match: (7, 'dattAni', 'dA', -190)
+[QUERY] (3, 'deva', 3)
+Pair Match: (9, 'deva', 'deva', 3)
+[QUERY] (3, 'Bogya', 41)
+Pair Match: (12, 'BogyAni', 'Bogya', 41)
+[QUERY] (4, 'sattama', 49)
+Pair Match: (18, 'sattama', 'sattama', 49)
+Words remaining in skt[271449.p]: 0
+
+========================================
+235976.P
+[QUERY] (0, 'SItala', 41)
+Pair Match: (1, 'SItalAni', 'SItala', 41)
+[QUERY] (1, 'kazAya', 41)
+Pair Match: (4, 'kazAyARi', 'kazAya', 41)
+[QUERY] (2, 'maDura', 41)
+Pair Match: (7, 'maDurARi', 'maDura', 41)
+[REMOVED]: [(12, 'rARi', 'rARA', 50)]
+[REMOVED]: [(13, 'rARi', 'rA', -31)]
+[QUERY] (3, 'SuBa', 41)
+Pair Match: (15, 'SuBAni', 'SuBa', 41)
+[QUERY] (4, 'ca', 2)
+Pair Match: (17, 'ca', 'ca', 2)
+Words remaining in skt[235976.p]: 0
+
+========================================
+310612.P
+[QUERY] (0, 'saMvatsara', 69)
+Pair Match: (0, 'saMvatsaram', 'saMvatsara', 69)
+[REMOVED]: [(2, 'ram', 'rA', 2)]
+[REMOVED]: [(3, 'saram', 'sara', 31), (4, 'saram', 'sara', 69), (5, 'saram', 'sara', 71)]
+[REMOVED]: [(6, 'sa', 'sa', 3)]
+[QUERY] (1, 'majjan', 129)
+Pair Match: (7, 'majj\\xf1as', 'majjan', 129)
+[REMOVED]: [(12, 'j\\xf1as', 'j\\xf1a', 29)]
+[QUERY] (2, 'na', 2)
+Pair Match: (13, 'na', 'na', 2)
+[QUERY] (2, 'aS', -23)
+Pair Match: (14, 'aSnIyAt', 'aS', -23)
+Words remaining in skt[310612.p]: 0
+
+========================================
+160368.P
+[QUERY] (0, 'heman', 3)
+Pair Match: (0, 'hema', 'heman', 3)
+[QUERY] (0, 'keyUra', 3)
+Pair Match: (3, 'keyUra', 'keyUra', 3)
+[REMOVED]: [(5, 'rava', 'rava', 3)]
+[QUERY] (0, 'valaya', 69)
+Pair Match: (6, 'valayam', 'valaya', 69)
+[REMOVED]: [(8, 'layam', 'laya', 69)]
+[REMOVED]: [(9, 'yam', 'yad', 31), (10, 'yam', 'yad', 71)]
+[QUERY] (1, 'svarRa', 3)
+Pair Match: (11, 'svarRa', 'svarRa', 3)
+[REMOVED]: [(14, 'fRa', 'fRa', 3)]
+[QUERY] (1, 'maRqala', 3)
+Pair Match: (18, 'maRqala', 'maRqala', 3)
+[QUERY] (1, 'kUbara', 69)
+Pair Match: (16, 'kUbaram', 'kUbara', 69)
+Words remaining in skt[160368.p]: 0
+
+========================================
+166436.P
+[QUERY] (0, 'tatas', 2)
+Pair Match: (0, 'tatas', 'tatas', 2)
+[QUERY] (0, 'tad', 34)
+Pair Match: (13, 'tO', 'tad', 34)
+[QUERY] (1, 'nara', 3)
+Pair Match: (14, 'nara', 'nara', 3)
+[QUERY] (1, 'SArdUla', 34)
+Pair Match: (16, 'SArdUlO', 'SArdUla', 34)
+[QUERY] (2, 'dIp', -10)
+Lemma Match: (18, 'dIpyamAnO', 'dIp', 74)
+[REMOVED]: [(27, 'mAnO', 'mAna', 74), (28, 'mAnO', 'mAna', 34)]
+[REMOVED]: [(29, 'mAnO', 'man', 74), (30, 'mAnO', 'man', 34), (31, 'mAnO', 'man', -190)]
+[REMOVED]: [(32, 'mAnO', 'mAna', 54)]
+[REMOVED]: [(33, 'mAnO', 'man', 54)]
+[REMOVED]: [(34, 'mAs', 'mAs', 29)]
+[REMOVED]: [(35, 'AnO', 'Ana', 74), (36, 'AnO', 'Ana', 34)]
+[REMOVED]: [(37, 'AnO', 'Ana', 54)]
+[REMOVED]: [(38, 'nO', 'mad', 117), (39, 'nO', 'mad', 77), (40, 'nO', 'mad', 157)]
+[QUERY] (3, 'sva', 3)
+Pair Match: (41, 'sva', 'sva', 3)
+[QUERY] (3, 'tejas', 91)
+Pair Match: (42, 'tejasA', 'tejas', 91)
+Words remaining in skt[166436.p]: 0
+
+========================================
+389374.P
+[QUERY] (0, 'vyaD', -43)
+Pair Match: (0, 'aviDyat', 'vyaD', -43)
+[REMOVED]: [(5, 'viDyat', 'vyaD', 3), (6, 'viDyat', 'vyaD', -10)]
+[REMOVED]: [(7, 'viDyat', 'vyaD', 31), (8, 'viDyat', 'vyaD', 71)]
+[REMOVED]: [(9, 'viDyan', 'vyaD', 29)]
+[REMOVED]: [(10, 'viDi', 'vD', 3)]
+[REMOVED]: [(11, 'DI', 'DI', 3)]
+[REMOVED]: [(12, 'Di', 'D', 3)]
+[REMOVED]: [(13, 'at', 'ad', 31), (14, 'at', 'ad', 29), (15, 'at', 'ad', 30), (16, 'at', 'ad', 71)]
+[REMOVED]: [(17, 'at', 'ad', 3)]
+[QUERY] (0, 'navan', 99)
+Lemma Match: (18, 'navaBis', 'navan', 102)
+[QUERY] (1, 'kzema', 69)
+Pair Match: (20, 'kzemam', 'kzema', 69)
+[QUERY] (2, 'tad', 29)
+Pair Match: (22, 'sa', 'tad', 29)
+[QUERY] (3, 'han', -190)
+Pair Match: (25, 'hatas', 'han', -190)
+[QUERY] (4, 'prapat', -43)
+[QUERY] (5, 'raTa', 129)
+Pair Match: (32, 'raTAt', 'raTa', 129)
+[REMOVED]: [(34, 'at', 'ad', 31), (35, 'at', 'ad', 29), (36, 'at', 'ad', 30), (37, 'at', 'ad', 71)]
+Words remaining in skt[389374.p]: 3
+
+========================================
+123977.P
+[QUERY] (0, 'na', 2)
+Pair Match: (0, 'na', 'na', 2)
+[QUERY] (1, 'ca', 2)
+Pair Match: (1, 'ca', 'ca', 2)
+[QUERY] (1, 'anya', 31)
+Pair Match: (2, 'anyat', 'anya', 31)
+[QUERY] (2, 'kf', -243)
+Pair Match: (4, 'kriyate', 'kf', -243)
+[REMOVED]: [(6, 'yate', 'yat', -11)]
+[REMOVED]: [(7, 'yate', 'yata', 35), (8, 'yate', 'yata', 36), (9, 'yate', 'yata', 75), (10, 'yate', 'yata', 76), (11, 'yate', 'yata', 49), (12, 'yate', 'yata', 51), (13, 'yate', 'yam', -190), (14, 'yate', 'yat', 109), (15, 'yate', 'yat', 111)]
+[REMOVED]: [(16, 'yate', 'yat', 49), (17, 'yate', 'yat', 50)]
+[REMOVED]: [(18, 'yate', 'yata', 56), (19, 'yate', 'yata', 50), (20, 'yate', 'yata', 55)]
+[QUERY] (3, 'karman', 31)
+Pair Match: (21, 'karma', 'karman', 31)
+[QUERY] (4, 'mUla', 3)
+Pair Match: (24, 'mUla', 'mUla', 3)
+[QUERY] (4, 'Ceda', 89)
+Pair Match: (26, 'Cedena', 'Ceda', 89)
+[REMOVED]: [(25, 'na', 'na', 2)]
+[REMOVED]: [(36, 'ina', 'na', 49), (37, 'ina', 'na', 51)]
+[QUERY] (5, 'Buj', -243)
+Pair Match: (38, 'Bujyate', 'Buj', -243)
+Words remaining in skt[123977.p]: 0
+
+========================================
+367170.P
+[QUERY] (0, 'tad', 109)
+Pair Match: (0, 'tasmE', 'tad', 109)
+[QUERY] (1, 'ha', 2)
+Pair Match: (2, 'ha', 'ha', 2)
+[REMOVED]: [(3, 'uvAca', 'vac', -151), (4, 'uvAca', 'vac', -153)]
+[REMOVED]: [(5, 'uvA', 'vA', -151), (6, 'uvA', 'vA', -153)]
+[REMOVED]: [(7, 'Uva', 'vA', -158)]
+[QUERY] (1, 'vac', -153)
+Words remaining in skt[367170.p]: 2
+
+========================================
+246105.P
+[QUERY] (0, 'sva', 3)
+Pair Match: (0, 'sva', 'sva', 3)
+[QUERY] (0, 'aMSa', 89)
+Pair Match: (2, 'aMSena', 'aMSa', 89)
+[REMOVED]: [(5, 'ina', 'na', 49), (6, 'ina', 'na', 51)]
+[REMOVED]: [(7, 'na', 'na', 2)]
+[QUERY] (1, 'BAskara', 29)
+Pair Match: (8, 'BAskaras', 'BAskara', 29)
+[QUERY] (1, 'tatra', 2)
+Pair Match: (9, 'tatra', 'tatra', 2)
+[QUERY] (2, 'sTA', -13)
+Lemma Match: (12, 'tizWate', 'sTA', -10)
+[REMOVED]: [(14, 'te', 'tad', 35), (15, 'te', 'tad', 75), (16, 'te', 'tad', 76), (17, 'te', 'tad', 36), (18, 'te', 'tad', 39), (19, 'te', 'tvad', 152), (20, 'te', 'tvad', 112)]
+[QUERY] (3, 'ca', 2)
+Pair Match: (21, 'ca', 'ca', 2)
+[QUERY] (3, 'uttara', 171)
+Lemma Match: (22, 'uttare', 'uttara', 49)
+[REMOVED]: [(31, 're', 'rA', 35), (32, 're', 'rA', 75), (33, 're', 'rA', 109)]
+[QUERY] (4, 'tawa', 171)
+Lemma Match: (34, 'tawe', 'tawa', 49)
+Words remaining in skt[246105.p]: 0
+
+========================================
+175943.P
+[QUERY] (0, 'yaTA', 2)
+Pair Match: (0, 'yaTA', 'yaTA', 2)
+Words remaining in skt[175943.p]: 0
+
+========================================
+12353.P
+[QUERY] (0, 'buDa', 3)
+Pair Match: (0, 'buDa', 'buDa', 3)
+[QUERY] (0, 'BArgava', 154)
+Pair Match: (5, 'BArgavayos', 'BArgava', 154)
+[REMOVED]: [(1, 'yos', 'yu', 129), (2, 'yos', 'yu', 130), (3, 'yos', 'yu', 150)]
+[QUERY] (1, 'SIGra', 129)
+Pair Match: (9, 'SIGrAt', 'SIGra', 129)
+[REMOVED]: [(12, 'at', 'ad', 31), (13, 'at', 'ad', 29), (14, 'at', 'ad', 30), (15, 'at', 'ad', 71)]
+[QUERY] (2, 'tadvat', 2)
+Lemma Match: (16, 'tadvat', 'tadvat', 1)
+[QUERY] (3, 'pAta', 29)
+Pair Match: (20, 'pAtas', 'pAta', 29)
+[QUERY] (4, 'yadA', 2)
+Pair Match: (23, 'yadA', 'yadA', 2)
+[QUERY] (5, 'sTA', -190)
+Pair Match: (25, 'sTitas', 'sTA', -190)
+Words remaining in skt[12353.p]: 0
+
+========================================
+271223.P
+[QUERY] (0, 'brahman', 29)
+Pair Match: (2, 'brahmA', 'brahman', 29)
+[REMOVED]: [(4, 'uvAca', 'vac', -151), (5, 'uvAca', 'vac', -153)]
+[REMOVED]: [(6, 'uvA', 'vA', -151), (7, 'uvA', 'vA', -153)]
+[REMOVED]: [(8, 'Uva', 'vA', -158)]
+[QUERY] (0, 'vac', -153)
+Words remaining in skt[271223.p]: 2
+
+========================================
+191998.P
+[QUERY] (0, 'viSuD', -190)
+[QUERY] (0, 'rasana', 171)
+Lemma Match: (2, 'rasane', 'rasana', 35)
+[QUERY] (1, 'tad', 109)
+Pair Match: (11, 'tasmE', 'tad', 109)
+[QUERY] (2, 'ruc', -13)
+Pair Match: (13, 'rocate', 'ruc', -13)
+[QUERY] (3, 'anna', 31)
+Pair Match: (14, 'annam', 'anna', 31)
+[QUERY] (3, 'apUrvavat', 2)
+Pair Match: (20, 'apUrvavat', 'apUrvavat', 2)
+[REMOVED]: [(16, 'avat', 'av', 31), (17, 'avat', 'av', -10), (18, 'avat', 'av', 71)]
+[REMOVED]: [(19, 'avat', 'av', 51)]
+[REMOVED]: [(22, 'pUrvavat', 'pUrvavat', 31), (23, 'pUrvavat', 'pUrvavat', 71)]
+[REMOVED]: [(24, 'pUrvavat', 'pUrvavat', 51)]
+[REMOVED]: [(25, 'pUru', 'puru', 3)]
+[REMOVED]: [(26, 'pUrU', 'puru', 74), (27, 'pUrU', 'puru', 34)]
+Words remaining in skt[191998.p]: 1
+
+========================================
+243335.P
+[QUERY] (0, 'tad', 29)
+Pair Match: (0, 'sa', 'tad', 29)
+[QUERY] (1, 'tad', 99)
+Pair Match: (1, 'tEs', 'tad', 99)
+[QUERY] (2, 'sarva', 99)
+Pair Match: (3, 'sarvEs', 'sarva', 99)
+[QUERY] (3, 'parivf', -190)
+[QUERY] (4, 'rAkzasa', 99)
+Pair Match: (9, 'rAkzasEs', 'rAkzasa', 99)
+[QUERY] (5, 'Gora', 3)
+Pair Match: (11, 'Gora', 'Gora', 3)
+[QUERY] (5, 'darSana', 99)
+Pair Match: (13, 'darSanEs', 'darSana', 99)
+Words remaining in skt[243335.p]: 2
+
+========================================
+416853.P
+[QUERY] (0, 'varRa', 79)
+Pair Match: (0, 'varRAn', 'varRa', 79)
+[REMOVED]: [(2, 'fRAn', 'fRa', 79)]
+[QUERY] (1, 'ASrama', 79)
+Pair Match: (3, 'ASramAn', 'ASrama', 79)
+[QUERY] (2, 'ca', 2)
+Pair Match: (4, 'ca', 'ca', 2)
+[QUERY] (3, 'nyAya', 129)
+Pair Match: (5, 'nyAyatas', 'nyAya', 129)
+[QUERY] (4, 'aBirakz', -23)
+Words remaining in skt[416853.p]: 2
+
+========================================
+112277.P
+[QUERY] (0, 'AhAra', 89)
+Pair Match: (0, 'AhAreRa', 'AhAra', 89)
+[REMOVED]: [(3, 'areRa', 'ara', 89), (4, 'areRa', 'ara', 91)]
+[REMOVED]: [(5, 'AreRa', 'Ara', 89), (6, 'AreRa', 'Ara', 91)]
+[QUERY] (1, 'vivfD', -19)
+[QUERY] (2, 'tad', 91)
+Pair Match: (9, 'tena', 'tad', 91)
+[REMOVED]: [(18, 'na', 'na', 2)]
+[QUERY] (3, 'jIv', -19)
+Pair Match: (19, 'jIvanti', 'jIv', -19)
+[QUERY] (4, 'jantu', 39)
+Pair Match: (25, 'jantavas', 'jantu', 39)
+Words remaining in skt[112277.p]: 1
