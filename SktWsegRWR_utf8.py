@@ -35,31 +35,33 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, all
     until 
     we reach steady state or max iteration steps
     """
-#     print(prioriVec)
+    # print('Priori SUM:', np.sum(prioriVec))
     transMat = np.copy(transMat)
     
-#     MERGE THE NEW QUERY NODE(IF ANY), CHANGES IN TRANSMAT AND PRIORI-VEC
-    doMax = False
-    if(len(queryList) > 1):
-        dest = queryList[0]
-        if(doMax):
-            # Using the max probability logic
-            transMat[dest, :] = np.max(transMat[queryList, :], axis=0)
-            transMat[queryList[1:], :] = 0   
-            
-            transMat[:, dest] = np.max(transMat[:, queryList], axis=1)
-            transMat[:, queryList[1:]] = 0
-        else:
-            # TODO - Using the sum probability logic
-            transMat[dest, :] = np.sum(transMat[queryList, :], axis=0)
-            transMat[queryList[1:], :] = 0
-            
-            transMat[:, dest] = np.sum(transMat[:, queryList], axis=1)
-            transMat[:, queryList[1:]] = 0
-
+    # FIRST TAKE CARE OF THE DEACTIVATED NODES
     transMat[:, deactivated] = 0
     transMat[deactivated, :] = 0
-    # MakeRowStochastic(transMat)
+    
+    # MERGE THE NEW QUERY NODE(IF ANY), CHANGES IN TRANSMAT AND PRIORI-VEC
+    # THIS SHOULD CREATE A PROPER ROW-STOCHASTIC TRANSITION MATRIX
+    
+    # print(np.sum(transMat, axis = 1))
+    if(len(queryList) > 1):
+        dest = queryList[0] # New merged node
+        # Add the columns
+        transMat[:, dest] = np.sum(transMat[:, queryList], axis=1)
+        transMat[:, queryList[1:]] = 0
+
+        # TODO - Using the sum probability logic
+        newPs = np.multiply(transMat[:, dest], prioriVec)
+        # transMat[dest, :] = np.sum(transMat[queryList, :], axis=0)
+        transMat[dest, :] = newPs
+        transMat[dest, :] /= np.sum(transMat[dest, :])
+        transMat[queryList[1:], :] = 0
+            
+    MakeRowStochastic(transMat)
+    # print('Transum',np.sum(transMat, axis=1))
+
 
 
     
@@ -68,10 +70,12 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, all
     n = prioriVec.shape[1]
     papMat = np.copy(prioriVec)
     
-    rVec = np.zeros((1, n))    
-#     print(n)
+    rVec = np.zeros((1, n))
+
+    '''FIXME: WHICH NODE(S) SHOULD BE THE QUERY NODES??
+    '''
+    # rVec[0, queryList[0]] = 1
     for i in queryList:
-#         print(i)
         rVec[0, i] = 1/len(queryList)
 
     nodes = []
@@ -102,6 +106,7 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, all
 #         print(diffMax)
         if  abs(diffMax) < eps and i > 25:
             break
+    # print(i, 'iterations')
     
     return(papMat)
 
@@ -161,9 +166,12 @@ class SktWsegRWR(object):
         partition /= sum(partition)
         self.partition = partition
 
-    def predict(self, sentenceObj, dcsObj, verbose = False, supervised = False, eta = 0.1):
+    def predict(self, sentenceObj, dcsObj, verbose = False, supervised = False, eta = 0.1, **kwargs):
+        if 'weightCollectorCSV' in kwargs:
+            wcsv = kwargs['weightCollectorCSV']
         # eta = 0.1
         partition = self.partition
+        # print(self.partition)
         try:
             (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
         except SentenceError as e:
@@ -250,36 +258,25 @@ class SktWsegRWR(object):
                     prioriVec3 = np.copy(prioriVec1)
 
                     restartP = 0.4 # This is to be set based on graph diameter
-                    # print(deactivated)
-                    weights_w2w = RWR(
-                        prioriVec = prioriVec1, transMat = TransitionMat_w2w, 
-                        restartP = restartP, maxIteration = 500, queryList = qu, 
-                        deactivated = deactivated, allowRPModify = False)
-                    print('After: W2W')
-                    print(weights_w2w)
-                    ranking_w2w = weights_w2w[0].argsort()[::-1]
-                    # print(weights_w2w)
-                    # print(ranking_w2w)
-
                     weights_t2t = RWR(
                         prioriVec = prioriVec2, transMat = TransitionMat_t2t, 
                         restartP = restartP, maxIteration = 500, queryList = qu, 
                         deactivated = deactivated, allowRPModify = False)
-                    print('After: T2T')
-                    print(weights_t2t)
                     ranking_t2t = weights_t2t[0].argsort()[::-1]
-                    # print(weights_t2t)
-                    # print(ranking_t2t)
+
+
+                    weights_w2w = RWR(
+                        prioriVec = prioriVec1, transMat = TransitionMat_w2w, 
+                        restartP = restartP, maxIteration = 500, queryList = qu, 
+                        deactivated = deactivated, allowRPModify = False)
+                    ranking_w2w = weights_w2w[0].argsort()[::-1]
+
 
                     weights_w2w_samecng = RWR(
                         prioriVec = prioriVec3, transMat = TransitionMat_w2w_samecng, 
                         restartP = restartP, maxIteration = 500, queryList = qu,
                         deactivated = deactivated, allowRPModify = False)
-                    print('After: SAMECNG')
-                    print(weights_w2w_samecng)
                     ranking_w2w_samecng = weights_w2w_samecng[0].argsort()[::-1]
-                    # print(weights_w2w_samecng)
-                    # print(ranking_w2w_samecng)
 
                     # v2c_scores = self.v2c_modelFunc(lemmaList, cngList, verbs)
                     # # print(v2c_scores)
@@ -288,8 +285,11 @@ class SktWsegRWR(object):
                     # print(ranking_v2cng)
 
                     # NORMALIZE THE WEIGHT VECTORS
+                    # print('W2W', np.sum(weights_w2w))
                     weights_w2w /= np.sum(weights_w2w)
+                    # print('T2T', np.sum(weights_t2t))
                     weights_t2t /= np.sum(weights_t2t)
+                    # print('SCNG', np.sum(weights_w2w_samecng))
                     weights_w2w_samecng /= np.sum(weights_w2w_samecng)
                     # v2c_scores /= np.sum(v2c_scores)
 
@@ -323,112 +323,97 @@ class SktWsegRWR(object):
                     # if verbose or True:
                     if verbose or supervised:
                         winner_w2w = -1
-                        dcsScore = -1
-                        wrongLemmaScore = -1
-                        diff_w2w = 0
                         for r in ranking_w2w:
                             if(r in qu or r in deactivated):
                                 continue
-                            if lemmaList[r] in solution:
-                                # DCS lemma found
-                                if dcsScore < 0:
-                                    dcsScore = weights_w2w[0,r]
-                                if wrongLemmaScore >= 0:
-                                    # Both have been set
-                                    break
-                            else:
-                                # WRONG PREDICTION FOUND
-                                if winner_w2w == -1:
-                                    winner_w2w = r
-                                    wrongLemmaScore = weights_w2w[0,r]
-                                if dcsScore >= 0:
-                                    # Both set
-                                    break
-                        diff_w2w = dcsScore - wrongLemmaScore
+                            winner_w2w = r
+                            break
+
 
                         winner_t2t = -1
-                        diff_t2t = 0
-                        dcsScore = -1
-                        wrongLemmaScore = -1
                         for r in ranking_t2t:
                             if(r in qu or r in deactivated):
                                 continue
-                            if lemmaList[r] in solution:
-                                # DCS lemma found
-                                if dcsScore < 0:
-                                    dcsScore = weights_t2t[0,r]
-                                if wrongLemmaScore >= 0:
-                                    # Both have been set
-                                    break
-                            else:
-                                # WRONG PREDICTION FOUND
-                                if winner_w2w == -1:
-                                    winner_w2w = r
-                                    wrongLemmaScore = weights_t2t[0,r]
-                                if dcsScore >= 0:
-                                    # Both set
-                                    break
-                        diff_t2t = dcsScore - wrongLemmaScore
+                            winner_t2t = r
+                            break
 
                         winner_w2w_samecng = -1
-                        diff_w2w_samecng = 0
-                        dcsScore = -1
-                        wrongLemmaScore = -1
                         for r in ranking_w2w_samecng:
                             if(r in qu or r in deactivated):
                                 continue
-                            if lemmaList[r] in solution:
-                                # DCS lemma found
-                                if dcsScore < 0:
-                                    dcsScore = weights_w2w_samecng[0,r]
-                                if wrongLemmaScore >= 0:
-                                    # Both have been set
-                                    break
-                            else:
-                                # WRONG PREDICTION FOUND
-                                if winner_w2w == -1:
-                                    winner_w2w = r
-                                    wrongLemmaScore = weights_w2w_samecng[0,r]
-                                if dcsScore >= 0:
-                                    # Both set
-                                    break
-                        diff_w2w_samecng = dcsScore - wrongLemmaScore
+                            winner_w2w_samecng = r
+                            break
                         
-                        if supervised:
-                            if np.isnan(diff_w2w_samecng):
-                                print(weights_w2w_samecng)
-                            print((diff_w2w), (diff_t2t), (diff_w2w_samecng))
 
-                            #==============================================
-                            # Supervised Learning of Weights
-                            #==============================================
-                            partition[0] = partition[0] - eta*diff_w2w
-                            partition[1] = partition[1] - eta*diff_t2t
-                            partition[2] = partition[2] - eta*diff_w2w_samecng
-                            partition = partition/np.sum(partition)
-                            self.partition = partition
-                            print(partition)
 
-                    
                     # FIND OUT THE WINNER
+                    winner_combined = -1
+                    
+                    dcsScores = [-1]*3
+                    wrongLemmaScores = [-1]*3
+
+                    diff_w2w = 0
+                    diff_t2t = 0
+                    diff_w2w_samecng = 0
                     for r in ranking_combined:
                         if(r in qu or r in deactivated):
                             continue
-                        qu.append(r)
-                        prioriVec[0,r] = 0
-                        # Remove overlapping competitors
-                        cid, pos, tid = revMap2Chunk[r]
+                        if winner_combined == -1:
+                            winner_combined = r
+                            qu.append(r)
+                            prioriVec[0,r] = 0
+                            # Remove overlapping competitors
+                            cid, pos, tid = revMap2Chunk[r]
 
-                        if verbose:
-                            # print(winner_w2w, winner_t2t, winner_w2w_samecng, r)
-                            stepDetails["winner"] = (r, wordList[r], lemmaList[r], cngList[r])
-                            wt = (lemmaList[r], cngList[r])
-                            # print(wt, wt in solTuples)
-                            s1 = ','.join([str(t) for t in [int(k) for k in [r == winner_w2w, r == winner_t2t, r == winner_w2w_samecng, lemmaList[r] in solution]]])
-                            s2 = ','.join([str(t) for t in [np.where(ranking_w2w == r)[0][0], np.where(ranking_t2t == r)[0][0], np.where(ranking_w2w_samecng == r)[0][0], int(lemmaList[r] in solution)]])
-                            metPerfFH_bin.write(s1 + '\n')
-                            metPerfFH.write(s2 + '\n')
-                        break
+                            if verbose:
+                                # print(winner_w2w, winner_t2t, winner_w2w_samecng, r)
+                                stepDetails["winner"] = (r, wordList[r], lemmaList[r], cngList[r])
+                                wt = (lemmaList[r], cngList[r])
+                                # print(wt, wt in solTuples)
+                                s1 = ','.join([str(t) for t in [int(k) for k in [r == winner_w2w, r == winner_t2t, r == winner_w2w_samecng, lemmaList[r] in solution]]])
+                                s2 = ','.join([str(t) for t in [np.where(ranking_w2w == r)[0][0], np.where(ranking_t2t == r)[0][0], np.where(ranking_w2w_samecng == r)[0][0], int(lemmaList[r] in solution)]])
+                                metPerfFH_bin.write(s1 + '\n')
+                                metPerfFH.write(s2 + '\n')
+                            if (lemmaList[r] in solution) or (lemmaList[r] in solution_no_pvb):
+                                #It's a correct weight, don't change anything
+                                break
+
+                        if (lemmaList[r] in solution) or (lemmaList[r] in solution_no_pvb):
+                            # DCS lemma found
+                            if dcsScores[0] < 0:
+                                dcsScores[0] = weights_w2w[0,r]
+                                dcsScores[1] = weights_t2t[0,r]
+                                dcsScores[2] = weights_w2w_samecng[0,r]
+                        else:
+                            # WRONG PREDICTION FOUND
+                            if wrongLemmaScores[0] < 0:
+                                wrongLemmaScores[0] = weights_w2w[0,r]
+                                wrongLemmaScores[1] = weights_t2t[0,r]
+                                wrongLemmaScores[2] = weights_w2w_samecng[0,r]
+                        if wrongLemmaScores[0] >= 0 and dcsScores[0] >= 0:
+                                # Both have been set
+                                diff_w2w = dcsScores[0] - wrongLemmaScores[0]
+                                diff_t2t = dcsScores[1] - wrongLemmaScores[1]
+                                diff_w2w_samecng = dcsScores[2] - wrongLemmaScores[2]
+
+                                if supervised:
+                                    #==============================================
+                                    # Supervised Learning of Weights
+                                    #==============================================
+
+                                    # HOW THE LAST SET OF PARTITION VALUES PERFORMED
+                                    if wcsv != None:
+                                        wcsv.writerow(np.append(partition,[diff_w2w, diff_t2t, diff_w2w_samecng]))
+                                    
+                                    partition[0] = partition[0] + eta*diff_w2w
+                                    partition[1] = partition[1] + eta*diff_t2t
+                                    partition[2] = partition[2] + eta*diff_w2w_samecng
+                                    # partition = partition/np.sum(partition)
+                                    self.partition = partition
+                                    # print(partition)
+                                break
+
+
 
                     for tup in tuplesMain[tid]:
                         if tup[0] not in qu:
