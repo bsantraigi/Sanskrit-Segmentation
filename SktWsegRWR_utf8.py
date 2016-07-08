@@ -408,7 +408,7 @@ class SktWsegRWR(object):
                                         partition[0] = partition[0] + eta*diff_w2w
                                         partition[1] = partition[1] + eta*diff_t2t
                                         partition[2] = partition[2] + eta*diff_w2w_samecng
-                                        # partition = partition/np.sum(partition)
+                                        partition = partition/np.sum(partition)
                                         self.partition = partition
                                         # print(partition)
                                     break

@@ -405,9 +405,11 @@ class ProbModels():
         if word_a in w2w_samecng_fullmat[word_b]:
             c_ab = max((w2w_samecng_fullmat[word_a][word_b] - delta), 0)/samecng_total_co_oc
             p_a = samecng_context_count[word_a]/samecng_total_context
-            p_b = samecng_context_count[word_b]/samecng_total_context
-            return c_ab + normalization*p_a*p_b
+            # p_b = samecng_context_count[word_b]/samecng_total_context
+            # return c_ab + normalization*p_a*p_b
+            return c_ab + normalization*p_a # Assuming it's P(b|a) so backoff to P(a)
         else:
             p_a = max(samecng_context_count[word_a], 1)/samecng_total_context
-            p_b = max(samecng_context_count[word_b], 1)/samecng_total_context
-            return normalization*p_a*p_b
+            # p_b = max(samecng_context_count[word_b], 1)/samecng_total_context
+            # return normalization*p_a*p_b
+            return normalization*p_a # Assuming it's P(b|a) so backoff to P(a)

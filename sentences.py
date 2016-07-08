@@ -89,7 +89,7 @@ SentencePreprocess:
 
     -> chunkDict: chunk_id -> position -> index in lemmaList (nested dictionary)
     -> lemmaList: list of possible words as a result of word segmentation
-    -> revMap2Chunk: Map word in wordlist to (cid, position) in chunkDict
+    -> revMap2Chunk: Map word in wordList to (cid, position) in chunkDict
     -> qu: Possible query nodes
 """
 v2t = pickle.load(open('extras/verbs_vs_cngs_matrix_countonly.p', 'rb'), encoding=u'utf8')
@@ -110,7 +110,14 @@ def CanBeQuery(chunk):
     if(len(allLemmas) == 1):
         return True
 
-def SentencePreprocess(sentenceObj):
+'''
+===================
+SentencePreprocess
+===================
+forceQuery: Setting it true will make the longest word available a query if no
+            other query is available
+'''
+def SentencePreprocess(sentenceObj, forceQuery = False):
     """
     Considering word names only
     ***{Word forms or cngs can also be used}
@@ -218,6 +225,17 @@ def SentencePreprocess(sentenceObj):
 
             if quFlag:
                 qu.append(tup1[1])
+
+    # if len(qu) == 0:
+    #     print('No query available')
+    #     maxI = 0
+    #     for i in range(len(wordList)):
+    #         if len(wordList[i]) > len(wordList[maxI]):
+    #             maxI = i
+    #         elif len(wordList[i]) == len(wordList[maxI]):
+    #             # Check the competitor count
+
+    #     print(wordList[maxI], 'is forced query')
 
     verbs = []
     i = -1
