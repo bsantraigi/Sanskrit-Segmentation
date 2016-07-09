@@ -29,7 +29,8 @@ def MakeRowStochastic(matrix):
         if(s!=0):
             matrix[row, :] = matrix[row, :]/s
 
-def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, allowRPModify = True):
+def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, allowRPModify = True, oldQueryList = np.array([])):
+
     """
     Run Random walk with restart
     until 
@@ -47,17 +48,50 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, all
     
     # print(np.sum(transMat, axis = 1))
     if(len(queryList) > 1):
-        dest = queryList[0] # New merged node
-        # Add the columns
-        transMat[:, dest] = np.sum(transMat[:, queryList], axis=1)
-        transMat[:, queryList[1:]] = 0
 
         # TODO - Using the sum probability logic
-        newPs = np.multiply(transMat[:, dest], prioriVec)
+        
+        '''
+        # USING SIMPLE SUM
+        
         # transMat[dest, :] = np.sum(transMat[queryList, :], axis=0)
-        transMat[dest, :] = newPs
+        transMat[dest, :] = np.sum(transMat[queryList, :], axis=0)
         transMat[dest, :] /= np.sum(transMat[dest, :])
         transMat[queryList[1:], :] = 0
+        '''
+        if oldQueryList.shape[0] == 0:
+            dest = queryList[0] # New merged node
+            # Add the columns
+            transMat[:, dest] = np.sum(transMat[:, queryList], axis=1)
+            transMat[:, queryList[1:]] = 0
+
+            # USING BAYES
+            newPs = np.multiply(transMat[:, dest], prioriVec)
+            # transMat[dest, :] = np.sum(transMat[queryList, :], axis=0)
+            transMat[dest, :] = newPs
+            transMat[dest, :] /= np.sum(transMat[dest, :])
+            transMat[queryList[1:], :] = 0
+
+        else:
+            # USING WEIGHTED SUM
+            newQueryList = list(set(queryList) - set(oldQueryList))
+            
+            dest = queryList[0] # New merged node
+
+            # ADD THE COLUMNS
+            c1 = np.sum(transMat[:, oldQueryList], axis=1)
+            c2 = np.sum(transMat[:, newQueryList], axis=1)
+
+            transMat[:, dest] = c1 + 0.1*c2
+            transMat[:, queryList[1:]] = 0
+
+
+            # ADD THE ROWS
+            v1 = np.sum(transMat[oldQueryList, :], axis=0)
+            v2 = np.sum(transMat[newQueryList, :], axis=0)
+
+            transMat[dest, :] = v1 + 0.1*v2
+            transMat[queryList[1:], :] = 0
             
     MakeRowStochastic(transMat)
     # print('Transum',np.sum(transMat, axis=1))
@@ -156,11 +190,12 @@ Pass weights for each method in partition array in the following order
 """
 class SktWsegRWR(object):
     # print("Loaded: ", model_cbow)
-    def __init__(self, w2w_modelFunc, t2t_modelFunc, v2c_modelFunc, sameCng_modelFunc, partition = np.array([1/3, 1/3, 1/3, 0])):
+    def __init__(self, w2w_modelFunc, t2t_modelFunc, v2c_modelFunc, sameCng_modelFunc, LMVBLM_pathfinder, partition = np.array([1/3, 1/3, 1/3, 0])):
         self.w2w_modelFunc = w2w_modelFunc
         self.t2t_modelFunc = t2t_modelFunc
         self.sameCng_modelFunc = sameCng_modelFunc
         self.v2c_modelFunc = v2c_modelFunc
+        self.LMVBLM_pathfinder = LMVBLM_pathfinder
 
         partition = np.array(partition)
         partition /= sum(partition)
@@ -174,6 +209,7 @@ class SktWsegRWR(object):
         # print(self.partition)
         try:
             (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
+            oldQueryList = np.copy(qu)
         except SentenceError as e:
             print('Empty name in file', sentenceObj.sent_id)
             if verbose:
@@ -261,21 +297,21 @@ class SktWsegRWR(object):
                     weights_t2t = RWR(
                         prioriVec = prioriVec2, transMat = TransitionMat_t2t, 
                         restartP = restartP, maxIteration = 500, queryList = qu, 
-                        deactivated = deactivated, allowRPModify = False)
+                        deactivated = deactivated, allowRPModify = False, oldQueryList=oldQueryList)
                     ranking_t2t = weights_t2t[0].argsort()[::-1]
 
 
                     weights_w2w = RWR(
                         prioriVec = prioriVec1, transMat = TransitionMat_w2w, 
                         restartP = restartP, maxIteration = 500, queryList = qu, 
-                        deactivated = deactivated, allowRPModify = False)
+                        deactivated = deactivated, allowRPModify = False, oldQueryList=oldQueryList)
                     ranking_w2w = weights_w2w[0].argsort()[::-1]
 
 
                     weights_w2w_samecng = RWR(
                         prioriVec = prioriVec3, transMat = TransitionMat_w2w_samecng, 
                         restartP = restartP, maxIteration = 500, queryList = qu,
-                        deactivated = deactivated, allowRPModify = False)
+                        deactivated = deactivated, allowRPModify = False, oldQueryList=oldQueryList)
                     ranking_w2w_samecng = weights_w2w_samecng[0].argsort()[::-1]
 
                     # v2c_scores = self.v2c_modelFunc(lemmaList, cngList, verbs)
@@ -284,18 +320,27 @@ class SktWsegRWR(object):
                     # ranking_v2cng = np.asarray(v2c_scores.argsort())
                     # print(ranking_v2cng)
 
+                    # SCORING OF NODES USING PATHS WITH LENGTHS MORE THAN 1
+
+                    #LMVBLM - lemma-verb-lemma
+                    LMVBLM_scores = self.LMVBLM_pathfinder(lemmaList, cngList, qu, oldQueryList, deactivated)
+                    ranking_LMVBLM = LMVBLM_scores.argsort()[::-1]
+                    # print(LMVBLM_scores[ranking_LMVBLM].astype(list))
+                    # print(ranking_LMVBLM)
+
                     # NORMALIZE THE WEIGHT VECTORS
-                    # print('W2W', np.sum(weights_w2w))
                     weights_w2w /= np.sum(weights_w2w)
-                    # print('T2T', np.sum(weights_t2t))
                     weights_t2t /= np.sum(weights_t2t)
-                    # print('SCNG', np.sum(weights_w2w_samecng))
                     weights_w2w_samecng /= np.sum(weights_w2w_samecng)
                     # v2c_scores /= np.sum(v2c_scores)
 
                     # FIXME:
-                    weights_combined = partition[0]*weights_w2w + partition[1]*weights_t2t + partition[2]*weights_w2w_samecng # + partition[3]*v2c_scores
+                    weights_combined = partition[0]*weights_w2w + partition[1]*weights_t2t + partition[2]*weights_w2w_samecng + partition[3]*LMVBLM_scores
                     ranking_combined = weights_combined[0].argsort()[::-1]
+                    
+                    # print(weights_combined.astype(list))
+                    # print(ranking_LMVBLM)
+                    # print(ranking_combined)
 
                     if verbose:
                         stepDetails['w2w_score'] = weights_w2w
@@ -349,12 +394,9 @@ class SktWsegRWR(object):
                     # FIND OUT THE WINNER
                     winner_combined = -1
                     
-                    dcsScores = [-1]*3
-                    wrongLemmaScores = [-1]*3
+                    dcsScores = [-1]*4
+                    wrongLemmaScores = [-1]*4
 
-                    diff_w2w = 0
-                    diff_t2t = 0
-                    diff_w2w_samecng = 0
                     for r in ranking_combined:
                         if(r in qu or r in deactivated):
                             continue
@@ -384,17 +426,20 @@ class SktWsegRWR(object):
                                     dcsScores[0] = weights_w2w[0,r]
                                     dcsScores[1] = weights_t2t[0,r]
                                     dcsScores[2] = weights_w2w_samecng[0,r]
+                                    dcsScores[3] = LMVBLM_scores[r]
                             else:
                                 # WRONG PREDICTION FOUND
                                 if wrongLemmaScores[0] < 0:
                                     wrongLemmaScores[0] = weights_w2w[0,r]
                                     wrongLemmaScores[1] = weights_t2t[0,r]
                                     wrongLemmaScores[2] = weights_w2w_samecng[0,r]
+                                    wrongLemmaScores[3] = LMVBLM_scores[r]
                             if wrongLemmaScores[0] >= 0 and dcsScores[0] >= 0:
                                     # Both have been set
                                     diff_w2w = dcsScores[0] - wrongLemmaScores[0]
                                     diff_t2t = dcsScores[1] - wrongLemmaScores[1]
                                     diff_w2w_samecng = dcsScores[2] - wrongLemmaScores[2]
+                                    diff_LMVBLM = dcsScores[3] - wrongLemmaScores[3]
 
                                     if supervised:
                                         #==============================================
@@ -403,11 +448,12 @@ class SktWsegRWR(object):
 
                                         # HOW THE LAST SET OF PARTITION VALUES PERFORMED
                                         if wcsv != None:
-                                            wcsv.writerow(np.append(partition,[diff_w2w, diff_t2t, diff_w2w_samecng]))
+                                            wcsv.writerow(np.append(partition,[diff_w2w, diff_t2t, diff_w2w_samecng, diff_LMVBLM]))
                                         
                                         partition[0] = partition[0] + eta*diff_w2w
                                         partition[1] = partition[1] + eta*diff_t2t
                                         partition[2] = partition[2] + eta*diff_w2w_samecng
+                                        partition[3] = partition[2] + eta*diff_LMVBLM
                                         partition = partition/np.sum(partition)
                                         self.partition = partition
                                         # print(partition)

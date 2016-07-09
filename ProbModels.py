@@ -32,16 +32,21 @@ class ProbModels():
             context_count[word] = len(fullCo_oc_mat[word])
 
         # Each bigram is repeated; a-b is same as b-a
-        total_context = int(sum(context_count.values())/2)
+        total_context = int(sum(context_count.values()))
 
         total_co_oc = sum(
             [sum(fullCo_oc_mat[word].values()) for word in fullCo_oc_mat.keys()])
+
+        co_oc_count = defaultdict(int)
+        for w in fullCo_oc_mat.keys():
+            co_oc_count[w] = sum(fullCo_oc_mat[w].values())
         
         self.fullCo_oc_mat = fullCo_oc_mat
         self.unigram_counts = unigram_counts
         self.context_count = context_count
         self.total_context = total_context
         self.total_co_oc = total_co_oc
+        self.co_oc_count = co_oc_count
 
         """TYPE2TYPE DATA"""
 
@@ -49,8 +54,10 @@ class ProbModels():
         cng2index_dict = kwargs['cng2index_dict']
 
         t2t_context_count = np.sum(cng2cngFullMat > 0, axis = 1) # Row-wise sum
-        t2t_total_co_oc = int(np.sum(cng2cngFullMat)/2)
+        t2t_total_co_oc = int(np.sum(cng2cngFullMat))
         t2t_total_contexts = np.sum(t2t_context_count)
+
+        t2t_co_oc_count = np.sum(cng2cngFullMat, axis = 1) # Row-wise sum
 
         self.cng2cngFullMat = cng2cngFullMat
         self.cng2index_dict = cng2index_dict
@@ -58,10 +65,14 @@ class ProbModels():
         self.t2t_context_count = t2t_context_count
         self.t2t_total_contexts = t2t_total_contexts
         self.t2t_total_co_oc = t2t_total_co_oc
+        self.t2t_co_oc_count = t2t_co_oc_count
 
 
         """VERB2TYPE DATA"""
         self.v2c_fullMat = kwargs['v2c_fullMat']
+        self.verbsList = defaultdict(int)
+        for v in self.v2c_fullMat.keys():
+            self.verbsList[v] = 1
 
 
         """W2W_SAME_CNG DATA"""
@@ -77,12 +88,17 @@ class ProbModels():
         
         samecng_total_co_oc = sum(
             [sum(w2w_samecng_fullmat[word].values()) for word in w2w_samecng_fullmat.keys()])
+
+        samecng_co_oc_count = defaultdict(int)
+        for w in w2w_samecng_fullmat.keys():
+            samecng_co_oc_count[w] = sum(w2w_samecng_fullmat[w].values())
         
         self.w2w_samecng_fullmat = w2w_samecng_fullmat
         self.samecng_unigram_counts = samecng_unigram_counts
         self.samecng_context_count = samecng_context_count
         self.samecng_total_context = samecng_total_context
         self.samecng_total_co_oc = samecng_total_co_oc
+        self.samecng_co_oc_count = samecng_co_oc_count
         return
 
     def RemoveCompetingEdges(self, TransitionMat, tuplesMain, chunkDict):
@@ -173,8 +189,9 @@ class ProbModels():
                 row_sum = np.sum(TransitionMat[row, :])
                 if(row_sum == 0):
                     print("Report ROW SUM ZERO CNG2CNG")
-                TransitionMat[row, :] /= row_sum
-                TransitionMat[row, row] = 0
+                else:
+                    TransitionMat[row, :] /= row_sum
+                    TransitionMat[row, row] = 0
         else:
             # FIXME: DOESN'T SUPPORT TUPLESMAIN
             cng2cngFullMat = self.cng2cngFullMat
@@ -238,9 +255,10 @@ class ProbModels():
             for row in range(nodeCount):
                 row_sum = np.sum(TransitionMat[row, :])
                 if(row_sum == 0):
-                    print("Report ROW SUM ZERO W2W")
-                TransitionMat[row, :] /= row_sum
-                TransitionMat[row, row] = 0
+                    print("Report ROW SUM ZERO W2W", row)
+                else:
+                    TransitionMat[row, :] /= row_sum
+                    TransitionMat[row, row] = 0
         else:
             # FIXME:
             wordList = []
@@ -291,7 +309,7 @@ class ProbModels():
             for row in range(nodeCount):
                 row_sum = np.sum(TransitionMat[row, :])
                 if(row_sum == 0):
-                    print("Report ROW SUM ZERO W2W")
+                    print("Report ROW SUM ZERO SCNG")
                 TransitionMat[row, :] /= row_sum
                 TransitionMat[row, row] = 0
         else:
@@ -343,24 +361,24 @@ class ProbModels():
         return ranks
 
     def kn_word2word(self, word_a, word_b):
+        # P_kn(word_b | word_a)
+
         fullCo_oc_mat = self.fullCo_oc_mat
         total_co_oc = self.total_co_oc
         total_context = self.total_context
         context_count = self.context_count
+        co_oc_count = self.co_oc_count
         
         delta = 0.5
-        normalization = delta*total_context/total_co_oc
+        normalization = delta*max(context_count[word_a], 1)/(co_oc_count[word_a] + 1)
 
         if word_a in fullCo_oc_mat[word_b]:
-            c_ab = max((fullCo_oc_mat[word_a][word_b] - delta), 0)/total_co_oc
-            p_a = context_count[word_a]/total_context
+            c_ab = max((fullCo_oc_mat[word_a][word_b] - delta), 0)/(co_oc_count[word_a] + 1)
             p_b = context_count[word_b]/total_context
-            return c_ab + normalization*p_a*p_b
+            return c_ab + normalization*p_b
         else:
-            p_a = max(context_count[word_a], 1)/total_context
             p_b = max(context_count[word_b], 1)/total_context
-
-            return normalization*p_a*p_b
+            return normalization*p_b
 
 
 
@@ -371,45 +389,93 @@ class ProbModels():
         t2t_context_count = self.t2t_context_count
         t2t_total_contexts = self.t2t_total_contexts
         t2t_total_co_oc = self.t2t_total_co_oc
+        t2t_co_oc_count = self.t2t_co_oc_count
 
-        delta = 0.5
-        normalization = delta*t2t_total_contexts/t2t_total_co_oc
 
         try:
             index_a = cng2index_dict[str(cng_a)]
             index_b = cng2index_dict[str(cng_b)]
         except KeyError:
             return 1/440000
+        
+        delta = 0.5
+        normalization = delta*max(t2t_context_count[index_a], 1)/(t2t_co_oc_count[index_a] + 1)
 
         if cng2cngFullMat[index_a, index_b] > 0:
-            c_ab = max((cng2cngFullMat[index_a, index_b] - delta), 0)/t2t_total_co_oc
+            c_ab = max((cng2cngFullMat[index_a, index_b] - delta), 0)/(t2t_co_oc_count[index_a] + 1)
             # print(cng_a, cng_b, c_ab)
-            p_a = t2t_context_count[index_a]/t2t_total_contexts
             p_b = t2t_context_count[index_b]/t2t_total_contexts
-            return c_ab + normalization*p_a*p_b
+            return c_ab + normalization*p_b
         else:
-            p_a = max(t2t_context_count[index_a], 1)/t2t_total_contexts
             p_b = max(t2t_context_count[index_b], 1)/t2t_total_contexts
             # print(p_a, p_b)
-            return normalization*p_a*p_b
+            return normalization*p_b
 
     def kn_word2word_samecng(self, word_a, word_b):
         w2w_samecng_fullmat = self.w2w_samecng_fullmat
         samecng_total_co_oc = self.samecng_total_co_oc
         samecng_total_context = self.samecng_total_context
         samecng_context_count = self.samecng_context_count
+        samecng_co_oc_count = self.samecng_co_oc_count
         
         delta = 0.5
-        normalization = delta*samecng_total_context/samecng_total_co_oc
+        normalization = delta*max(samecng_context_count[word_a], 1)/(samecng_co_oc_count[word_a] + 1)
 
         if word_a in w2w_samecng_fullmat[word_b]:
-            c_ab = max((w2w_samecng_fullmat[word_a][word_b] - delta), 0)/samecng_total_co_oc
-            p_a = samecng_context_count[word_a]/samecng_total_context
-            # p_b = samecng_context_count[word_b]/samecng_total_context
-            # return c_ab + normalization*p_a*p_b
-            return c_ab + normalization*p_a # Assuming it's P(b|a) so backoff to P(a)
+            c_ab = max((w2w_samecng_fullmat[word_a][word_b] - delta), 0)/(samecng_co_oc_count[word_a] + 1)
+            p_b = samecng_context_count[word_b]/samecng_total_context
+            return c_ab + normalization*p_b
         else:
-            p_a = max(samecng_context_count[word_a], 1)/samecng_total_context
-            # p_b = max(samecng_context_count[word_b], 1)/samecng_total_context
-            # return normalization*p_a*p_b
-            return normalization*p_a # Assuming it's P(b|a) so backoff to P(a)
+            p_b = max(samecng_context_count[word_b], 1)/samecng_total_context
+            return normalization*p_b
+
+    def LMVBLM_pathfinder(self, lemmaList, cngList, queryList, oldQueryList, deactivated):
+        try:
+            verbsList = self.verbsList
+            fullCo_oc_mat = self.fullCo_oc_mat
+            total_co_oc = self.total_co_oc
+
+            dact_set = set(deactivated)
+
+            n = len(lemmaList)
+
+            left_nodes = set(queryList)
+            # print('LEFT', len(left_nodes))
+
+            mid_nodes = set()
+            for li in range(len(lemmaList)):
+                if cngList[li] < 0:
+                    mid_nodes.add(li)
+
+            mid_nodes = mid_nodes - left_nodes
+            # print('MID', len(mid_nodes))
+
+            right_nodes = ((set(list(range(len(lemmaList)))) - left_nodes) - mid_nodes) - dact_set
+            # print('RIGHT', len(right_nodes))
+
+            scores = [0]*n # Scores of right nodes will be non-zero, rest are zero
+
+            for rn in right_nodes:
+                sTotal = 0
+                right = lemmaList[rn]
+                for ln in left_nodes:
+                    left = lemmaList[ln]
+                    for v in mid_nodes:
+                        # TRY word-word-word
+                        vb = lemmaList[v]
+                        p = 0
+                        if vb in fullCo_oc_mat[left]:
+                            if right in fullCo_oc_mat[vb]:
+                                p = fullCo_oc_mat[left][vb]/total_co_oc
+                                p *= fullCo_oc_mat[vb][right]/total_co_oc
+                        sTotal += p
+                scores[rn] = sTotal
+
+            scores = np.array(scores)
+            s = np.sum(scores)
+            if s != 0:
+                scores /= s
+
+            return np.array(scores)
+        except TypeError:
+            return np.array([0]*n)
