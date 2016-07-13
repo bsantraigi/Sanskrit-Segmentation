@@ -8,7 +8,7 @@ import math
 # badFiles = []
 # print(badFiles)
 class AlgoTestFactory():
-    def __init__(self, testRange, processCount, sentencesPath = '../TextSegmentation/Pickles/', dcsPath = '../Text Segmentation/DCS_pick/', storeAccuracies = False, savePath = None):
+    def __init__(self, testRange, processCount, partition = [0, 0, 0, 1], sentencesPath = '../TextSegmentation/Pickles/', dcsPath = '../Text Segmentation/DCS_pick/', storeAccuracies = False, savePath = None, algoname = '3RWR'):
         
         if(sys.version_info < (3, 0)):
             warnings.warn("\nPython version 3 or greater is required. Python 2.x is not tested.\n")
@@ -24,48 +24,42 @@ class AlgoTestFactory():
         self.processCount = processCount
         self.storeAccuracies = storeAccuracies
         self.savePath = savePath
+        self.algoname = algoname
 
         
         self.algo = SktWsegRWR(
             w2w_modelFunc = AlgoTestFactory.pb.get_w2w_mat, 
             t2t_modelFunc = AlgoTestFactory.pb.get_cng2cng_mat,
             v2c_modelFunc = AlgoTestFactory.pb.get_v2c_ranking,
+            df_PCRW = ProbData.df_pcrw,
             sameCng_modelFunc = AlgoTestFactory.pb.get_w2w_samecng_mat,
-            partition=[0.25, 0.25, 0.25, 0.1]
+            partition = partition
         )
 
-    def loadSentence(self, fName, folderTag):
-        # print('File: ', fName)
-        try:
-            dcsObj = pickleFixLoad(self.dcsPath + fName)           
-            if folderTag == "C1020" :
-                sentenceObj = pickleFixLoad('../TextSegmentation/corrected_10to20/' + fName)
-            else:
-                sentenceObj = pickleFixLoad('../TextSegmentation/Pickle_Files/' + fName)
-
-        except (KeyError, EOFError, pickle.UnpicklingError) as e:
-            return None, None
-        return(sentenceObj, dcsObj)
-
     def processTarget(self, processID, start, finish):
-        accuracies = []
-        for f in list(AlgoTestFactory.goodFileDict.keys())[start:finish]:
-            sentenceObj, dcsObj = self.loadSentence(f, AlgoTestFactory.goodFileDict[f])
+        accuracies = {}
+        for f in list(AlgoTestFactory.loaded_SKT.keys())[start:finish]:
+        #for f in list(AlgoTestFactory.undone)[start:finish]:
+            sentenceObj = AlgoTestFactory.loaded_SKT[f]
+            dcsObj = AlgoTestFactory.loaded_DCS[f]
+            
             if(sentenceObj != None):
                 try:
-                    result = self.algo.predict(sentenceObj, dcsObj)
+                    result = self.algo.predict(sentenceObj, dcsObj, algoname = self.algoname)
                 except RuntimeWarning:
-                    print(f)
+                    print('RuntimeWarning', f)
                 
 
                 if result != None:
-                    ac = Accuracy(result, dcsObj)
-                    accuracies.append(ac)
+                    solution, solution_no_pvb = GetSolutions(dcsObj)
+                    ac = 0
+                    for x in range(len(solution)):
+                        if(solution[x] in result):
+                            ac += 1
+
+                    accuracies[f] = (ac, len(solution), len(result))
                     if not self.storeAccuracies and not self.processCount > 1:
                         print(ac)
-                # else:
-                    # print(f)
-                    # print("BAD HIT")
         savePath = self.savePath
         if(self.storeAccuracies):
             if(savePath == None):
@@ -103,10 +97,14 @@ class AlgoTestFactory():
                 
 
 
+print('ATF loading files...')
+#AlgoTestFactory.loaded_SKT = pickle.load(open('../Simultaneous_CompatSKT_10K.p', 'rb'))
+#AlgoTestFactory.loaded_DCS = pickle.load(open('../Simultaneous_DCS_10K.p', 'rb'))
+AlgoTestFactory.loaded_SKT = pickle.load(open('../Simultaneous_CompatSKT.p', 'rb'))
+AlgoTestFactory.loaded_DCS = pickle.load(open('../Simultaneous_DCS.p', 'rb'))
+AlgoTestFactory.undone = list(pickle.load(open('.temp/undone13K.p', 'rb')))
+print('ATF file loading [COMPLETE]...')
 
-
-
-AlgoTestFactory.goodFileDict = pickle.load(open('mergedGood_v3.p', 'rb'))
 AlgoTestFactory.allAccuracies = []
 AlgoTestFactory.pb = ProbModels(fullCo_oc_mat = ProbData.fullCo_oc_mat, unigram_counts = ProbData.unigram_counts,
                cng2cngFullMat = ProbData.cng2cngFullMat, cng2index_dict = ProbData.cng2index_dict,

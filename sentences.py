@@ -110,6 +110,44 @@ def CanBeQuery(chunk):
     if(len(allLemmas) == 1):
         return True
 
+def Get_QCs(tuplesMain, chunkDict):
+    # Form NON-competitor dictionary - Query - Candidate Pairs
+    qc_pairs = {}
+    nodeList = [t for ts in tuplesMain for t in ts]
+    
+    for ni in range(len(nodeList)):
+        qc_pairs[ni] = set(range(len(nodeList))) - set([ni])
+
+    for cid in chunkDict.keys():
+        # Neighbours
+        for pos1 in chunkDict[cid].keys():
+            for pos2 in chunkDict[cid].keys():
+                if pos1 <= pos2:
+                    nList1 = []
+                    for ti1 in chunkDict[cid][pos1]:
+                        for tup1 in tuplesMain[ti1]:
+                            nList1.append(tup1[0])
+                    nList2 = []
+                    for ti2 in chunkDict[cid][pos2]:
+                        for tup2 in tuplesMain[ti2]:
+                            nList2.append(tup2[0])
+                    nList1 = set(nList1)
+                    nList2 = set(nList2)
+                    for n1 in nList1:
+                        qc_pairs[n1] = qc_pairs[n1] - nList1
+
+                    for n2 in nList2:
+                        qc_pairs[n2] = qc_pairs[n2] - nList2
+
+                    if pos1 < pos2:
+                        for n1 in nList1:
+                            for n2 in nList2:
+                                if not CanCoExist_sandhi(pos1, pos2, nodeList[n1][1], nodeList[n2][1]):
+                                    qc_pairs[n1] = qc_pairs[n1] - set([n2])
+                                    qc_pairs[n2] = qc_pairs[n2] - set([n1])
+                                    
+    return qc_pairs
+
 '''
 ===================
 SentencePreprocess
@@ -248,5 +286,30 @@ def SentencePreprocess(sentenceObj, forceQuery = False):
     # pprint.pprint(tuplesMain)
     # pprint.pprint(chunkDict)
     # pprint.pprint(revMap2Chunk)
-    # print(qu)
-    return (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain)
+    
+    qc_pairs = Get_QCs(tuplesMain, chunkDict)
+    
+    if len(qu) == 0:
+        lens = np.array([len(t[1]) for ts in tuplesMain for t in ts])
+        cw = [(t[0], t[1]) for ts in tuplesMain for t in ts]
+        round1 = np.where(lens == np.max(lens))[0]
+        hits = [len(qc_pairs[r]) for r in round1]
+        finalist = round1[np.where(hits == np.min(hits))][0]
+        qu.append(finalist)
+    
+    return (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain, qc_pairs)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

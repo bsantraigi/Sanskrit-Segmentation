@@ -1,4 +1,5 @@
-from AlgoTestFactory import *
+import pandas as pd
+from utilities import *
 import os
 
 def printAccuracies(path):    
@@ -19,6 +20,6 @@ def printAccuracies(path):
     print('Macro Accuracy %:', 100*np.sum(accuracies >= 95)/accuracies.shape[0])
 
 if __name__ == "__main__":
-    altf1 = AlgoTestFactory([0, 100000], 12, savePath="3RWR_13K_qless", storeAccuracies=True, partition = [0.35, 0.1, 0.55, 1], algoname = '3RWR')
-    altf1.run()
-    printAccuracies('.temp/3RWR_13K_qless/')
+    printAccuracies('.temp/pcrw_include_20and3/')
+    printAccuracies('.temp/pcrw_include_22paths/')
+    printAccuracies('.temp/pcrw_include_17paths/')

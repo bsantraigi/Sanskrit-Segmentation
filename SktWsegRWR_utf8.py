@@ -13,6 +13,8 @@ import multiprocessing
 from ProbModels import *
 from graph import *
 import csv
+from IPython.display import display
+import pandas as pd
 
 class Method():
     word2vec = 0
@@ -144,41 +146,61 @@ def RWR(prioriVec, transMat, restartP, maxIteration, queryList, deactivated, all
     
     return(papMat)
 
+# ONLY THE ONE WITH POSITIVE WEIGHTS HAVE BEEN TAKEN HERE
+# goodCols = ['112', '113', '122', '123', '131', '213', '223', '231', '232', '311', '312', '322', '400', '500', '600', '700', '800']
+# goodCols = ['111', '112', '113', '122', '123', '131', '132', '211', '212', '213', '222', '223', '231', '232', '311', '312', '322', '400', '500', '600', '700', '800']
+
+
+goodCols = ['111', '112', '113', '122', '123', '131', '132', '211', '212', '213', '222', '223', '231', '232', '311', '312', '322', '400', '500', '600', '700', '800', '011', '022', '033']
+
+
+'''
+goodWeights = [ 0.00288289,  0.11299414,  0.02034902,  0.05426418,  0.3139211 ,
+        0.09675109,  0.07450028,  0.04045034,  0.12735949,  0.08601451,
+        0.00226412,  0.0114856 ,  0.03033762,  0.00314999,  0.00367026,
+        0.01618957,  0.00341584]
+'''
+'''
+goodWeights = [ 0.0383487 ,  0.00542029,  0.23419246,  0.04553042,  0.11657666,
+        0.7726488 , -0.0310248 , -0.2273512 , -0.0942556 ,  0.2111668 ,
+       -0.07864587,  0.18102852,  0.09075549,  0.27696369,  0.20928265,
+        0.00544038,  0.02693159,  0.0686089 ,  0.00674246,  0.00769334,
+        0.03832224,  0.00840885]
+        
+'''
+#'''
+goodWeights = [ -3.60154202,   0.12051034,  10.20001181,   2.19923501,
+         2.28734689,  25.36362492,  -3.09226718, -15.77969152,
+        -4.21303213,  10.62164022,  -3.71344374,   5.8242817 ,
+         2.13084679,  13.42347203,   6.94626147,   0.33661488,
+         1.22412063,   2.88330069,   0.20301016,   0.32069797,
+         1.04363305,   0.28507474,   4.49850795,  -0.27397026,   8.43255253]
+#'''
+def Get_PCRW_ranking(qu, candNodes, qc_pairs, tMain_unrolled, df_pcrw_f):
+    scores = np.zeros((len(tMain_unrolled), len(goodCols)));
+    for cn in candNodes:
+        try:
+            df_picked = pd.DataFrame()
+            for q in qu:
+                ql = tMain_unrolled[q][2]
+                cl = tMain_unrolled[cn][2]
+                qcng = int(tMain_unrolled[q][3])
+                ccng = int(tMain_unrolled[cn][3])
+                df_picked = df_picked.append(df_pcrw_f.loc[(df_pcrw_f.ln_lemma == ql) & (df_pcrw_f.rn_lemma == cl) & (df_pcrw_f.ln_cng == qcng) & (df_pcrw_f.rn_cng == ccng), goodCols])
+            scores[cn, :] = np.sum(df_picked[goodCols], axis = 0)
+        except TypeError:
+            pass
+        
+    for c in range(scores.shape[1]):
+        scores[:, c] *= goodWeights[c]
+    return np.sum(scores, axis = 1)
+
 def CanCoExist_simple(p1, p2, n1, n2):
     # Make sure p1 is < p2, always
     if(p1 < p2):
         if(p1 + len(n1) - 1 < p2):
             return True
     return False
-
-# sandhiRules = pickle.load(open('extras/sandhiRules.p','rb'))    
-# def CanCoExist_sandhi(p1, p2, name1, name2):
-#     # P1 must be less than P2
-#     # Just send it in the proper order
-    
-
-#     if(p1 < p2):
-#         overlap = max((p1 + len(name1)) - p2, 0)
-#         if overlap == 0:
-#             return True
-#         if overlap == 1:
-#             pair1 = (name1[len(name1) - overlap:len(name1):], name2[0])
-#             pair2 = (name1[-1], name2[0:overlap:])
-#             # print(name1, name2, p1, p2)
-#             # print(p1, p2)
-#             if pair1 in sandhiRules:
-#                 if(sandhiRules[pair1]['length'] < len(pair1[0]) + len(pair1[1])):
-#                     # with open('.temp/sandhi_encounters.csv', 'a') as fh:
-#                     #     fcsv = csv.writer(fh)
-#                     #     fcsv.writerow([pair1[0], pair1[1], sandhiRules[pair1]['derivations'], name1, name2, p1, p2])
-#                     return True
-#             if pair2 in sandhiRules:
-#                 if(sandhiRules[pair2]['length'] < len(pair2[0]) + len(pair2[1])):
-#                     # with open('.temp/sandhi_encounters.csv', 'a') as fh:
-#                     #     fcsv = csv.writer(fh)
-#                     #     fcsv.writerow([pair2[0], pair2[1], sandhiRules[pair2]['derivations'], name1, name2, p1, p2])
-#                     return True
-#     return False
 
 """
 Loads the Model_CBOW from file
@@ -190,26 +212,28 @@ Pass weights for each method in partition array in the following order
 """
 class SktWsegRWR(object):
     # print("Loaded: ", model_cbow)
-    def __init__(self, w2w_modelFunc, t2t_modelFunc, v2c_modelFunc, sameCng_modelFunc, LMVBLM_pathfinder, partition = np.array([1/3, 1/3, 1/3, 0])):
+    def __init__(self, w2w_modelFunc, t2t_modelFunc, v2c_modelFunc, sameCng_modelFunc, df_PCRW, partition = np.array([1/3, 1/3, 1/3, 0])):
         self.w2w_modelFunc = w2w_modelFunc
         self.t2t_modelFunc = t2t_modelFunc
         self.sameCng_modelFunc = sameCng_modelFunc
         self.v2c_modelFunc = v2c_modelFunc
-        self.LMVBLM_pathfinder = LMVBLM_pathfinder
+        self.df_pcrw = df_PCRW
 
         partition = np.array(partition)
-        partition /= sum(partition)
+        # partition /= sum(partition)
         self.partition = partition
 
-    def predict(self, sentenceObj, dcsObj, verbose = False, supervised = False, eta = 0.1, **kwargs):
+    def predict(self, sentenceObj, dcsObj, verbose = False, supervised = False, eta = 0.1, algoname = '3RWR', **kwargs):
         if 'weightCollectorCSV' in kwargs:
             wcsv = kwargs['weightCollectorCSV']
         # eta = 0.1
         partition = self.partition
         # print(self.partition)
         try:
-            (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain) = SentencePreprocess(sentenceObj)
+            (chunkDict, lemmaList, wordList, revMap2Chunk, qu, cngList, verbs, tuplesMain, qc_pairs) = SentencePreprocess(sentenceObj)
+            tMain_unrolled = [t for ts in tuplesMain for t in ts]
             oldQueryList = np.copy(qu)
+            df_pcrw_f = self.df_pcrw[self.df_pcrw.f == sentenceObj.sent_id + '.p2']
         except SentenceError as e:
             print('Empty name in file', sentenceObj.sent_id)
             if verbose:
@@ -288,78 +312,86 @@ class SktWsegRWR(object):
                         if verbose:
                             stepDetails['removed'].append((index, wordList[index], lemmaList[index], cngList[index]))
                 try:
-                    uniform_prob = 1/(nodeCount - len(qu) + 1 - len(deactivated))
-                    prioriVec1 = np.copy((prioriVec != 0) * uniform_prob)
-                    prioriVec2 = np.copy(prioriVec1)
-                    prioriVec3 = np.copy(prioriVec1)
+                    if algoname == '3RWR':
+                        uniform_prob = 1/(nodeCount - len(qu) + 1 - len(deactivated))
+                        prioriVec1 = np.copy((prioriVec != 0) * uniform_prob)
+                        prioriVec2 = np.copy(prioriVec1)
+                        prioriVec3 = np.copy(prioriVec1)
 
-                    restartP = 0.4 # This is to be set based on graph diameter
-                    weights_t2t = RWR(
-                        prioriVec = prioriVec2, transMat = TransitionMat_t2t, 
-                        restartP = restartP, maxIteration = 500, queryList = qu, 
-                        deactivated = deactivated, allowRPModify = False, oldQueryList=oldQueryList)
-                    ranking_t2t = weights_t2t[0].argsort()[::-1]
-
-
-                    weights_w2w = RWR(
-                        prioriVec = prioriVec1, transMat = TransitionMat_w2w, 
-                        restartP = restartP, maxIteration = 500, queryList = qu, 
-                        deactivated = deactivated, allowRPModify = False, oldQueryList=oldQueryList)
-                    ranking_w2w = weights_w2w[0].argsort()[::-1]
+                        restartP = 0.4 # This is to be set based on graph diameter
+                        weights_t2t = RWR(
+                            prioriVec = prioriVec2, transMat = TransitionMat_t2t, 
+                            restartP = restartP, maxIteration = 500, queryList = qu, 
+                            deactivated = deactivated, allowRPModify = False, oldQueryList=oldQueryList)
+                        ranking_t2t = weights_t2t[0].argsort()[::-1]
 
 
-                    weights_w2w_samecng = RWR(
-                        prioriVec = prioriVec3, transMat = TransitionMat_w2w_samecng, 
-                        restartP = restartP, maxIteration = 500, queryList = qu,
-                        deactivated = deactivated, allowRPModify = False, oldQueryList=oldQueryList)
-                    ranking_w2w_samecng = weights_w2w_samecng[0].argsort()[::-1]
+                        weights_w2w = RWR(
+                            prioriVec = prioriVec1, transMat = TransitionMat_w2w, 
+                            restartP = restartP, maxIteration = 500, queryList = qu, 
+                            deactivated = deactivated, allowRPModify = False, oldQueryList=oldQueryList)
+                        ranking_w2w = weights_w2w[0].argsort()[::-1]
 
-                    # v2c_scores = self.v2c_modelFunc(lemmaList, cngList, verbs)
-                    # # print(v2c_scores)
-                    # v2c_scores = 1/(1+v2c_scores)
-                    # ranking_v2cng = np.asarray(v2c_scores.argsort())
-                    # print(ranking_v2cng)
 
-                    # SCORING OF NODES USING PATHS WITH LENGTHS MORE THAN 1
+                        weights_w2w_samecng = RWR(
+                            prioriVec = prioriVec3, transMat = TransitionMat_w2w_samecng, 
+                            restartP = restartP, maxIteration = 500, queryList = qu,
+                            deactivated = deactivated, allowRPModify = False, oldQueryList=oldQueryList)
+                        ranking_w2w_samecng = weights_w2w_samecng[0].argsort()[::-1]
+                        
+                        # NORMALIZE THE WEIGHT VECTORS
+                        if np.sum(weights_w2w) > 0:
+                            weights_w2w /= np.sum(weights_w2w)
+                        if np.sum(weights_t2t) > 0:
+                            weights_t2t /= np.sum(weights_t2t)
+                        if np.sum(weights_w2w_samecng) > 0:
+                            weights_w2w_samecng /= np.sum(weights_w2w_samecng)
 
-                    #LMVBLM - lemma-verb-lemma
-                    LMVBLM_scores = self.LMVBLM_pathfinder(lemmaList, cngList, qu, oldQueryList, deactivated)
-                    ranking_LMVBLM = LMVBLM_scores.argsort()[::-1]
-                    # print(LMVBLM_scores[ranking_LMVBLM].astype(list))
-                    # print(ranking_LMVBLM)
+                        # FIXME:
+                        weights_combined = partition[0]*weights_w2w + partition[1]*weights_t2t + partition[2]*weights_w2w_samecng
+                        ranking_combined = weights_combined[0].argsort()[::-1]
 
-                    # NORMALIZE THE WEIGHT VECTORS
-                    weights_w2w /= np.sum(weights_w2w)
-                    weights_t2t /= np.sum(weights_t2t)
-                    weights_w2w_samecng /= np.sum(weights_w2w_samecng)
-                    # v2c_scores /= np.sum(v2c_scores)
+                    elif algoname == '25Path':
+                        # SCORING OF NODES USING PATHS WITH LENGTHS MORE THAN 1
+                        
+                        # TODO: ADD NEW CODE HERE FOR PCRW
+                        candNodes = set(range(nodeCount))
+                        
+                        weights_pcrw = Get_PCRW_ranking(qu, candNodes - set(qu) - set(deactivated), qc_pairs, tMain_unrolled, df_pcrw_f)
+                        ranking_pcrw = weights_pcrw.argsort()[::-1]
+                        
+                        # NORMALIZE THE WEIGHT VECTORS
+                        if np.sum(weights_pcrw) > 0:
+                            weights_pcrw /= np.sum(weights_pcrw)
 
-                    # FIXME:
-                    weights_combined = partition[0]*weights_w2w + partition[1]*weights_t2t + partition[2]*weights_w2w_samecng + partition[3]*LMVBLM_scores
-                    ranking_combined = weights_combined[0].argsort()[::-1]
-                    
-                    # print(weights_combined.astype(list))
-                    # print(ranking_LMVBLM)
-                    # print(ranking_combined)
+                        # FIXME:
+                        weights_combined = weights_pcrw                        
+                        ranking_combined = weights_combined.argsort()[::-1]
+                        
+                        # print(weights_combined.astype(list))
+                        # print(ranking_combined)
 
                     if verbose:
-                        stepDetails['w2w_score'] = weights_w2w
-                        stepDetails['t2t_score'] = weights_t2t
-                        stepDetails['w2w_samecng_score'] = weights_w2w_samecng
-                        stepDetails['final_score'] = weights_combined
-                        stepDetails['w2w_rank'] = ranking_w2w
-                        stepDetails['t2t_rank'] = ranking_t2t
-                        stepDetails['w2w_samecng_rank'] = ranking_w2w_samecng
+                        if algoname == '3RWR':
+                            stepDetails['w2w_score'] = weights_w2w
+                            stepDetails['t2t_score'] = weights_t2t
+                            stepDetails['w2w_samecng_score'] = weights_w2w_samecng
+                            stepDetails['final_score'] = weights_combined
+                            stepDetails['w2w_rank'] = ranking_w2w
+                            stepDetails['t2t_rank'] = ranking_t2t
+                            stepDetails['w2w_samecng_rank'] = ranking_w2w_samecng
+                            
                         stepDetails['final_rank'] = ranking_combined
 
 
-                    # print("W2W: ", ranking_w2w)
-                    # print("W2W CNG: ", ranking_t2t)
-                    # print("W2W SAMECNG: ", ranking_w2w_samecng)
-                    # # print("V2C Ranking: ", ranking_v2cng)
-                    # print("*********************************")
-                    # print("COMBINED: ", ranking_combined)
-                    # print()
+                    #print("W2W: ", ranking_w2w)
+                    #print("W2W CNG: ", ranking_t2t)
+                    #print("W2W SAMECNG: ", ranking_w2w_samecng)
+                    #print(weights_pcrw[ranking_pcrw])
+                    #print("PCRW Ranking: ", ranking_pcrw)
+                    #print("*********************************")
+                    #print("COMBINED: ", ranking_combined)
+                    #print()
 
 
                     cid = -1
@@ -396,6 +428,9 @@ class SktWsegRWR(object):
                     
                     dcsScores = [-1]*4
                     wrongLemmaScores = [-1]*4
+                    # print('Ws', weights_combined)
+                    # print('Rank List:', ranking_combined)
+                    
 
                     for r in ranking_combined:
                         if(r in qu or r in deactivated):
@@ -426,20 +461,17 @@ class SktWsegRWR(object):
                                     dcsScores[0] = weights_w2w[0,r]
                                     dcsScores[1] = weights_t2t[0,r]
                                     dcsScores[2] = weights_w2w_samecng[0,r]
-                                    dcsScores[3] = LMVBLM_scores[r]
                             else:
                                 # WRONG PREDICTION FOUND
                                 if wrongLemmaScores[0] < 0:
                                     wrongLemmaScores[0] = weights_w2w[0,r]
                                     wrongLemmaScores[1] = weights_t2t[0,r]
                                     wrongLemmaScores[2] = weights_w2w_samecng[0,r]
-                                    wrongLemmaScores[3] = LMVBLM_scores[r]
                             if wrongLemmaScores[0] >= 0 and dcsScores[0] >= 0:
                                     # Both have been set
                                     diff_w2w = dcsScores[0] - wrongLemmaScores[0]
                                     diff_t2t = dcsScores[1] - wrongLemmaScores[1]
                                     diff_w2w_samecng = dcsScores[2] - wrongLemmaScores[2]
-                                    diff_LMVBLM = dcsScores[3] - wrongLemmaScores[3]
 
                                     if supervised:
                                         #==============================================
@@ -448,12 +480,11 @@ class SktWsegRWR(object):
 
                                         # HOW THE LAST SET OF PARTITION VALUES PERFORMED
                                         if wcsv != None:
-                                            wcsv.writerow(np.append(partition,[diff_w2w, diff_t2t, diff_w2w_samecng, diff_LMVBLM]))
+                                            wcsv.writerow(np.append(partition,[diff_w2w, diff_t2t, diff_w2w_samecng]))
                                         
                                         partition[0] = partition[0] + eta*diff_w2w
                                         partition[1] = partition[1] + eta*diff_t2t
                                         partition[2] = partition[2] + eta*diff_w2w_samecng
-                                        partition[3] = partition[2] + eta*diff_LMVBLM
                                         partition = partition/np.sum(partition)
                                         self.partition = partition
                                         # print(partition)
@@ -478,9 +509,6 @@ class SktWsegRWR(object):
                                     index = tup[0]
                                     if index not in deactivated and index not in qu:
                                         w = wordList[index]
-
-
-
                                         '''
                                         # FIXME: REMOVE TRY-CATCH
                                         '''
