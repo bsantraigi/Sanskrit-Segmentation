@@ -38,8 +38,9 @@ class AlgoTestFactory():
 
     def processTarget(self, processID, start, finish):
         accuracies = {}
+        fileCount = 0
         for f in list(AlgoTestFactory.loaded_SKT.keys())[start:finish]:
-        #for f in list(AlgoTestFactory.undone)[start:finish]:
+        # for f in list(AlgoTestFactory.undone)[start:finish]:
             sentenceObj = AlgoTestFactory.loaded_SKT[f]
             dcsObj = AlgoTestFactory.loaded_DCS[f]
             
@@ -60,19 +61,40 @@ class AlgoTestFactory():
                     accuracies[f] = (ac, len(solution), len(result))
                     if not self.storeAccuracies and not self.processCount > 1:
                         print(ac)
+            if len(accuracies) >= 100:
+                savePath = self.savePath
+                if(self.storeAccuracies):
+                    if(savePath == None):
+                        savePath = '.temp/' + str(processID) + 'f' + str(fileCount) + '_out.p'
+                    else:
+                        directory = '.temp/' + savePath + '/'
+                        if not os.path.exists(directory):
+                            os.makedirs(directory)
+                        savePath = directory + str(processID) + 'f' + str(fileCount) + '_out.p'
+
+                    pickle.dump(accuracies, open(savePath, 'wb'))
+                    print('Process Finished ({1} accuracies and saved to disk){0}'.format(savePath, len(accuracies)))
+                    accuracies = {}
+                    fileCount += 1
+                    
+                    
+        # save the rest of the accuracies
         savePath = self.savePath
-        if(self.storeAccuracies):
+        if(self.storeAccuracies) and len(accuracies) > 0:
             if(savePath == None):
-                savePath = '.temp/' + str(processID) + '_out.p'
+                savePath = '.temp/' + str(processID) + 'f' + str(fileCount) + '_out.p'
             else:
                 directory = '.temp/' + savePath + '/'
                 if not os.path.exists(directory):
                     os.makedirs(directory)
-                savePath = directory + str(processID) + '_out.p'
+                savePath = directory + str(processID) + 'f' + str(fileCount) + '_out.p'
 
             pickle.dump(accuracies, open(savePath, 'wb'))
             print('Process Finished ({1} accuracies and saved to disk){0}'.format(savePath, len(accuracies)))
-        else:
+            accuracies = {}
+            fileCount += 1
+
+        if not self.storeAccuracies:
             accuracies = np.array(accuracies)
             print("Results: ")
             print("Mean: ", accuracies.mean())
@@ -80,6 +102,7 @@ class AlgoTestFactory():
             print('Process Finished ({0} accuracies and not saved to disk)'.format(len(accuracies)))
 
     def run(self):
+        print('Using', self.algoname)
         processCount = self.processCount
         start = self.testRange[0] 
         finish = self.testRange[1]
@@ -89,7 +112,8 @@ class AlgoTestFactory():
             step = math.ceil((finish - start)/processCount)
             processes = []
             for processID in range(0, processCount):
-                processes.append(multiprocessing.Process(target = self.processTarget, args = (processID, start + step*processID, min(step*(processID + 1), finish))))
+                print('Range', self.savePath, (processID, start + step*processID, min(step*(processID + 1), finish)))
+                processes.append(multiprocessing.Process(target = self.processTarget, args = (processID, start + step*processID, min(start + step*(processID + 1), finish))))
             for p in processes:
                 p.start()
             for p in processes:
@@ -102,6 +126,7 @@ print('ATF loading files...')
 #AlgoTestFactory.loaded_DCS = pickle.load(open('../Simultaneous_DCS_10K.p', 'rb'))
 AlgoTestFactory.loaded_SKT = pickle.load(open('../Simultaneous_CompatSKT.p', 'rb'))
 AlgoTestFactory.loaded_DCS = pickle.load(open('../Simultaneous_DCS.p', 'rb'))
+
 AlgoTestFactory.undone = list(pickle.load(open('.temp/undone13K.p', 'rb')))
 print('ATF file loading [COMPLETE]...')
 

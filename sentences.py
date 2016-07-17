@@ -289,7 +289,11 @@ def SentencePreprocess(sentenceObj, forceQuery = False):
     
     qc_pairs = Get_QCs(tuplesMain, chunkDict)
     
-    if len(qu) == 0:
+    '''
+    qu = [] # Have to remove it later
+    '''
+    # print(chunkDict)
+    if len(qu) == 0 and len(lemmaList) > 0:
         lens = np.array([len(t[1]) for ts in tuplesMain for t in ts])
         cw = [(t[0], t[1]) for ts in tuplesMain for t in ts]
         round1 = np.where(lens == np.max(lens))[0]

@@ -19,6 +19,10 @@ def printAccuracies(path):
     print('Macro Accuracy %:', 100*np.sum(accuracies >= 95)/accuracies.shape[0])
 
 if __name__ == "__main__":
-    altf1 = AlgoTestFactory([0, 100000], 12, savePath="3RWR_13K_qless", storeAccuracies=True, partition = [0.35, 0.1, 0.55, 1], algoname = '3RWR')
+    path = "3RWR_Unsup_QNEW_66"
+    print('Modules Loaded... ID-', path)
+    
+    # 3RWR or 25Path
+    altf1 = AlgoTestFactory([50000, 100078], 12, savePath = path, storeAccuracies=True, partition = [0.33, 0.33, 0.33, 1], algoname = '3RWR')
     altf1.run()
-    printAccuracies('.temp/3RWR_13K_qless/')
+    printAccuracies('.temp/%s/' % path)

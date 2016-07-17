@@ -20,7 +20,7 @@ print("Dataloader Finished[Prob]...")
 
 print("Preprocessing PCRW Database...")
 
-df_pcrw = pd.read_csv('pcrw_25.csv', usecols=['f', 'ln_lemma', 'rn_lemma', 'ln_cng', 'rn_cng', '111',
+df_pcrw = pd.read_csv('pcrw_25_smooth.csv', usecols=['f', 'ln_lemma', 'rn_lemma', 'ln_cng', 'rn_cng', '111',
        '112', '113', '121', '122', '123', '131', '132', '133', '211', '212',
        '213', '221', '222', '223', '231', '232', '233', '311', '312', '313',
        '321', '322', '323', '331', '332', '333', '400', '500', '600', '700',

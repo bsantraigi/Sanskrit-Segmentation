@@ -169,12 +169,12 @@ goodWeights = [ 0.0383487 ,  0.00542029,  0.23419246,  0.04553042,  0.11657666,
         
 '''
 #'''
-goodWeights = [ -3.60154202,   0.12051034,  10.20001181,   2.19923501,
-         2.28734689,  25.36362492,  -3.09226718, -15.77969152,
-        -4.21303213,  10.62164022,  -3.71344374,   5.8242817 ,
-         2.13084679,  13.42347203,   6.94626147,   0.33661488,
-         1.22412063,   2.88330069,   0.20301016,   0.32069797,
-         1.04363305,   0.28507474,   4.49850795,  -0.27397026,   8.43255253]
+goodWeights = [ -2.30184849,   0.15205544,  11.37284794,   2.22866016,
+         2.5926891 ,  27.34128227,  -2.72856657, -15.95316347,
+        -4.30608648,   9.95769945,  -3.72684989,   5.79208033,
+         2.16235142,  13.69485912,   6.77834282,   0.43567416,
+         1.20300337,   2.95172869,   0.24279471,   0.30121553,
+         1.29004227,   0.27179539,  30.28146594,  -0.21266843,   9.93318708]
 #'''
 def Get_PCRW_ranking(qu, candNodes, qc_pairs, tMain_unrolled, df_pcrw_f):
     scores = np.zeros((len(tMain_unrolled), len(goodCols)));
@@ -399,27 +399,35 @@ class SktWsegRWR(object):
 
                     # if verbose or True:
                     if verbose or supervised:
-                        winner_w2w = -1
-                        for r in ranking_w2w:
-                            if(r in qu or r in deactivated):
-                                continue
-                            winner_w2w = r
-                            break
+                        if algoname == '3RWR':
+                            winner_w2w = -1
+                            for r in ranking_w2w:
+                                if(r in qu or r in deactivated):
+                                    continue
+                                winner_w2w = r
+                                break
 
 
-                        winner_t2t = -1
-                        for r in ranking_t2t:
-                            if(r in qu or r in deactivated):
-                                continue
-                            winner_t2t = r
-                            break
+                            winner_t2t = -1
+                            for r in ranking_t2t:
+                                if(r in qu or r in deactivated):
+                                    continue
+                                winner_t2t = r
+                                break
 
-                        winner_w2w_samecng = -1
-                        for r in ranking_w2w_samecng:
-                            if(r in qu or r in deactivated):
-                                continue
-                            winner_w2w_samecng = r
-                            break
+                            winner_w2w_samecng = -1
+                            for r in ranking_w2w_samecng:
+                                if(r in qu or r in deactivated):
+                                    continue
+                                winner_w2w_samecng = r
+                                break
+                        elif algoname == '25Path':
+                            winner_pcrw = -1
+                            for r in ranking_pcrw:
+                                if(r in qu or r in deactivated):
+                                    continue
+                                winner_pcrw = r
+                                break
                         
 
 
